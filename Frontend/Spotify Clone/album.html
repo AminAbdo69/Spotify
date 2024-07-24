@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Album name</title>
+    <link
+      rel="shortcut icon"
+      href="assets/icons/LogosSpotifyIcon.svg"
+      type="image/x-icon"
+    />
+    <meta name="description" content="A brief description of Spotify" />
+    <meta name="keywords" content="Spotify, music, Entertainment " />
+
+    <meta name="author" content="Amin Abdelhafiz" />
+    <!-- todo: Social media meta tags -->
+    <meta property="og:title" content=" Spotify | music for every one" />
+    <meta
+      property="og:description"
+      content="Have Fun with Your Favorite Artist."
+    />
+    <!-- Google font links -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="styles/preflight.css" />
+    <link rel="stylesheet" href="styles/global.css" />
+    <link rel="stylesheet" href="styles/album.css" />
+  </head>
+  <body>
+    <div class="sidebar">
+      <div class="logo">
+        <a href="#">
+          <img src="assets/images/logo-new.png" alt="Logo" />
+        </a>
+      </div>
+
+      <div class="navigation">
+        <ul>
+          <li>
+            <a href="#">
+              <span class="fa fa-home"></span>
+              <span>Home</span>
+            </a>
+          </li>
+
+          <li>
+            <a href="#">
+              <span class="fa fa-search"></span>
+              <span>Search</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+
+      <div class="navigation">
+        <ul>
+          <li>
+            <a href="#">
+              <span class="fa fas fa-book"></span>
+              <span>Your Library</span>
+            </a>
+            <i class="fa-solid fa-plus"></i>
+          </li>
+          <li>
+            <div class="sidebar-scroll">
+              <div class="create-playlist">
+                <h4>Create Your Playlist</h4>
+                <p>it's easy , we'll help you</p>
+                <button>create Playlist</button>
+              </div>
+              <div class="create-playlist">
+                <h4>Create Your Playlist</h4>
+                <p>it's easy , we'll help you</p>
+                <button>create Playlist</button>
+              </div>
+            </div>
+          </li>
+        </ul>
+      </div>
+
+      <div class="privacy">
+        <ul>
+          <li>
+            <a href="">legal</a>
+          </li>
+          <li>
+            <a href="">Safety&Privacy Center</a>
+          </li>
+          <li>
+            <a href="">Privacy Policy</a>
+          </li>
+        </ul>
+        <ul>
+          <li>
+            <a href="">Cookies</a>
+          </li>
+          <li>
+            <a href="">About Ads</a>
+          </li>
+          <li>
+            <a href="">Accessibility</a>
+          </li>
+        </ul>
+      </div>
+      <div class="policies">
+        <ul>
+          <li>
+            <a href="#">Cookies</a>
+          </li>
+          <li>
+            <a href="#">Privacy</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="main-container">
+      <div class="topbar">
+        <div class="prev-next-buttons">
+          <button type="button" class="fa fas fa-chevron-left"></button>
+          <button type="button" class="fa fas fa-chevron-right"></button>
+        </div>
+
+        <div class="navbar">
+          <ul>
+            <li>
+              <a href="#">Sign Up</a>
+            </li>
+          </ul>
+          <button type="button">Log In</button>
+        </div>
+      </div>
+
+      <div class="album">
+        <div class="album-header">
+          <div class="album-image-box">
+            <img
+              class="album-image"
+              id="albumImage"
+              src="./assets/images/item-3.jpg"
+              alt=""
+            />
+          </div>
+
+          <div class="album-content">
+            <p>Album</p>
+            <h1 class="album-title">Name Here</h1>
+            <div class="album-info">
+              <img
+                class="artist-image"
+                id="artistImage"
+                src="./assets/images/item-1.jpg"
+                alt="Artist image"
+              />
+              <a class="artist-name" href="">marawan pablo .</a>
+              <p class="album-date">2002 .</p>
+              <p class="album-otal-time">22hr, 32 m</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="album-playlist">
+          <div class="track">
+            <div class="track-icons">
+              <div class="play">
+                <span class="fa fa-play"></span>
+              </div>
+              <i class="fa-regular fa-heart"></i>
+              <i class="fa-solid fa-ellipsis"></i>
+            </div>
+            <div class="track-icons">
+                <i class="fa-solid fa-list-ul"></i>
+            </div>
+          </div>
+          <hr>
+          <ol type="1">
+            <li>
+                <span class="song-title">AMAN (Intro) <br>
+                  <span class="artistName">marawan Pablo</span>
+                </span>
+                <span class="duration">
+                  <i class="fa-regular fa-heart"></i>
+                  <span class="time">2:58</span>
+                  <i class="fa-solid fa-ellipsis"></i>
+                </span>
+            </li>
+            <li>
+                <span class="song-title">Daheya <br>
+                  <span class="artistName">marawan Pablo</span>
+                </span>
+                <span class="duration">
+                  <i class="fa-regular fa-heart"></i>
+                  <span class="time">2:40</span>
+                  <i class="fa-solid fa-ellipsis"></i>
+                </span>
+            </li>
+            <!-- Add other songs here -->
+        </ol>
+
+        
+        </div>
+      </div>
+    </div>
+
+    <div class="preview">
+      <div class="text">
+        <h6>Preview of Spotify</h6>
+        <p>
+          Sign up to get unlimited songs and podcasts with occasional ads. No
+          credit card needed.
+        </p>
+      </div>
+      <div class="button">
+        <button type="button">Sign up free</button>
+      </div>
+    </div>
+
+    <div class="preview">
+      <div class="text">
+        <h6>Preview of Spotify</h6>
+        <p>
+          Sign up to get unlimited songs and podcasts with occasional ads. No
+          credit card needed.
+        </p>
+      </div>
+      <div class="button">
+        <button type="button">Sign up free</button>
+      </div>
+    </div>
+    <script
+      src="https://kit.fontawesome.com/408aac1832.js"
+      crossorigin="anonymous"
+    ></script>
+    <script src="./scripts/album.js"></script>
+  </body>
+</html>

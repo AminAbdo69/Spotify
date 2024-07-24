@@ -1,0 +1,184 @@
+ <div class="sidebar">
+      <div class="sidebar-nav">
+        <div class="logo">
+          <a href=""><img src="assets/images/logo-new.png" alt="" /></a>
+        </div>
+        <ul>
+          <li>
+            <a href="">
+              <span><i class="fa-solid fa-house"></i></span>
+              <span>Home</span>
+            </a>
+          </li>
+          <li>
+            <a href="">
+              <span><i class="fa-solid fa-magnifying-glass"></i></span>
+              <span>Search</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+      <div class="sidebar-nav box2">
+        <ul>
+          <li>
+            <a href="">
+              <span><i class="fa-solid fa-book"></i></span>
+              <span class="library">Your Library</span>
+            </a>
+            <i class="fa-solid fa-plus"></i>
+          </li>
+          <li>
+            <div class="sidebar-scroll">
+              <div class="create-playlist">
+                <h4>Create Your Playlist</h4>
+                <p>it's easy , we'll help you</p>
+                <button>create Playlist</button>
+              </div>
+              <div class="create-playlist">
+                <h4>Create Your Playlist</h4>
+                <p>it's easy , we'll help you</p>
+                <button>create Playlist</button>
+              </div>
+            </div>
+          </li>
+        </ul>
+      </div>
+      <div class="privacy">
+        <ul>
+          <li>
+            <a href="">Legal</a>
+            <a href="">Safety & privacy Center</a>
+            <a href="">Privacy Policy</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-------------------------
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+body {
+  background-color: #121212;;
+  font-family: 'Montserrat', sans-serif;
+}
+.sidebar {
+  width: 350px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+}
+.sidebar-nav {
+  background: var(--sidebar-bg);
+  border-radius: 10px;
+  padding: 20px 10px;
+  margin-bottom: 10px;
+}
+.sidebar-nav .logo {
+  width: 120px;
+}
+.sidebar-nav .logo img {
+  width: 100%;
+}
+.sidebar-nav ul {
+  list-style: none;
+  
+}
+.sidebar-nav ul li {
+  padding: 10px 20px;
+
+}
+/* .sidebar-nav li a {
+  text-decoration: none;
+  color: var(--white);
+  font-size: 16px;
+  font-weight: 600;
+} */
+.sidebar-nav li a {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  height: 40px;
+  text-decoration: none;
+  color: var(--white);
+}
+.sidebar-nav ul li a i  {
+  font-size: 20px;
+  margin-right: 10px;
+}
+.box2 li{
+  display: flex;
+  font-size: 20px;
+  color: white;
+  justify-content: space-between;
+  text-align: center;
+  align-items: center;
+}
+/* .library::after {
+  content: "+";
+  float: right;
+  text-align: center;
+
+  border-radius: 50%;
+  font-size: 15px;
+} */
+.create-playlist {
+  background: var(--sidebar-scroll-bg);
+  padding: 16px 20px;
+  border-radius: 10px;
+  margin-bottom: 10px;
+  text-align: left;
+}
+.sidebar-scroll {
+  height: 150px;
+  width: 100%;
+  
+  overflow-y: auto;
+}
+.sidebar-scroll::-webkit-scrollbar {
+  background: transparent;
+}
+.sidebar-scroll::-webkit-scrollbar-thumb {
+  background: #ccc;
+  width: 5px;
+}
+.create-playlist h4{
+  color: var(--white);
+  font-size: 1rem;
+  font-weight: 700;
+}
+.create-playlist p{
+  color: var(--white);
+  font-size: 0.8125rem;
+  margin-top:5px;
+  margin-bottom:20px;
+
+}
+.create-playlist button{
+  padding: 5px 15px;
+  border: 0;
+  outline: 0;
+  border-radius: 20px;
+  font-weight: 600;
+  margin-bottom: 10px;
+  font-size: 15px;
+  background-color: #fff;
+  color:#000 ;
+}
