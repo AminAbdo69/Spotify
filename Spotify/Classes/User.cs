@@ -1,11 +1,14 @@
-﻿using System.Security.Cryptography;
+﻿using System.ComponentModel.DataAnnotations;
+using System.Security.Cryptography;
 using System.Text;
 
 namespace Spotify
 {
     public class User
     {
+        [Key]
         public int UserId { get; set; }
+        public string UserName { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
 
@@ -13,7 +16,7 @@ namespace Spotify
         public required byte[] PasswordHash { get; set; }
         public required byte[] PasswordSalt { get; set; }
 
-        public string Lisence { get; set; }
+        public string Lisence { get; set; } = "Normal";
         public bool? IsActive { get; set; } = false;
 
         public List<Playlist> LikedPlaylists { get; set; }

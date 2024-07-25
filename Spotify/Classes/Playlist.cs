@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Spotify
 {
@@ -10,10 +11,12 @@ namespace Spotify
         public string PlaylistName { get; set;}
         public DateTime PlaylistDate { get; set; }
 
-        public List<User> PLaylistLovers { get; set; }
 
-        public int UserId { get; set; }
-        public User PlaylistCreator { get; set; }
+        [Required]
+        public required int UserId { get; set; }
+        [Required]
+        public required User? User { get; set; }
+        public List<User> PLaylistLovers { get; set; }
         public List<Song> PlaylistSongs { get; set; }
     }
 }

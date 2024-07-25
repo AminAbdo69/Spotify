@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Sign Up - Spotify</title>
+    <link
+      rel="shortcut icon"
+      href="assets/icons/LogosSpotifyIcon.svg"
+      type="image/x-icon"
+    />
+
+    <!-- Google font links -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="styles/preflight.css" />
+    <link rel="stylesheet" href="styles/global.css" />
+    <link rel="stylesheet" href="styles/Signup.css" />
+  </head>
+  <body>
+    <header>
+      <div class="logo">
+        <a href="index.html">
+          <img src="assets/icons/LogosSpotifyIcon.svg" alt="" />
+        </a>
+      </div>
+    </header>
+    <section>
+      <div class="main">
+        <h1>Sign up to start listening</h1>
+
+        <div class="log-in">
+          <form action="" id="myform">
+            <div class="name">
+              <div class="firstname">
+                <label>First Name</label>
+                <input type="text" placeholder="e.g amin" id="firstname" />
+                <span class="firstname-error"></span>
+              </div>
+              <div class="lastname">
+                <label>Last Name</label>
+                <input type="text" placeholder="e.g abdo" id="lasttname" />
+                <span class="lastname-error"></span>
+              </div>
+            </div>
+            <label>Email address</label>
+            <input type="email" placeholder="name@domain.com" id="email" />
+            <span class="email-error"></span>
+            <label>Password</label>
+            <input type="password" placeholder="Password" id="password" />
+            <span class="Password-error"></span>
+            <label>Username</label>
+            <input type="text" placeholder="Username" id="username" />
+            <span class="username-error"></span>
+            <button>Sign Up</button>
+            <div class="haveaccount">
+              <span>Already have an account?</span>
+              <a href="Login.html">Log in here</a>
+            </div>
+          </form>
+        </div>
+        <hr />
+
+        <div class="account-connect">
+          <button class="a-c-btn" id="googlebtn">
+            <img src="assets/icons/google.png" alt="" />
+            <span>Continue with Google</span>
+          </button>
+          <button class="a-c-btn" id="facebookbtn">
+            <img src="assets/icons/facebook.png" alt="" />
+            <span>Continue with Facebook</span>
+          </button>
+          <button class="a-c-btn" id="applebtn">
+            <img src="assets/icons/apple.png" alt="" />
+            <span>Continue with Apple</span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      <p>
+        This site is protected by reCAPTCHA and the Google
+        <span>Privacy Policy</span> and <span> Terms of Service</span> apply.
+      </p>
+    </footer>
+    <script src="./scripts/signin.js"></script>
+  </body>
+</html>

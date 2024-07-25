@@ -27,7 +27,7 @@ namespace Spotify.Data
 
             modelBuilder.Entity<User>()
           .HasMany(u => u.CreatedPlaylists)
-          .WithOne(p => p.PlaylistCreator)
+          .WithOne(p => p.User)
           .HasForeignKey(p => p.UserId)
           .OnDelete(DeleteBehavior.ClientSetNull);
 
