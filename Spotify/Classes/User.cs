@@ -15,9 +15,9 @@ namespace Spotify
         public string Email { get; set; }
         public required byte[] PasswordHash { get; set; }
         public required byte[] PasswordSalt { get; set; }
+        public bool? IsActive { get; set; } = false;
 
         public string Lisence { get; set; } = "Normal";
-        public bool? IsActive { get; set; } = false;
 
         public List<Playlist> LikedPlaylists { get; set; }
 

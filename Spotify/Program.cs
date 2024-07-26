@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Spotify.Data;
+using Spotify.Services.ArtistService;
 using Swashbuckle.AspNetCore.Filters;
 using System.Text;
 
@@ -23,6 +24,7 @@ builder.Services.AddDbContext<DataBase>(options => options.UseSqlServer(
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddScoped<IUserService, UserService>();
+//builder.Services.AddScoped<IArtistService, ArtistService>();
 builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddSwaggerGen(options => {

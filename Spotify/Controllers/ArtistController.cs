@@ -1,25 +1,27 @@
-﻿using Azure.Core;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Spotify.Classes.DTO;
 using Spotify.Data;
+using Spotify.Services.UserServices;
+using System.Data;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
-using System.Text.RegularExpressions;
 
 namespace Spotify.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class AuthController(DataBase db, IConfiguration config ,IUserService userService) : ControllerBase
+    public class ArtistController(DataBase db, IConfiguration config) : ControllerBase
     {
-        [HttpPost("register")]
-        public async Task<ActionResult<User>> Register(UserRegisterDTO request)
+
+        [HttpPost("Artistregister")]
+        public  ActionResult<string> Register(ArtistRegisterDTO request)
         {
             if (!IsValidUsername(request.Username))
             {
@@ -29,140 +31,93 @@ namespace Spotify.Controllers
             {
                 return BadRequest("Invalid Email");
             }
-            if (!IsValidPassword(request.Password))
-            {
-                return BadRequest("Invalid Password");
-            }
-            if (!IsValidName(request.FirstName))
-            {
-                return BadRequest("Invalid FirstName");
-            }
-            if (!IsValidName(request.LastName))
-            {
-                return BadRequest("Invalid LastName");
-            }
 
-
-            if (db.Users.FirstOrDefault(u => u.UserName == request.Username) != null)
+            if (db.Artists.FirstOrDefault(u => u.Username == request.Username) != null)
             {
                 return Conflict("Username is already exists. Please choose a different username.");
             }
+            string password = request.Username + "111";
+            CreatePasswordHash(password, out byte[] PasswordHash, out byte[] PasswordSalt);
 
-            CreatePasswordHash(request.Password, out byte[] PasswordHash, out byte[] PasswordSalt);
-
-            User user = new()
+            Artist artist = new()
             {
-                UserName = request.Username,
-                FirstName = request.FirstName,
-                LastName = request.LastName,
+                Username = request.Username,
                 Email = request.Email,
                 PasswordHash = PasswordHash,
                 PasswordSalt = PasswordSalt,
             };
 
-            await db.Users.AddAsync(user);
-            await db.SaveChangesAsync();
+             db.Artists.Add(artist);
+             db.SaveChanges();
 
-            return Ok(user);
+            return Ok("your request has been send successfully");
 
         }
-
-
-
-        [HttpPost("login")]
-        public async Task<ActionResult<string>> Login(UserLoginDTO request)
+        [HttpPost("Artistlogin")]
+        public async Task<ActionResult<Artist>> Login(ArtistLoginDTO request)
         {
-           
-                if (
-                  String.IsNullOrEmpty(request.UserName)||
-                  String.IsNullOrEmpty(request.Password)
-                )
-                {
-                    return BadRequest("Please provide the required info.");
-                }
 
-                User? user = await db.Users.FirstOrDefaultAsync(u => u.UserName == request.UserName);
+            if (
+              String.IsNullOrEmpty(request.Username) ||
+              String.IsNullOrEmpty(request.Password)
+            )
+            {
+                return BadRequest("Please provide the required info.");
+            }
 
-                if (user != null)
-                {
-                    Artist? artist = await db.Artists.FirstOrDefaultAsync(u => u.Username == request.UserName);
-                    if(artist == null)
-                    {
-                        return NotFound("Artist not found. Please check your username and password.");
-                    }
-                    return NotFound("User not found. Please check your username and password.");
-                }
+            Artist? artist = await db.Artists.FirstOrDefaultAsync(u => u.Username == request.Username);
 
-                if (!VerifyPasswordHash(request.Password, user.PasswordHash, user.PasswordSalt))
-                {
-                    return BadRequest("Wrong Password Entered");
-                }
+            if (artist == null)
+            {
+                return NotFound("Artist not found. Please check your username and password.");
+            }
 
-                string? Token = CreateToken(request.UserName, Role: "User");
-                var refreshToken = GenrateRefreshToken();
-                SetRefreshToken(request.UserName, refreshToken);
-                if (Token == null)
-                {
-                    return StatusCode(500, "An error occurred while generating the token.");
-                }
+            if (!VerifyPasswordHash(request.Password, artist.PasswordHash, artist.PasswordSalt))
+            {
+                return BadRequest("Wrong Password Entered");
+            }
+            Response.Cookies.Append("Username", request.Username, new CookieOptions
+            {
+                Secure = true,
+                HttpOnly = false,
+                SameSite = SameSiteMode.None,
+            });
 
-                return Ok(Token);            
+            Response.Cookies.Append("Role", "Artist", new CookieOptions
+            {
+                Secure = true,
+                HttpOnly = false,
+                SameSite = SameSiteMode.None,
+            });
+
+            return Ok(artist);
         }
 
-        [HttpPost("refreshToken") , Authorize]
-        public  ActionResult<string> RefrshToken()
+        [HttpPost("ChangeData")]
+
+        public ActionResult<string> ChangeData(ChangedataDTO request)
         {
-            var refreshToken = Request.Cookies["refreshToken"];
-            var userName = userService.GetMyName();
-            var ROLE = userService.GetMyRole();
+            if (!IsValidPassword(request.NewPassword))
+            {
+                return BadRequest("Invalid Password Structue");
+            }
+            if(request.NewPassword != request.ConfirmPassword)
+            {
+                return BadRequest("NewPassword not matched with ConfirmPassword , Try again.");
+            }
+            Artist artist = db.Artists.FirstOrDefault(a  => a.Username == request.Username);
+            if(artist == null)
+            {
+                return NotFound("Not Found this Artist");
+            }
+            UpdatePassword(artist.Username, request.NewPassword);
             
-           
-            User? user =  db.Users.FirstOrDefault(u => u.UserName == userName);
-            if (user == null)
-            {
-                return NotFound("Invalid user");
-            }
-
-            if (!user.RefreshToken.Equals(refreshToken))
-            {
-                return Unauthorized("Invalid RefreshToken.");
-            }
-            else if (user.TokenExpires < DateTime.Now)
-            {
-                return Unauthorized("Token Expired.");
-            }
-
-            string token = CreateToken(user.UserName, ROLE);
-            var newRefrshToken = GenrateRefreshToken();
-            SetRefreshToken(user.UserName, newRefrshToken);
-
-            return Ok(token);
+            return Ok("Data has been changed successfully");
         }
 
-        [HttpGet , Authorize]
-        public ActionResult<string> Getme()
-        {
-
-            var userName = userService.GetMyName();
-            var ROLE = userService.GetMyRole();
-            string result = userName + ROLE;
-            //var username = User?.Identity?.Name;
-            var usename2 = User.FindFirstValue(ClaimTypes.Name);
-            //var role = User.FindFirstValue(ClaimTypes.Role);
-
-            return Ok(result);
-        }
-
-        private string getmyname()
-        {
-            var userName = userService.GetMyName();
-            return userName;
-        }
-
-        #region Helpers
 
 
-
+        #region Helpers 
         private static void CreatePasswordHash(string Password, out byte[] PasswordHash, out byte[] PasswordSalt)
         {
             using var hmac = new HMACSHA512();
@@ -177,29 +132,41 @@ namespace Spotify.Controllers
             return ComputedHash.SequenceEqual(PasswordHash);
         }
 
+        private void UpdatePassword(string username ,  string Password)
+        {
+            CreatePasswordHash(Password, out byte[] PasswordHash, out byte[] PasswordSalt);
+            Artist artist = db.Artists.FirstOrDefault(a =>a.Username == username);
+
+            artist.PasswordHash = PasswordHash;
+            artist.PasswordSalt = PasswordSalt;
+            artist.IsActive = true;
+            db.Update(artist);
+            db.SaveChanges();
+        }
+
 
         private string CreateToken(string Username, string Role)
         {
-                List<Claim> claims =
-                [
-                    new Claim(ClaimTypes.Name, Username),
+            List<Claim> claims =
+            [
+                new Claim(ClaimTypes.Name, Username),
                     new Claim(ClaimTypes.Role, Role)
-                ];
+            ];
 
-                byte[] AppToken = Encoding.UTF8.GetBytes(config.GetSection("AppSettings:Token").Value);
+            byte[] AppToken = Encoding.UTF8.GetBytes(config.GetSection("AppSettings:Token").Value);
 
-                var Key = new SymmetricSecurityKey(AppToken);
+            var Key = new SymmetricSecurityKey(AppToken);
 
-                var credentials = new SigningCredentials(Key, SecurityAlgorithms.HmacSha512);
+            var credentials = new SigningCredentials(Key, SecurityAlgorithms.HmacSha512);
 
-                var jwtSecurityToken = new JwtSecurityToken(
-                    claims: claims,
-                    expires: DateTime.Now.AddDays(1),
-                    signingCredentials: credentials);
+            var jwtSecurityToken = new JwtSecurityToken(
+                claims: claims,
+                expires: DateTime.Now.AddDays(1),
+                signingCredentials: credentials);
 
-                var jwtToken = new JwtSecurityTokenHandler().WriteToken(jwtSecurityToken);
+            var jwtToken = new JwtSecurityTokenHandler().WriteToken(jwtSecurityToken);
 
-                return jwtToken; 
+            return jwtToken;
         }
 
         private RefreshToken GenrateRefreshToken()
@@ -213,14 +180,14 @@ namespace Spotify.Controllers
             return refreshToken;
         }
 
-        private void SetRefreshToken(String Username  , RefreshToken refreshToken)
+        private void SetRefreshToken(String Username, RefreshToken refreshToken)
         {
             var cookieOption = new CookieOptions
             {
                 HttpOnly = true,
                 Expires = refreshToken.Expires
             };
-            Response.Cookies.Append("refreshToken", refreshToken.Token , cookieOption);
+            Response.Cookies.Append("refreshToken", refreshToken.Token, cookieOption);
             User user = db.Users.FirstOrDefault(u => u.UserName == Username);
 
             user.RefreshToken = refreshToken.Token;
@@ -231,7 +198,7 @@ namespace Spotify.Controllers
             db.SaveChanges();
         }
 
-
+        
         #endregion
 
         #region Register Validation
