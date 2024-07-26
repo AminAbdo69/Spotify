@@ -28,7 +28,9 @@ namespace Spotify
         public List<Artist> FollowedArtists { get; set; }
 
 
-
+        public string RefreshToken { get; set; }
+        public DateTime Tokencreated { get; set; }
+        public DateTime TokenExpires { get; set; }
 
 
         private static void CreatePasswordHash(string Password, out byte[] PasswordHash, out byte[] PasswordSalt)

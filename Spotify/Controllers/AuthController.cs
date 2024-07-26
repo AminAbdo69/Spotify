@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Azure.Core;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -14,7 +16,7 @@ namespace Spotify.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class AuthController(DataBase db, IConfiguration config) : ControllerBase
+    public class AuthController(DataBase db, IConfiguration config ,IUserService userService) : ControllerBase
     {
         [HttpPost("register")]
         public async Task<ActionResult<User>> Register(UserRegisterDTO request)
@@ -92,14 +94,64 @@ namespace Spotify.Controllers
                 }
 
                 string? Token = CreateToken(request.UserName, Role: "User");
+                var refreshToken = GenrateRefreshToken();
+                SetRefreshToken(request.UserName, refreshToken);
                 if (Token == null)
                 {
                     return StatusCode(500, "An error occurred while generating the token.");
                 }
 
-                return Ok(Token);
- 
+                return Ok(Token);            
+        }
+
+        [HttpPost("refreshToken") , Authorize]
+        public  ActionResult<string> RefrshToken()
+        {
+            var refreshToken = Request.Cookies["refreshToken"];
+            var userName = userService.GetMyName();
+            var ROLE = userService.GetMyRole();
             
+           
+            User? user =  db.Users.FirstOrDefault(u => u.UserName == userName);
+            if (user == null)
+            {
+                return NotFound("Invalid user");
+            }
+
+            if (!user.RefreshToken.Equals(refreshToken))
+            {
+                return Unauthorized("Invalid RefreshToken.");
+            }
+            else if (user.TokenExpires < DateTime.Now)
+            {
+                return Unauthorized("Token Expired.");
+            }
+
+            string token = CreateToken(user.UserName, ROLE);
+            var newRefrshToken = GenrateRefreshToken();
+            SetRefreshToken(user.UserName, newRefrshToken);
+
+            return Ok(token);
+        }
+
+        [HttpGet , Authorize]
+        public ActionResult<string> Getme()
+        {
+
+            var userName = userService.GetMyName();
+            var ROLE = userService.GetMyRole();
+            string result = userName + ROLE;
+            //var username = User?.Identity?.Name;
+            var usename2 = User.FindFirstValue(ClaimTypes.Name);
+            //var role = User.FindFirstValue(ClaimTypes.Role);
+
+            return Ok(result);
+        }
+
+        private string getmyname()
+        {
+            var userName = userService.GetMyName();
+            return userName;
         }
 
         #region Helpers
@@ -143,6 +195,35 @@ namespace Spotify.Controllers
                 var jwtToken = new JwtSecurityTokenHandler().WriteToken(jwtSecurityToken);
 
                 return jwtToken; 
+        }
+
+        private RefreshToken GenrateRefreshToken()
+        {
+            var refreshToken = new RefreshToken
+            {
+                Token = Convert.ToBase64String(RandomNumberGenerator.GetBytes(64)),
+                Expires = DateTime.Now.AddDays(1),
+                created = DateTime.Now
+            };
+            return refreshToken;
+        }
+
+        private void SetRefreshToken(String Username  , RefreshToken refreshToken)
+        {
+            var cookieOption = new CookieOptions
+            {
+                HttpOnly = true,
+                Expires = refreshToken.Expires
+            };
+            Response.Cookies.Append("refreshToken", refreshToken.Token , cookieOption);
+            User user = db.Users.FirstOrDefault(u => u.UserName == Username);
+
+            user.RefreshToken = refreshToken.Token;
+            user.Tokencreated = refreshToken.created;
+            user.TokenExpires = refreshToken.Expires;
+
+            db.Update(user);
+            db.SaveChanges();
         }
 
 

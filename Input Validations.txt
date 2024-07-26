@@ -55,3 +55,96 @@ Name validation : e.g, amin
     		return Regex.IsMatch(name, namePattern) && name.Length > 2;
 	}
 
+
+***************************************
+
+
+
+#region Register Validation
+//public bool IsValidEmail(string email)
+//{
+
+//    const string emailPattern = @"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$";
+//    bool isValid = Regex.IsMatch(email, emailPattern);
+//    return isValid;
+//}
+//public bool IsValidPassword(string password)
+//{
+
+//    const string passwordPattern = @"^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$";
+//    return Regex.IsMatch(password, passwordPattern);
+//}
+//public bool IsValidUsername(string username)
+//{
+
+//    const string usernamePattern = @"^(?!.*[-.]{2})[a-zA-Z0-9][a-zA-Z0-9 .-]{0,58}[a-zA-Z0-9]$";
+//    return Regex.IsMatch(username, usernamePattern);
+//}
+//public bool IsValidName(string name)
+//{
+//    const string namePattern = @"^[a-zA-Z -]+$";
+//    return Regex.IsMatch(name, namePattern) && name.Length > 2;
+//}
+
+
+//public bool IsValidName(string name)
+//{
+//    // Check if the name contains only letters, spaces, and hyphens
+//    foreach (char c in name)
+//    {
+//        if (!char.IsLetter(c) && c != ' ' && c != '-')
+//            return false;
+//    }
+
+//    // Check if the name length is greater than 2
+//    return name.Length > 2;
+//}
+
+//public bool IsValidUsername(string username)
+//{
+//    // Check if the username contains only alphanumeric characters, spaces, dots, and hyphens
+//    foreach (char c in username)
+//    {
+//        if (!char.IsLetterOrDigit(c) && c != ' ' && c != '.' && c != '-')
+//            return false;
+//    }
+
+//    // Check if the username length is within the specified range
+//    return username.Length >= 3 && username.Length <= 60;
+//}
+
+//public bool IsValidPassword(string password)
+//{
+//    // Check if the password meets the specified criteria
+//    bool hasUppercase = false;
+//    bool hasLowercase = false;
+//    bool hasDigit = false;
+//    bool hasSpecialChar = false;
+
+//    foreach (char c in password)
+//    {
+//        if (char.IsUpper(c))
+//            hasUppercase = true;
+//        else if (char.IsLower(c))
+//            hasLowercase = true;
+//        else if (char.IsDigit(c))
+//            hasDigit = true;
+//        else if ("@$!%*?&".Contains(c))
+//            hasSpecialChar = true;
+//    }
+
+//    return password.Length >= 8 && hasUppercase && hasLowercase && hasDigit && hasSpecialChar;
+//}
+
+//public bool IsValidEmail(string email)
+//{
+//    // Check if the email contains "@" and "."
+//    int atIndex = email.IndexOf('@');
+//    int dotIndex = email.LastIndexOf('.');
+//    return atIndex > 0 && dotIndex > atIndex && dotIndex < email.Length - 1;
+//}
+
+
+
+#endregion
+
