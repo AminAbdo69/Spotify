@@ -10,9 +10,9 @@
 
         public DateTime ReleaseDate { get; set; }
 
-        public List<User> ALmubLikers { get; set; }
+        public List<User> ALmubLikers { get; set; } = [];
         public Artist Artist { get; set; }
-        public List<Song> AlbumSongs { get; set; }
+        public List<Song> AlbumSongs { get; set; } = [];
 
     }
 }

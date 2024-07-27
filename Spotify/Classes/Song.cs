@@ -7,8 +7,8 @@
         public string SongName { get; set; }
         public float Duration { get; set; }
         public DateTime ReleaseDate { get; set; }
-        public string path { get; set; }
-        public string? picture { get; set; }
+        public string path { get; set; } = string.Empty;
+        public string? picture { get; set; } = string.Empty;
 
 
         public List<Playlist> playlists { get; set; }

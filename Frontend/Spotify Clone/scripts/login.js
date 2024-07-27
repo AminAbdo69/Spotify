@@ -27,6 +27,8 @@ document
 
       const token = await response.text();
       console.log("Login successful. Token:", token);
+      sessionStorage.setItem("username", UserName);
+      location.href = "/index2.html";
       // Handle the token (e.g., store it in local storage or use it for subsequent requests)
     } catch (error) {
       console.error("Error logging in:", error);

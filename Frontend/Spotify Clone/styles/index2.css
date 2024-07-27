@@ -1,0 +1,449 @@
+* {
+  padding: 0;
+  margin: 0;
+}
+body {
+  background-color: #121212;
+  font-family: "Montserrat", sans-serif;
+}
+
+.sidebar {
+  position: fixed;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 400px;
+  background-color: #000000;
+  padding: 10px;
+  z-index: 4;
+}
+.sidebar .logo img {
+  width: 130px;
+}
+
+.sidebar .navigation ul {
+  list-style: none;
+  margin-top: 20px;
+  background-color: var(--background-base);
+  font-weight: 700;
+}
+.sidebar .navigation ul li {
+  padding: 8px 16px;
+  color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.sidebar .navigation ul li a {
+  color: #b3b3b3;
+  text-decoration: none;
+  font-size: 20px;
+}
+.sidebar .navigation ul li a:hover,
+.sidebar .navigation ul li a:active,
+.sidebar .navigation ul li a:focus {
+  color: #ffffff;
+}
+.sidebar .navigation ul li a:hover .fa,
+.sidebar .navigation ul li a:active .fa,
+.sidebar .navigation ul li a:focus .fa {
+  color: #b3b3b3;
+}
+.sidebar .navigation ul li .fa {
+  font-size: 20px;
+  margin-right: 20px;
+}
+.sidebar .navigation ul li a:hover .fa:hover,
+.sidebar .navigation ul li a:hover .fa:active,
+.sidebar .navigation ul li a:hover .fa:focus {
+  color: #ffffff;
+}
+
+.sidebar-scroll {
+  height: 200px;
+  width: 100%;
+  overflow-y: auto;
+}
+
+.create-playlist {
+  background: var(--sidebar-scroll-bg);
+  padding: 16px 20px;
+  border-radius: 15px;
+  margin-bottom: 25px;
+  text-align: left;
+}
+.sidebar-scroll::-webkit-scrollbar {
+  background: transparent;
+}
+.sidebar-scroll::-webkit-scrollbar-thumb {
+  background: #ccc;
+  width: 5px;
+}
+.create-playlist h4 {
+  color: var(--white);
+  font-size: 1.3rem;
+  font-weight: 700;
+}
+.create-playlist p {
+  color: var(--white);
+  font-size: 1rem;
+  margin-top: 5px;
+  margin-bottom: 20px;
+}
+.create-playlist button {
+  padding: 5px 15px;
+  border: 0;
+  outline: 0;
+  border-radius: 20px;
+  font-weight: 600;
+  margin-bottom: 10px;
+  font-size: 17px;
+  background-color: #fff;
+  color: #000;
+}
+
+.privacy {
+  text-align: center;
+  padding-inline: 20px;
+  padding-top: 30px;
+  color: white;
+}
+
+.sidebar .policies {
+  position: absolute;
+  bottom: 100px;
+}
+.sidebar .policies ul,
+.privacy ul {
+  list-style: none;
+  display: flex;
+  gap: 20px;
+  margin-bottom: 15px;
+  flex-direction: row;
+  align-items: center;
+}
+.sidebar .policies ul li,
+.privacy ul li {
+  padding-bottom: 5px;
+}
+.sidebar .policies ul li a,
+.privacy ul li a {
+  color: #b3b3b3;
+  font-weight: 500;
+  text-decoration: none;
+  font-size: 13px;
+}
+.sidebar .policies ul li a:hover,
+.sidebar .policies ul li a:active,
+.sidebar .policies ul li a:focus {
+  text-decoration: underline;
+}
+
+.main-container {
+  margin-left: 400px;
+  margin-bottom: 100px;
+  padding-block: 10px;
+}
+
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  background-color: #101010;
+  padding: 14px 30px;
+}
+.topbar .prev-next-buttons button {
+  color: #7a7a7a;
+  cursor: not-allowed;
+  width: 34px;
+  height: 34px;
+  border-radius: 100%;
+  font-size: 18px;
+  border: 0px;
+  background-color: #090909;
+  margin-right: 10px;
+}
+.topbar .navbar {
+  display: flex;
+  align-items: center;
+  color: var(--text-base);
+}
+
+.topbar .navbar .username {
+  font-weight: bold;
+  font-size: 15px;
+}
+.topbar .navbar ul {
+  list-style: none;
+}
+.topbar .navbar ul li {
+  display: inline-block;
+  margin: 0px 15px;
+  width: fit-content;
+  text-align: center;
+}
+.topbar .navbar ul li a,
+.topbar .navbar ul li i {
+  color: #b3b3b3;
+  text-decoration: none;
+  font-weight: bold;
+  font-size: 14px;
+  letter-spacing: 1px;
+}
+.topbar .navbar ul li a:hover,
+.topbar .navbar ul li a:active,
+.topbar .navbar ul li a:focus,
+.topbar .navbar ul li i:hover {
+  color: #ffffff;
+  font-size: 15px;
+}
+.topbar .navbar ul li.divider {
+  color: #ffffff;
+  font-size: 26px;
+  margin: 0px 20px;
+  width: auto;
+}
+.topbar .navbar button {
+  background-color: #ffffff;
+  color: #000000;
+  font-size: 16px;
+  font-weight: bold;
+  padding: 5px 15px;
+  border: 0px;
+  border-radius: 40px;
+  cursor: pointer;
+  margin-left: 20px;
+}
+.topbar .navbar button:hover,
+.topbar .navbar button:active,
+.topbar .navbar button:focus {
+  background-color: #f2f2f2;
+}
+.spotify-playlists {
+  padding-inline-start: var(--content-spacing);
+  margin-block: 25px;
+}
+.spotify-playlists h2 {
+  color: #ffffff;
+  font-size: 25px;
+  font-weight: bolder;
+}
+.spotify-playlists h2:hover {
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.spotify-playlists .list {
+  display: flex;
+  width: auto;
+
+  overflow: hidden;
+}
+.spotify-playlists .list .item {
+  flex: 1;
+  padding: 15px;
+  background-color: #181818;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all ease 0.4s;
+}
+.spotify-playlists .list .item:hover {
+  background-color: #252525;
+}
+.spotify-playlists .list .item img {
+  width: 100%;
+  border-radius: 6px;
+  margin-bottom: 10px;
+}
+.spotify-playlists .list .item .play {
+  position: relative;
+}
+.spotify-playlists .list .item .play .fa {
+  position: absolute;
+  right: 10px;
+  top: -60px;
+  padding: 18px;
+  background-color: #1db954;
+  border-radius: 100%;
+  color: #000;
+  opacity: 0;
+  transition: all ease 0.4s;
+}
+.spotify-playlists .list .item:hover .play .fa {
+  opacity: 1;
+  transform: translateY(-20px);
+}
+.spotify-playlists .list .item h4 {
+  color: #ffffff;
+  font-size: 14px;
+  margin-bottom: 10px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.spotify-playlists .list .item p {
+  color: #989898;
+  font-size: 12px;
+  line-height: 20px;
+  font-weight: 600;
+}
+.spotify-playlists hr {
+  margin: 70px 0px 0px;
+  border-color: #636363;
+}
+
+.music-player {
+  --primary-color: #ddd;
+  --secondary-color: #999;
+  --green-color: #2d5;
+  --padding: 1em;
+  background-color: #111;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  z-index: 5;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 6rem;
+  padding: var(--padding);
+  color: var(--primary-color);
+}
+i {
+  color: var(--secondary-color);
+}
+i:hover {
+  color: var(--primary-color);
+}
+.song-bar {
+  position: absolute;
+  left: var(--padding);
+
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 1.5rem;
+  width: 25%;
+}
+
+.song-infos {
+  display: flex;
+  align-items: center;
+  gap: 1em;
+}
+.image-container {
+  --size: 4em;
+  flex-shrink: 0;
+  width: var(--size);
+  height: var(--size);
+}
+.image-container img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 5px;
+}
+.song-description p {
+  margin: 0.2em;
+}
+.title,
+.artist {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
+  overflow: hidden;
+}
+.title:hover,
+.artist:hover {
+  text-decoration: underline;
+}
+.artist {
+  color: var(--secondary-color);
+}
+.icons {
+  display: flex;
+  gap: 1em;
+}
+.progress-controller {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5em;
+  padding: 10px;
+  color: var(--secondary-color);
+  
+
+}
+.control-buttons {
+  display: flex;
+  align-items: center;
+  gap: 2em;
+  
+}
+.play-pause {
+  display: inline-block;
+  padding: 0.8em;
+  background-color: var(--primary-color);
+  color: #111;
+  border-radius: 50%;
+}
+.play-pause:hover {
+  transform: scale(1.1);
+  color: #111;
+}
+.progress-container {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1em;
+}
+.progress-bar {
+  height: 4px;
+  border-radius: 10px;
+  width: 30%;
+  background-color: #ccc4;
+}
+.progress {
+  position: relative;
+  height: 100%;
+  width: 30%;
+  border-radius: 10px;
+  background-color: var(--secondary-color);
+}
+.progress-bar:hover .progress {
+  background-color: var(--green-color);
+}
+.progress-bar:hover .progress::after {
+  content: "";
+  position: absolute;
+  --size: 1em;
+  width: var(--size);
+  height: var(--size);
+  right: 0;
+  border-radius: 50%;
+  background-color: var(--primary-color);
+  transform: translate(50%, calc(2px - 50%));
+}
+.other-features {
+  position: absolute;
+  right: var(--padding);
+  display: flex;
+  flex-direction: row;
+  gap: 1em;
+}
+.volume-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.7em;
+}
+.volume-bar .progress-bar {
+  width: 6em;
+}
+.volume-bar .progress-bar:hover .progress::after {
+  --size: 0.8em;
+}

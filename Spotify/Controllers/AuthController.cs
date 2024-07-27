@@ -83,13 +83,8 @@ namespace Spotify.Controllers
 
                 User? user = await db.Users.FirstOrDefaultAsync(u => u.UserName == request.UserName);
 
-                if (user != null)
+                if (user == null)
                 {
-                    Artist? artist = await db.Artists.FirstOrDefaultAsync(u => u.Username == request.UserName);
-                    if(artist == null)
-                    {
-                        return NotFound("Artist not found. Please check your username and password.");
-                    }
                     return NotFound("User not found. Please check your username and password.");
                 }
 
