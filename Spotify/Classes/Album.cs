@@ -7,6 +7,7 @@
         public int ArtistId { get; set; }
 
         public string AlbumName { get; set; }
+        public int Nsongs { get; set; } = 0;
 
         public DateTime ReleaseDate { get; set; }
 

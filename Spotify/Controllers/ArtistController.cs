@@ -129,7 +129,7 @@ namespace Spotify.Controllers
                 return NotFound("Invalid Artist.");
             }
 
-            if(!IsValidName(albumDTO.AlbumName))
+            if(String.IsNullOrEmpty(albumDTO.AlbumName))
             {
                 return BadRequest("invalid Album Name.");
             }
@@ -139,13 +139,19 @@ namespace Spotify.Controllers
                 AlbumName = albumDTO.AlbumName,
                 ReleaseDate = DateTime.Now
             };
-            
-            foreach (Album album in artist.CreatedAlbums)
+
+            //foreach (Album album in artist.CreatedAlbums)
+            //{
+            //    if (album.AlbumName == albumDTO.AlbumName)
+            //    {
+            //        return Conflict($"this Album Already Created By {artist.Username}");
+            //    }
+            //}
+
+            bool albumExists = db.Albums.Any(a => a.ArtistId == artist.ArtistId && a.AlbumName == albumDTO.AlbumName);
+            if (albumExists)
             {
-                if (album.AlbumName.Equals(albumDTO.AlbumName))
-                {
-                    return Conflict($"this Album Already Created By {artist.Username}");
-                }
+                return Conflict($"This album has already been created by {artist.Username}.");
             }
             artist.CreatedAlbums.Add(album1);
             db.Artists.Update(artist);
@@ -153,6 +159,43 @@ namespace Spotify.Controllers
             db.SaveChanges();
             return Ok($" {albumDTO.AlbumName} Has Been Created Successfully");
         }
+        [HttpGet("ArtistAlbums")]
+        public ActionResult<List<AlbumOutDTO>> getArtistAlbums(string artistName)
+        {
+            if (String.IsNullOrEmpty(artistName))
+            {
+                return BadRequest("Invalid username.");
+            }
+            var artist = db.Artists
+                .Include(u => u.CreatedAlbums)
+                .SingleOrDefault(u => u.Username == artistName);
+
+            if (artist == null)
+            {
+                return NotFound("artist doesn't exist.");
+            }
+            if (!artist.IsActive)
+            {
+                return Unauthorized("Please activate the account by changing your default password.");
+            }
+            List<AlbumOutDTO> ArtistAlbums = [];
+
+            foreach (Album album in artist.CreatedAlbums)
+            {
+                ArtistAlbums.Add(new AlbumOutDTO()
+                {
+                    albumname = album.AlbumName,
+                    ReleaseDate = album.ReleaseDate,
+                    Nsongs = album.Nsongs
+                });
+            }
+            return Ok(ArtistAlbums);
+
+        }
+
+        
+
+
 
         [HttpPost("AddSong")]
         public ActionResult<string> AddSong(AddSongDTO songDTO)
@@ -184,25 +227,31 @@ namespace Spotify.Controllers
                 ReleaseDate = DateTime.Now,
             };
 
-            foreach (Song song in album.AlbumSongs)
+            bool songExistsInAlbum = db.Songs.Any(s => s.AlbumId == album.AlbumId && s.SongName == songDTO.Songname);
+            if (songExistsInAlbum)
             {
-                if (song.SongName.Equals(songDTO.Songname))
-                {
-                    return Conflict($"this song Already exists in {album.AlbumName} album");
-                }
-            }
-            foreach (Song song in artist.Songs)
-            {
-                if (song.SongName.Equals(songDTO.Songname))
-                {
-                    return Conflict($"this song Already Created by {artist.Username}");
-                }
+                return Conflict($"This song already exists in the {album.AlbumName} album.");
             }
 
-            
+            bool songExistsForArtist = db.Songs.Any(s => s.ArtistId == artist.ArtistId && s.SongName == songDTO.Songname);
+            if (songExistsForArtist)
+            {
+                return Conflict($"This song has already been created by {artist.Username}.");
+            }
+
+            //foreach (Song song in artist.Songs)
+            //{
+            //    if (song.SongName.Equals(songDTO.Songname))
+            //    {
+            //        return Conflict($"this song Already Created by {artist.Username}");
+            //    }
+            //}
+
+
 
             artist.Songs.Add(song1);
             album.AlbumSongs.Add(song1);
+            album.Nsongs = album.Nsongs + 1;
             db.Songs.Add(song1);
 
             db.Artists.Update(artist);
@@ -211,6 +260,38 @@ namespace Spotify.Controllers
 
             return Ok($"{songDTO.Songname} has been created successfully.");
 
+        }
+        [HttpGet("ArtistSongs")]
+        public ActionResult<List<SongoutDTO>> getArtistsongs(string artistName)
+        {
+            if (String.IsNullOrEmpty(artistName))
+            {
+                return BadRequest("Invalid username.");
+            }
+            var artist = db.Artists
+                .Include(u => u.Songs)
+                .SingleOrDefault(u => u.Username == artistName);
+
+            if (artist == null)
+            {
+                return NotFound("artist doesn't exist.");
+            }
+            if (!artist.IsActive)
+            {
+                return Unauthorized("Please activate the account by changing your default password.");
+            }
+            List<SongoutDTO> ArtistSongs = [];
+
+            foreach (Song song in artist.Songs)
+            {
+                ArtistSongs.Add(new SongoutDTO()
+                {
+                    SongName = song.SongName,
+                    Duration = song.Duration,
+                    ReleaseDate = song.ReleaseDate
+                });
+            }
+            return Ok(ArtistSongs);
         }
 
 

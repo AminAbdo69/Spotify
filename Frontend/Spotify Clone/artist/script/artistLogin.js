@@ -32,9 +32,9 @@ document
       const result = await response.json();
       console.log(result);
       if (result.isActive == false) {
-        location.href = "/changepassword.html";
+        location.href = "/artist/changepassword.html";
       }
-
+      location.href = "/artist/artistDashboard.html";
       document.getElementById("loginusername").value = "";
       document.getElementById("loginpassword").value = "";
       // Handle the token (e.g., store it in local storage or use it for subsequent requests)
