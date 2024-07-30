@@ -256,7 +256,7 @@ body {
   flex-direction: column;
   justify-content: space-between;
   padding: 20px;
-  
+  margin-bottom: 100px;
 }
 .album-playlist  .track {
   display: flex;

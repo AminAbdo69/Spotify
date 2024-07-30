@@ -11,6 +11,7 @@ namespace Spotify
         public string PlaylistName { get; set;}
         public DateTime PlaylistDate { get; set; }
         public int PlaylistsoungCount { get; set; } = 0;
+        public string picpath { get; set; } = string.Empty;
 
 
         [Required]

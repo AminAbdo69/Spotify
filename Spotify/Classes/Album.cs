@@ -8,6 +8,7 @@
 
         public string AlbumName { get; set; }
         public int Nsongs { get; set; } = 0;
+        public string picture {  get; set; } = string.Empty;
 
         public DateTime ReleaseDate { get; set; }
 

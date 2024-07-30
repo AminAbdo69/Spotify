@@ -12,6 +12,8 @@ namespace Spotify.Controllers
     public class UserController(DataBase db) : ControllerBase
     {
 
+        #region Playlists
+
         [HttpPost("AddPlaylist") , Authorize]
         public ActionResult<string> AddPlaylist(AddPlaylistDTO request)
         {
@@ -206,6 +208,32 @@ namespace Spotify.Controllers
 
         //    return Ok(playlistSongs);
         //}
+
+
+
+        [HttpGet("AllPlaylists")]
+        public ActionResult<List<PlaylistOutDTO3>> GetAllPlaylists()
+        {
+            var playlists = db.Playlists
+                .Include(p => p.User)
+                .ToList();
+
+            List<PlaylistOutDTO3> allPlaylists = new List<PlaylistOutDTO3>();
+
+            foreach (Playlist playlist in playlists)
+            {
+                allPlaylists.Add(new PlaylistOutDTO3()
+                {
+                    name = playlist.PlaylistName,
+                    creator = playlist.User.UserName,
+                    count = playlist.PlaylistsoungCount,
+                    picture = playlist.picpath
+                });
+            }
+            return Ok(allPlaylists);
+        }
+
+        #endregion
 
     }
 }

@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <title>Album name</title>
+    <title>Artist Page</title>
     <link
       rel="shortcut icon"
       href="assets/icons/LogosSpotifyIcon.svg"
@@ -27,7 +27,7 @@
     <!-- Stylesheets -->
     <link rel="stylesheet" href="styles/preflight.css" />
     <link rel="stylesheet" href="styles/global.css" />
-    <link rel="stylesheet" href="styles/album.css" />
+    <link rel="stylesheet" href="styles/artist.css" />
   </head>
   <body>
     <div class="sidebar">
@@ -127,80 +127,125 @@
         <div class="navbar">
           <ul>
             <li>
-              <a href="#">Sign Up</a>
+              <a href="SignUp.html">Sign Up</a>
             </li>
           </ul>
-          <button type="button">Log In</button>
+          <button type="button">
+            <a href="/Login.html">Log In</a>
+          </button>
         </div>
       </div>
 
-      <div class="album">
-        <div class="album-header">
-          <div class="album-image-box">
-            <img
-              class="album-image"
-              id="albumImage"
-              src="./assets/images/item-3.jpg"
-              alt=""
-            />
-          </div>
-
-          <div class="album-content">
-            <p>Album</p>
-            <h1 class="album-title" id="album-title">Name Here</h1>
-            <div class="album-info">
-              <img
-                class="artist-image"
-                id="artistImage"
-                src="./assets/images/item-1.jpg"
-                alt="Artist image"
-              />
-              <a class="artist-name" id="artist-name" href="">marawan pablo .</a>
-              <p class="album-songs"><span  id="album-songs"></span></p>
-              <p class="album-otal-time">22hr, 32 m</p>
-            </div>
-          </div>
+      
+      <div class="artist-header">
+        <div class="image-container">
+          <img id="artist-pic" src="/assets/images/the last peace of art3.jpg" alt="">
         </div>
+        <div class="artist-info">
+          <h2 id="artist-name">Marwan Pablo</h2>
+          <p id="artist-followers">Followers (24654)</p>
+        </div>
+      </div>
 
-        <div class="album-playlist">
+        <div class="artist-songs">
           <div class="track">
             <div class="track-icons">
               <div class="play">
                 <span class="fa fa-play"></span>
               </div>
-              <i class="fa-regular fa-heart"></i>
+              <button id="followBtn">Follow</button>
               <i class="fa-solid fa-ellipsis"></i>
             </div>
-            <div class="track-icons">
-                <i class="fa-solid fa-list-ul"></i>
-            </div>
+            
           </div>
-          <hr>
-          <ol type="1" id="albumSongs">
+          <hr />
+          <ol type="1" id="song-list">
             <li>
-                <span class="song-title">AMAN (Intro) <br>
-                  <span class="artistName">marawan Pablo</span>
-                </span>
-                <span class="duration">
-                  <i class="fa-regular fa-heart"></i>
-                  <span class="time">2:58</span>
-                  <i class="fa-solid fa-ellipsis"></i>
-                </span>
+              <span class="song-title"
+                >AMAN (Intro) <br />
+                <span class="artistName">marawan Pablo</span>
+              </span>
+              <span class="duration">
+                <i class="fa-regular fa-heart"></i>
+                <span class="time">2:58</span>
+                <i class="fa-solid fa-ellipsis"></i>
+              </span>
             </li>
             <li>
-                <span class="song-title">Daheya <br>
-                  <span class="artistName">marawan Pablo</span>
-                </span>
-                <span class="duration">
-                  <i class="fa-regular fa-heart"></i>
-                  <span class="time">2:40</span>
-                  <i class="fa-solid fa-ellipsis"></i>
-                </span>
+              <span class="song-title"
+                >Daheya <br />
+                <span class="artistName">marawan Pablo</span>
+              </span>
+              <span class="duration">
+                <i class="fa-regular fa-heart"></i>
+                <span class="time">2:40</span>
+                <i class="fa-solid fa-ellipsis"></i>
+              </span>
             </li>
             <!-- Add other songs here -->
-        </ol>
-
-        
+          </ol>
+          <div class="spotify-playlists Popular-Albums">
+            <div class="title">
+              <h2>Spotify Albums</h2>
+              <button id="showAll2">show all</button>
+            </div>
+    
+            <div class="list" id="Popular-Albums">
+              <a
+                class="item album-card"
+                data-artist="amin"
+                data-artist-pic="/assets/images/the last peace of art3.jpg  "
+                href="./album.html"
+              >
+                <img
+                  class="album-image"
+                  src="assets/images/the last peace of art.png"
+                />
+                <div class="play">
+                  <span class="fa fa-play"></span>
+                </div>
+                <h4 class="album-title" id="album-name">Today's Top Hits</h4>
+                <p id="album-creator">Rema & Selena Gomez are on top of the...</p>
+              </a>
+    
+              <a class="item album-card" href="./album.html">
+                <img src="assets/images/the last peace of art2.png" />
+                <div class="play">
+                  <span class="fa fa-play"></span>
+                </div>
+                <h4 class="album-title">RapCaviar</h4>
+                <p>New Music from Lil Baby, Juice WRLD an...</p>
+              </a>
+    
+              <div class="item">
+                <img src="assets/images/the last peace of art4.png" />
+                <div class="play">
+                  <span class="fa fa-play"></span>
+                </div>
+                <h4>All out 2010s</h4>
+                <p>The biggest spmgs pf tje 2010s. Cover:...</p>
+              </div>
+    
+              <div class="item">
+                <img src="assets/images/item-1.jpg" />
+                <div class="play">
+                  <span class="fa fa-play"></span>
+                </div>
+                <h4>Rock Classics</h4>
+                <p>Rock Legends & epic songs that continue t...</p>
+              </div>
+    
+              <div class="item">
+                <img src="assets/images/item-3.jpg" />
+                <div class="play">
+                  <span class="fa fa-play"></span>
+                </div>
+                <h4>Viva Latino</h4>
+                <p>Today's top Latin hits elevando nuestra...</p>
+              </div>
+            </div>
+          </div>
+    
         </div>
       </div>
     </div>
@@ -234,6 +279,6 @@
       src="https://kit.fontawesome.com/408aac1832.js"
       crossorigin="anonymous"
     ></script>
-    <script src="./scripts/album.js"></script>
+    <script src="./scripts/artist.js"></script>
   </body>
 </html>

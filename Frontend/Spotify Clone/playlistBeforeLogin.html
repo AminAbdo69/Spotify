@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <title>Album name</title>
+    <title>Spotify</title>
     <link
       rel="shortcut icon"
       href="assets/icons/LogosSpotifyIcon.svg"
@@ -27,7 +27,7 @@
     <!-- Stylesheets -->
     <link rel="stylesheet" href="styles/preflight.css" />
     <link rel="stylesheet" href="styles/global.css" />
-    <link rel="stylesheet" href="styles/album.css" />
+    <link rel="stylesheet" href="styles/playlistBeforeLogin.css" />
   </head>
   <body>
     <div class="sidebar">
@@ -69,52 +69,53 @@
               <div class="create-playlist">
                 <h4>Create Your Playlist</h4>
                 <p>it's easy , we'll help you</p>
-                <button>create Playlist</button>
+                <button id="createPlaylist">create Playlist</button>
+                <div class="hint-container">
+                  <div class="hint">
+                    <h2>create Playlist</h2>
+                    <form action="" id="playlistForm">
+                      <label>Playlist Name</label>
+                      <input
+                        type="text"
+                        placeholder="e.g Sad Rap"
+                        id="playlistname"
+                      />
+                      <div class="buttons">
+                        <button type="submit" id="addplaylist">
+                          Add Playlist
+                        </button>
+                      </div>
+                    </form>
+                  </div>
+                </div>
               </div>
               <div class="create-playlist">
-                <h4>Create Your Playlist</h4>
-                <p>it's easy , we'll help you</p>
-                <button>create Playlist</button>
+                <h4>All Playlists</h4>
+                <p>Show All Playlist</p>
+                <button id="showAllPlaylists">Show All</button>
               </div>
+            </div>
+          </li>
+          <li>
+            <div class="sidebar-scroll">
+              <ul id="playlists" class="container-playlist">
+                <div class="playlist-container">
+                  <div class="image">
+                    <img src="/assets/icons/LogosSpotifyIcon.svg" alt="">
+                  </div>
+                  <div class="playlist-info">
+                    <p id="playlistName">last peace <span id="count">(4)</span></p>
+                    <p class="creator-info">playlist <span id="playlistCreator">aminabdo</span> </p>
+                    
+                  </div>
+                </div>
+              </ul>
             </div>
           </li>
         </ul>
       </div>
 
-      <div class="privacy">
-        <ul>
-          <li>
-            <a href="">legal</a>
-          </li>
-          <li>
-            <a href="">Safety&Privacy Center</a>
-          </li>
-          <li>
-            <a href="">Privacy Policy</a>
-          </li>
-        </ul>
-        <ul>
-          <li>
-            <a href="">Cookies</a>
-          </li>
-          <li>
-            <a href="">About Ads</a>
-          </li>
-          <li>
-            <a href="">Accessibility</a>
-          </li>
-        </ul>
-      </div>
-      <div class="policies">
-        <ul>
-          <li>
-            <a href="#">Cookies</a>
-          </li>
-          <li>
-            <a href="#">Privacy</a>
-          </li>
-        </ul>
-      </div>
+      
     </div>
 
     <div class="main-container">
@@ -127,10 +128,10 @@
         <div class="navbar">
           <ul>
             <li>
-              <a href="#">Sign Up</a>
+              <a href="SignUp.html">Sign Up</a>
             </li>
           </ul>
-          <button type="button">Log In</button>
+          <button type="button"><a href="Login.html">Log in</a></button>
         </div>
       </div>
 
@@ -146,18 +147,13 @@
           </div>
 
           <div class="album-content">
-            <p>Album</p>
-            <h1 class="album-title" id="album-title">Name Here</h1>
+            <p>playlist</p>
+            <h1 class="album-title" id="playlistName2">Name Here</h1>
             <div class="album-info">
-              <img
-                class="artist-image"
-                id="artistImage"
-                src="./assets/images/item-1.jpg"
-                alt="Artist image"
-              />
-              <a class="artist-name" id="artist-name" href="">marawan pablo .</a>
-              <p class="album-songs"><span  id="album-songs"></span></p>
-              <p class="album-otal-time">22hr, 32 m</p>
+              
+              <a class="artist-name" href="" id="username">marawan pablo.</a>
+              <p id="numSongs">0</p>
+              
             </div>
           </div>
         </div>
@@ -176,7 +172,7 @@
             </div>
           </div>
           <hr>
-          <ol type="1" id="albumSongs">
+          <ol type="1" id="playlistSongs">
             <li>
                 <span class="song-title">AMAN (Intro) <br>
                   <span class="artistName">marawan Pablo</span>
@@ -201,23 +197,10 @@
         </ol>
 
         
+        
         </div>
       </div>
     </div>
-
-    <div class="preview">
-      <div class="text">
-        <h6>Preview of Spotify</h6>
-        <p>
-          Sign up to get unlimited songs and podcasts with occasional ads. No
-          credit card needed.
-        </p>
-      </div>
-      <div class="button">
-        <button type="button">Sign up free</button>
-      </div>
-    </div>
-
     <div class="preview">
       <div class="text">
         <h6>Preview of Spotify</h6>
@@ -234,6 +217,6 @@
       src="https://kit.fontawesome.com/408aac1832.js"
       crossorigin="anonymous"
     ></script>
-    <script src="./scripts/album.js"></script>
+    <script src="./scripts/playlistBeforeLogin.js"></script>
   </body>
 </html>
