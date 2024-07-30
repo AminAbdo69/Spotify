@@ -22,4 +22,9 @@ albumCards.forEach((card) => {
   });
 });
 
-
+document
+  .getElementById("createPlaylist")
+  .addEventListener("click", function () {
+    var hintContainer = document.querySelector(".hint-container");
+    hintContainer.style.display = "block"; // Show the hint-container
+  });

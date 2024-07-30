@@ -19,13 +19,13 @@ namespace Spotify
 
         public string Lisence { get; set; } = "Normal";
 
-        public List<Playlist> LikedPlaylists { get; set; }
+        public List<Playlist> LikedPlaylists { get; set; } = [];
 
-        public List<Playlist> CreatedPlaylists { get; set; }
+        public List<Playlist> CreatedPlaylists { get; set; } = [];
 
-        public List<Song> LikedSons { get; set; }
-        public List<Album> LikedAlbums { get; set; }
-        public List<Artist> FollowedArtists { get; set; }
+        public List<Song> LikedSons { get; set; } = [];
+        public List<Album> LikedAlbums { get; set; } = [];
+        public List<Artist> FollowedArtists { get; set; } = [];
 
 
         public string RefreshToken { get; set; }

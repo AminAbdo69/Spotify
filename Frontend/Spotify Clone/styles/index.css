@@ -72,6 +72,33 @@ body {
   margin-bottom: 25px;
   text-align: left;
 }
+
+.hint-container {
+  background: dodgerblue;
+  padding: 15px;
+  border-radius: 15px;
+  width: 363px;
+  position: absolute;
+  top: 245px;
+  left: 380px;
+  display: none;
+}
+.create-playlist button:active .hint-container {
+  display: block;
+}
+.hint-container h2 {
+  font-size: 20px;
+  font-weight: bold;
+}
+.hint-container .buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 15px;
+  margin-top: 30px;
+}
+.create-playlist .hint-container .hint .buttons button a {
+  color: black;
+}
 .sidebar-scroll::-webkit-scrollbar {
   background: transparent;
 }

@@ -10,13 +10,14 @@ namespace Spotify
         
         public string PlaylistName { get; set;}
         public DateTime PlaylistDate { get; set; }
+        public int PlaylistsoungCount { get; set; } = 0;
 
 
         [Required]
         public required int UserId { get; set; }
-        [Required]
-        public required User? User { get; set; }
-        public List<User> PLaylistLovers { get; set; }
-        public List<Song> PlaylistSongs { get; set; }
+        
+        public  User? User { get; set; }
+        public List<User> PLaylistLovers { get; set; } = [];
+        public List<Song> PlaylistSongs { get; set; } = [];
     }
 }

@@ -189,7 +189,7 @@ namespace Spotify.Controllers
 
                 var jwtSecurityToken = new JwtSecurityToken(
                     claims: claims,
-                    expires: DateTime.Now.AddDays(1),
+                    expires: DateTime.Now.AddMinutes(15),
                     signingCredentials: credentials);
 
                 var jwtToken = new JwtSecurityTokenHandler().WriteToken(jwtSecurityToken);
@@ -202,7 +202,7 @@ namespace Spotify.Controllers
             var refreshToken = new RefreshToken
             {
                 Token = Convert.ToBase64String(RandomNumberGenerator.GetBytes(64)),
-                Expires = DateTime.Now.AddDays(1),
+                Expires = DateTime.Now.AddDays(7),
                 created = DateTime.Now
             };
             return refreshToken;
