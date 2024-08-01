@@ -31,11 +31,15 @@ document
     event.preventDefault(); // Prevent the default form submission behavior
     const playlistname = document.getElementById("playlistname").value;
     sessionStorage.setItem("playlistName", playlistname);
-    const playlistcreator = sessionStorage.getItem("username");
-    const data = {
-      playlistname,
-      playlistcreator,
-    };
+    const playlistcreator = username;
+
+    const formData = new FormData();
+    formData.append(
+      "playlistname",
+      document.getElementById("playlistname").value
+    );
+    formData.append("image", document.getElementById("playlistImage").files[0]);
+    formData.append("playlistcreator", username); // Replace with the actual username
 
     try {
       // Make an HTTP POST request to your API endpoint
@@ -43,13 +47,21 @@ document
         "https://localhost:7259/api/User/AddPlaylist",
         {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${Token}`,
-          },
-          body: JSON.stringify(data),
+          body: formData,
         }
       );
+
+      // await fetch(
+      //   "https://localhost:7259/api/User/AddPlaylist",
+      //   {
+      //     method: "POST",
+      //     // headers: {
+      //     //   "Content-Type": "application/json",
+      //     // },
+      //     // // Authorization: `Bearer ${Token}`,
+      //     body: formData,
+      //   }
+      // );
 
       if (!response.ok) {
         throw new Error(`Error: ${response.status} ${response.statusText}`);
@@ -57,7 +69,7 @@ document
 
       const dataa = await response.text();
       console.log(dataa);
-      location.href = "/playlist.html";
+      // location.href = "/playlist.html";
     } catch (error) {
       console.error("Error logging in:", error);
       // Handle login error (e.g., show an error message to the user)
@@ -65,29 +77,7 @@ document
   });
 // refresh token
 
-function refreshToken() {
-  fetch("https://localhost:7259/api/Auth/refreshToken", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${Token}`, // Include your authorization token if needed
-    },
-  })
-    .then((response) => {
-      if (!response.ok) {
-        throw new Error("Network response was not ok");
-      }
-      return response.text();
-    })
-    .then((data) => {
-      console.log("New token:", data);
-      // Optionally, update the token in your application
-    })
-    .catch((error) => console.error("Error:", error));
-}
 
-// Call refreshToken every 5 minutes (300000 milliseconds)
-setInterval(refreshToken, 300000);
 
 // user playlists
 
@@ -115,17 +105,19 @@ document
 
       const playlists = await response.json();
       const playlistsElement = document.getElementById("playlists");
+      playlistsElement.style.opacity = 1;
       playlistsElement.innerHTML = ""; // Clear any existing playlists
 
       playlists.forEach((playlist) => {
         const playlistElement = document.createElement("li");
         playlistElement.innerHTML = `
-        <div class="playlist-container">
+        <div class="playlist-container" onclick="sendData(this, ${playlist.count})">
           <div class="image">
             <img src="/assets/icons/LogosSpotifyIcon.svg" alt="">
           </div>
           <div class="playlist-info">
-            <p id="playlistName">${playlist.name} <span id="count">(${playlist.count})</span></p>
+            <p id="playlistName">${playlist.name} <span id="count">.${playlist.count} songs</span></p>
+            
             <p class="creator-info">playlist <span id="playlistCreator">${playlist.creator}</span></p>
           </div>
         </div>
@@ -136,6 +128,25 @@ document
       console.error("Error fetching playlists:", error);
     }
   });
+
+function sendData(element, identifier) {
+  const playlistName = element.querySelector("#playlistName").innerText;
+  const playlistCreator = element.querySelector("#playlistCreator").innerText;
+  const counter = element.querySelector("#count").innerText;
+  // const count = counter.substring(counter.indexOf("("), counter.indexOf(")"));
+  // const userPlaylistImage = element.querySelector('#userplaylistimage').src;
+
+  localStorage.setItem("playlistName", playlistName);
+  localStorage.setItem("playlistCreator", playlistCreator);
+  localStorage.setItem("playlistCount", counter);
+
+  window.location.href = "/playlist.html"; // Replace with your target page
+}
+
+
+
+
+
 
 var TheArtistName = document.getElementById("artist-name");
 var TheArtistpic = document.getElementById("artist-pic");
@@ -193,7 +204,7 @@ document.addEventListener("DOMContentLoaded", () => {
         albumCard.className = "item album-card";
         albumCard.dataset.artist = artist;
         albumCard.dataset.artistPic = album.albumPic; // Assuming albumPic is part of AlbumOutDTO
-        albumCard.href = "./album.html";
+        albumCard.href = "/albumAfterLogin.html";
 
         albumCard.innerHTML = `
           <img class="album-image" src="assets/images/the last peace of art.png" />

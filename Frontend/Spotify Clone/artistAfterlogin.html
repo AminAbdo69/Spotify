@@ -40,7 +40,7 @@
       <div class="navigation">
         <ul>
           <li>
-            <a href="#">
+            <a href="index2.html">
               <span class="fa fa-home"></span>
               <span>Home</span>
             </a>
@@ -80,8 +80,15 @@
                         placeholder="e.g Sad Rap"
                         id="playlistname"
                       />
+                      <label for="playlistImage">Profile Image</label>
+                      <input
+                        type="file"
+                        id="playlistImage"
+                        name="playlistImage"
+                        accept=".png, .jpeg, .jpg, .avif"
+                        required
+                      />
                       <div class="buttons">
-
                         <button type="submit" id="addplaylist">
                           Add Playlist
                         </button>
@@ -99,15 +106,18 @@
           </li>
           <li>
             <div class="sidebar-scroll">
-              <ul id="playlists" class="container-playlist">
+              <ul id="playlists" class="container-playlist" style="opacity: 0">
                 <div class="playlist-container">
                   <div class="image">
-                    <img src="/assets/icons/LogosSpotifyIcon.svg" alt="">
+                    <img src="/assets/icons/LogosSpotifyIcon.svg" alt="" />
                   </div>
                   <div class="playlist-info">
-                    <p id="playlistName">last peace <span id="count">(4)</span></p>
-                    <p class="creator-info">playlist <span id="playlistCreator">aminabdo</span> </p>
-                    
+                    <p id="playlistName">
+                      last peace <span id="count">(4)</span>
+                    </p>
+                    <p class="creator-info">
+                      playlist <span id="playlistCreator">aminabdo</span>
+                    </p>
                   </div>
                 </div>
               </ul>
@@ -115,8 +125,6 @@
           </li>
         </ul>
       </div>
-
-      
     </div>
 
     <div class="main-container">
@@ -153,7 +161,11 @@
 
       <div class="artist-header2">
         <div class="image-container2">
-          <img id="artist-pic" src="/assets/images/the last peace of art3.jpg" alt="">
+          <img
+            id="artist-pic"
+            src="/assets/images/the last peace of art3.jpg"
+            alt=""
+          />
         </div>
         <div class="artist-info2">
           <h2 id="artist-name">Marwan Pablo</h2>
@@ -161,106 +173,104 @@
         </div>
       </div>
 
-        <div class="artist-songs">
-          <div class="track">
-            <div class="track-icons">
-              <div class="play">
-                <span class="fa fa-play"  id="playicon"></span>
-              </div>
-              <button id="followBtn">Follow</button>
-              <i class="fa-solid fa-ellipsis" id="ellipsisicon"></i>
+      <div class="artist-songs">
+        <div class="track">
+          <div class="track-icons">
+            <div class="play">
+              <span class="fa fa-play" id="playicon"></span>
             </div>
-            
+            <button id="followBtn">Follow</button>
+            <i class="fa-solid fa-ellipsis" id="ellipsisicon"></i>
           </div>
-          <hr />
-          <ol type="1" id="song-list">
-            <li>
-              <span class="song-title"
-                >AMAN (Intro) <br />
-                <span class="artistName">marawan Pablo</span>
-              </span>
-              <span class="duration">
-                <i class="fa-regular fa-heart"></i>
-                <span class="time">2:58</span>
-                <i class="fa-solid fa-ellipsis"></i>
-              </span>
-            </li>
-            <li>
-              <span class="song-title"
-                >Daheya <br />
-                <span class="artistName">marawan Pablo</span>
-              </span>
-              <span class="duration">
-                <i class="fa-regular fa-heart"></i>
-                <span class="time">2:40</span>
-                <i class="fa-solid fa-ellipsis"></i>
-              </span>
-            </li>
-            <!-- Add other songs here -->
-          </ol>
-          <div class="spotify-playlists Popular-Albums">
-            <div class="title">
-              <h2>Spotify Albums</h2>
-              <button id="showAll2">show all</button>
-            </div>
-    
-            <div class="list" id="Popular-Albums">
-              <a
-                class="item album-card"
-                data-artist="amin"
-                data-artist-pic="/assets/images/the last peace of art3.jpg  "
-                href="./album.html"
-              >
-                <img
-                  class="album-image"
-                  src="assets/images/the last peace of art.png"
-                />
-                <div class="play">
-                  <span class="fa fa-play"></span>
-                </div>
-                <h4 class="album-title" id="album-name">Today's Top Hits</h4>
-                <p id="album-creator">Rema & Selena Gomez are on top of the...</p>
-              </a>
-    
-              <a class="item album-card" href="./album.html">
-                <img src="assets/images/the last peace of art2.png" />
-                <div class="play">
-                  <span class="fa fa-play"></span>
-                </div>
-                <h4 class="album-title">RapCaviar</h4>
-                <p>New Music from Lil Baby, Juice WRLD an...</p>
-              </a>
-    
-              <div class="item">
-                <img src="assets/images/the last peace of art4.png" />
-                <div class="play">
-                  <span class="fa fa-play"></span>
-                </div>
-                <h4>All out 2010s</h4>
-                <p>The biggest spmgs pf tje 2010s. Cover:...</p>
-              </div>
-    
-              <div class="item">
-                <img src="assets/images/item-1.jpg" />
-                <div class="play">
-                  <span class="fa fa-play"></span>
-                </div>
-                <h4>Rock Classics</h4>
-                <p>Rock Legends & epic songs that continue t...</p>
-              </div>
-    
-              <div class="item">
-                <img src="assets/images/item-3.jpg" />
-                <div class="play">
-                  <span class="fa fa-play"></span>
-                </div>
-                <h4>Viva Latino</h4>
-                <p>Today's top Latin hits elevando nuestra...</p>
-              </div>
-            </div>
-          </div>
-    
         </div>
+        <hr />
+        <ol type="1" id="song-list">
+          <li>
+            <span class="song-title"
+              >AMAN (Intro) <br />
+              <span class="artistName">marawan Pablo</span>
+            </span>
+            <span class="duration">
+              <i class="fa-regular fa-heart"></i>
+              <span class="time">2:58</span>
+              <i class="fa-solid fa-ellipsis"></i>
+            </span>
+          </li>
+          <li>
+            <span class="song-title"
+              >Daheya <br />
+              <span class="artistName">marawan Pablo</span>
+            </span>
+            <span class="duration">
+              <i class="fa-regular fa-heart"></i>
+              <span class="time">2:40</span>
+              <i class="fa-solid fa-ellipsis"></i>
+            </span>
+          </li>
+          <!-- Add other songs here -->
+        </ol>
+        <div class="spotify-playlists Popular-Albums">
+          <div class="title">
+            <h2>Spotify Albums</h2>
+            <button id="showAll2">show all</button>
+          </div>
+
+          <div class="list" id="Popular-Albums">
+            <a
+              class="item album-card"
+              data-artist="amin"
+              data-artist-pic="/assets/images/the last peace of art3.jpg  "
+              href="./album.html"
+            >
+              <img
+                class="album-image"
+                src="assets/images/the last peace of art.png"
+              />
+              <div class="play">
+                <span class="fa fa-play"></span>
+              </div>
+              <h4 class="album-title" id="album-name">Today's Top Hits</h4>
+              <p id="album-creator">Rema & Selena Gomez are on top of the...</p>
+            </a>
+
+            <a class="item album-card" href="./album.html">
+              <img src="assets/images/the last peace of art2.png" />
+              <div class="play">
+                <span class="fa fa-play"></span>
+              </div>
+              <h4 class="album-title">RapCaviar</h4>
+              <p>New Music from Lil Baby, Juice WRLD an...</p>
+            </a>
+
+            <div class="item">
+              <img src="assets/images/the last peace of art4.png" />
+              <div class="play">
+                <span class="fa fa-play"></span>
+              </div>
+              <h4>All out 2010s</h4>
+              <p>The biggest spmgs pf tje 2010s. Cover:...</p>
+            </div>
+
+            <div class="item">
+              <img src="assets/images/item-1.jpg" />
+              <div class="play">
+                <span class="fa fa-play"></span>
+              </div>
+              <h4>Rock Classics</h4>
+              <p>Rock Legends & epic songs that continue t...</p>
+            </div>
+
+            <div class="item">
+              <img src="assets/images/item-3.jpg" />
+              <div class="play">
+                <span class="fa fa-play"></span>
+              </div>
+              <h4>Viva Latino</h4>
+              <p>Today's top Latin hits elevando nuestra...</p>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
     <div class="music-player">
       <div class="song-bar">

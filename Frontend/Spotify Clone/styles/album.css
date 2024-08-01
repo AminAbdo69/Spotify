@@ -64,6 +64,38 @@ body {
   width: 100%;
   overflow-y: auto;
 }
+.hint-container,
+.hint-container2 {
+  background: dodgerblue;
+  padding: 15px;
+  border-radius: 15px;
+  width: 363px;
+  position: absolute;
+  top: 245px;
+  left: 380px;
+  display: none;
+}
+.create-playlist button:active .hint-container,
+.create-playlist button:active .hint-container2 {
+  display: block;
+}
+.hint-container h2,
+.hint-container2 h2 {
+  font-size: 20px;
+  font-weight: bold;
+}
+.hint-container .buttons,
+.hint-container2 .buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 15px;
+  margin-top: 30px;
+}
+.create-playlist .hint-container .hint .buttons button a,
+.create-playlist .hint-container2 .hint2 .buttons button a {
+  color: black;
+}
+
 
 .create-playlist {
   background: var(--sidebar-scroll-bg);

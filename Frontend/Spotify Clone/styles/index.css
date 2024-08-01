@@ -73,7 +73,8 @@ body {
   text-align: left;
 }
 
-.hint-container {
+.hint-container,
+.hint-container2 {
   background: dodgerblue;
   padding: 15px;
   border-radius: 15px;
@@ -83,20 +84,24 @@ body {
   left: 380px;
   display: none;
 }
-.create-playlist button:active .hint-container {
+.create-playlist button:active .hint-container,
+.create-playlist button:active .hint-container2 {
   display: block;
 }
-.hint-container h2 {
+.hint-container h2,
+.hint-container2 h2 {
   font-size: 20px;
   font-weight: bold;
 }
-.hint-container .buttons {
+.hint-container .buttons,
+.hint-container2 .buttons {
   display: flex;
   justify-content: flex-end;
   gap: 15px;
   margin-top: 30px;
 }
-.create-playlist .hint-container .hint .buttons button a {
+.create-playlist .hint-container .hint .buttons button a,
+.create-playlist .hint-container2 .hint2 .buttons button a {
   color: black;
 }
 .sidebar-scroll::-webkit-scrollbar {
@@ -247,7 +252,6 @@ body {
   padding-inline: var(--content-spacing);
 }
 
-
 .spotify-playlists .title {
   display: flex;
   justify-content: space-between;
@@ -385,5 +389,3 @@ body {
   border-radius: 40px;
   cursor: pointer;
 }
-
-

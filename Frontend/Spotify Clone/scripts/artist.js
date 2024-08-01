@@ -1,3 +1,54 @@
+// create playlist buttons and browse podcasts
+document
+  .getElementById("createPlaylist")
+  .addEventListener("click", function () {
+    var hintContainer = document.querySelector(".hint-container");
+    hintContainer.style.display = "block"; // Show the hint-container
+  });
+
+document
+  .getElementById("Browsepodcasts")
+  .addEventListener("click", function () {
+    var hintContainer = document.querySelector(".hint-container2");
+    hintContainer.style.display = "block"; // Show the hint-container
+  });
+
+document.getElementById("notnow").addEventListener("click", function () {
+  var hintContainer = document.querySelector(".hint-container");
+  hintContainer.style.display = "none"; // Show the hint-container
+});
+
+document.getElementById("notnow2").addEventListener("click", function () {
+  var hintContainer = document.querySelector(".hint-container2");
+  hintContainer.style.display = "none"; // Show the hint-container
+});
+
+document.addEventListener("click", function (event) {
+  var hintContainer = document.querySelector(".hint-container");
+  var createPlaylistButton = document.getElementById("createPlaylist");
+
+  // Check if the click is outside the hint-container and the createPlaylist button
+  if (
+    !hintContainer.contains(event.target) &&
+    event.target !== createPlaylistButton
+  ) {
+    hintContainer.style.display = "none"; // Hide the hint-container
+  }
+});
+
+document.addEventListener("click", function (event) {
+  var hintContainer = document.querySelector(".hint-container2");
+  var createPlaylistButton = document.getElementById("Browsepodcasts");
+
+  // Check if the click is outside the hint-container and the createPlaylist button
+  if (
+    !hintContainer.contains(event.target) &&
+    event.target !== createPlaylistButton
+  ) {
+    hintContainer.style.display = "none"; // Hide the hint-container
+  }
+});
+
 // Get the modal
 var modal = document.getElementById("myModal");
 

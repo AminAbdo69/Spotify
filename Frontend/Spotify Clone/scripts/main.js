@@ -1,10 +1,4 @@
-
-
-
-
-
-
-
+// SELECTED Album
 const albumCards = document.querySelectorAll(".album-card");
 albumCards.forEach((card) => {
   card.addEventListener("click", (e) => {
@@ -28,6 +22,7 @@ albumCards.forEach((card) => {
   });
 });
 
+// SELECTED playlist
 const playlistCards = document.querySelectorAll("playlist-card");
 playlistCards.forEach((card) => {
   card.addEventListener("click", (e) => {
@@ -47,6 +42,7 @@ playlistCards.forEach((card) => {
   });
 });
 
+// create playlist buttons and browse podcasts
 document
   .getElementById("createPlaylist")
   .addEventListener("click", function () {
@@ -54,6 +50,48 @@ document
     hintContainer.style.display = "block"; // Show the hint-container
   });
 
+document
+  .getElementById("Browsepodcasts")
+  .addEventListener("click", function () {
+    var hintContainer = document.querySelector(".hint-container2");
+    hintContainer.style.display = "block"; // Show the hint-container
+  });
+
+document.getElementById("notnow").addEventListener("click", function () {
+  var hintContainer = document.querySelector(".hint-container");
+  hintContainer.style.display = "none"; // Show the hint-container
+});
+
+document.getElementById("notnow2").addEventListener("click", function () {
+  var hintContainer = document.querySelector(".hint-container2");
+  hintContainer.style.display = "none"; // Show the hint-container
+});
+
+document.addEventListener("click", function (event) {
+  var hintContainer = document.querySelector(".hint-container");
+  var createPlaylistButton = document.getElementById("createPlaylist");
+
+  // Check if the click is outside the hint-container and the createPlaylist button
+  if (
+    !hintContainer.contains(event.target) &&
+    event.target !== createPlaylistButton
+  ) {
+    hintContainer.style.display = "none"; // Hide the hint-container
+  }
+});
+
+document.addEventListener("click", function (event) {
+  var hintContainer = document.querySelector(".hint-container2");
+  var createPlaylistButton = document.getElementById("Browsepodcasts");
+
+  // Check if the click is outside the hint-container and the createPlaylist button
+  if (
+    !hintContainer.contains(event.target) &&
+    event.target !== createPlaylistButton
+  ) {
+    hintContainer.style.display = "none"; // Hide the hint-container
+  }
+});
 
 document.addEventListener("DOMContentLoaded", function () {
   fetch("https://localhost:7259/api/Artist/AllArtists")
@@ -240,5 +278,3 @@ document.querySelectorAll(".album-card").forEach((item) => {
     window.location.href = item.getAttribute("href");
   });
 });
-
-

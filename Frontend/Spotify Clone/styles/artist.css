@@ -17,8 +17,8 @@ body {
   width: 100%; /* Full width */
   height: 100%; /* Full height */
   overflow: auto; /* Enable scroll if needed */
-  background-color: rgb(0,0,0); /* Fallback color */
-  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+  background-color: rgb(0, 0, 0); /* Fallback color */
+  background-color: rgba(0, 0, 0, 0.4); /* Black w/ opacity */
 }
 
 .modal-content {
@@ -27,16 +27,16 @@ body {
   padding: 20px;
   border: 1px solid #888;
   width: 500px;
-  border-radius:20px; /* Could be more or less, depending on screen size */
+  border-radius: 20px; /* Could be more or less, depending on screen size */
 }
 .modal-content button {
   border: 1px solid black;
-  border-radius:15px;
+  border-radius: 15px;
   padding-block: 10px;
   padding-inline: 15px;
   margin-top: 20px;
 }
-.modal-content p  {
+.modal-content p {
   font-size: 25px;
   font-weight: bold;
 }
@@ -111,7 +111,37 @@ body {
   width: 100%;
   overflow-y: auto;
 }
-
+.hint-container,
+.hint-container2 {
+  background: dodgerblue;
+  padding: 15px;
+  border-radius: 15px;
+  width: 363px;
+  position: absolute;
+  top: 245px;
+  left: 380px;
+  display: none;
+}
+.create-playlist button:active .hint-container,
+.create-playlist button:active .hint-container2 {
+  display: block;
+}
+.hint-container h2,
+.hint-container2 h2 {
+  font-size: 20px;
+  font-weight: bold;
+}
+.hint-container .buttons,
+.hint-container2 .buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 15px;
+  margin-top: 30px;
+}
+.create-playlist .hint-container .hint .buttons button a,
+.create-playlist .hint-container2 .hint2 .buttons button a {
+  color: black;
+}
 .create-playlist {
   background: var(--sidebar-scroll-bg);
   padding: 16px 20px;
@@ -423,7 +453,6 @@ body {
   opacity: 1;
 }
 
-
 .popular-artists {
   display: flex;
   flex-direction: column;
@@ -434,7 +463,6 @@ body {
 .spotify-playlists {
   padding-inline: var(--content-spacing);
 }
-
 
 .spotify-playlists .title {
   display: flex;

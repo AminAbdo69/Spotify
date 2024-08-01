@@ -2,20 +2,23 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Spotify.Classes.DTO;
+using Spotify.Classes.DTO.AlbumDTO;
+using Spotify.Classes.DTO.PlaylistDTO;
 using Spotify.Data;
+using System;
+using System.Linq;
 
 namespace Spotify.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class UserController(DataBase db) : ControllerBase
+    public class UserController(DataBase db , IWebHostEnvironment environment) : ControllerBase
     {
 
         #region Playlists
 
-        [HttpPost("AddPlaylist") , Authorize]
-        public ActionResult<string> AddPlaylist(AddPlaylistDTO request)
+        [HttpPost("AddPlaylist") ]
+        public ActionResult<string> AddPlaylist([FromForm]AddPlaylistDTO request)
         {
             if (String.IsNullOrEmpty(request.playlistname))
             {
@@ -26,12 +29,34 @@ namespace Spotify.Controllers
             {
                 return NotFound("user dosen't exists .");
             }
+
+
+
+            if (request.Image == null || request.Image.Length == 0)
+            {
+                return BadRequest("No image for yourprofile was uploaded.");
+            }
+
+            var extention = Path.GetExtension(request.Image.FileName).ToLowerInvariant();
+            var allowedExtentions = new string[] { ".png", ".jpeg", ".jpg", ".avif" };
+
+            if (!allowedExtentions.Contains(extention))
+            {
+                return BadRequest("Unsupport image format.");
+            }
+            var filePath = SaveProfileImage(request.playlistname, request.Image);
+
+
             Playlist playlist = new()
             {
                 PlaylistName = request.playlistname,
                 PlaylistDate = DateTime.Now,
                 UserId = user.UserId,
+                picpath = filePath,
             };
+
+
+
             bool playlistExists = db.Playlists.Any(p => p.UserId == user.UserId && p.PlaylistName == request.playlistname);
             if (playlistExists)
             {
@@ -226,6 +251,50 @@ namespace Spotify.Controllers
         }
 
         #endregion
+
+
+
+        private string SaveProfileImage(string Username, IFormFile Image)
+        {
+            var uploadFolder = Path.Combine(environment.ContentRootPath, "ProfileArtistImages");
+
+            if (!Directory.Exists(uploadFolder))
+            {
+                Directory.CreateDirectory(uploadFolder);
+            }
+
+            var extention = Path.GetExtension(Image.FileName).ToLowerInvariant();
+
+            var imagePath = Path.Combine(uploadFolder, $"{Username}{extention}");
+
+            using (var fileStream = new FileStream(imagePath, FileMode.Create))
+            {
+                Image.CopyTo(fileStream);
+            }
+
+            return Path.Combine("ProfileArtistImages", $"{Username}{extention}");
+        }
+
+        private string SaveAudioFile(string username, IFormFile audioFile)
+        {
+            var uploadFolder = Path.Combine(environment.ContentRootPath, "ArtistAudioFiles");
+
+            if (!Directory.Exists(uploadFolder))
+            {
+                Directory.CreateDirectory(uploadFolder);
+            }
+
+            var extension = Path.GetExtension(audioFile.FileName).ToLowerInvariant();
+            var audioPath = Path.Combine(uploadFolder, $"{username}{extension}");
+
+            using (var fileStream = new FileStream(audioPath, FileMode.Create))
+            {
+                audioFile.CopyTo(fileStream);
+            }
+
+            return Path.Combine("ArtistAudioFiles", $"{username}{extension}");
+        }
+
 
     }
 }

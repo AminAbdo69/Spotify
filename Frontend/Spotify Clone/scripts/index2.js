@@ -6,12 +6,15 @@ console.log(" Token:", Token);
 var username = sessionStorage.getItem("username");
 console.log(username);
 
+//create playlist
+
 document
   .getElementById("createPlaylist")
   .addEventListener("click", function () {
     var hintContainer = document.querySelector(".hint-container");
     hintContainer.style.display = "block"; // Show the hint-container
   });
+
 document.addEventListener("click", function (event) {
   var hintContainer = document.querySelector(".hint-container");
   var createPlaylistButton = document.getElementById("createPlaylist");
@@ -32,11 +35,15 @@ document
     event.preventDefault(); // Prevent the default form submission behavior
     const playlistname = document.getElementById("playlistname").value;
     sessionStorage.setItem("playlistName", playlistname);
-    const playlistcreator = sessionStorage.getItem("username");
-    const data = {
-      playlistname,
-      playlistcreator,
-    };
+    const playlistcreator = username;
+
+    const formData = new FormData();
+    formData.append(
+      "playlistname",
+      document.getElementById("playlistname").value
+    );
+    formData.append("image", document.getElementById("playlistImage").files[0]);
+    formData.append("playlistcreator", username); // Replace with the actual username
 
     try {
       // Make an HTTP POST request to your API endpoint
@@ -44,13 +51,21 @@ document
         "https://localhost:7259/api/User/AddPlaylist",
         {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          Authorization: `Bearer ${Token}`,
-          body: JSON.stringify(data),
+          body: formData,
         }
       );
+
+      // await fetch(
+      //   "https://localhost:7259/api/User/AddPlaylist",
+      //   {
+      //     method: "POST",
+      //     // headers: {
+      //     //   "Content-Type": "application/json",
+      //     // },
+      //     // // Authorization: `Bearer ${Token}`,
+      //     body: formData,
+      //   }
+      // );
 
       if (!response.ok) {
         throw new Error(`Error: ${response.status} ${response.statusText}`);
@@ -58,65 +73,14 @@ document
 
       const dataa = await response.text();
       console.log(dataa);
-      location.href = "/playlist.html";
+      // location.href = "/playlist.html";
     } catch (error) {
       console.error("Error logging in:", error);
       // Handle login error (e.g., show an error message to the user)
     }
   });
-// refresh token
 
-// function refreshToken() {
-//   fetch("https://localhost:7259/api/Auth/refreshToken", {
-//     method: "POST",
-//     headers: {
-//       "Content-Type": "application/json",
-//     },
-//     Authorization: `Bearer ${Token}`, // Include your authorization token if needed
-//     credentials: "include",
-//   })
-//     .then((response) => {
-//       if (!response.ok) {
-//         throw new Error("Network response was not ok");
-//       }
-//       return response.text();
-//     })
-//     .then((data) => {
-//       console.log("New token:", data);
-//       // Optionally, update the token in your application
-//     })
-//     .catch((error) => console.error("Error:", error));
-// }
-// setInterval(refreshToken, 3000);
-
-function refreshToken() {
-  fetch("https://localhost:7259/api/Auth/refreshToken", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    Authorization: `bearer ${Token}`,
-    credentials: "include",
-    body: JSON.stringify("aminabdo"),
-  })
-    .then((response) => {
-      if (!response.ok) {
-        throw new Error("Failed to refresh token");
-      }
-      return response.text();
-    })
-    .then((data) => {
-      console.log("Token refreshed successfully:", data);
-    })
-    .catch((error) => {
-      console.error("Error refreshing token:", error);
-    });
-}
-
-// Call refreshToken function every 5 minutes (300000 milliseconds)
-setInterval(refreshToken, 10000);
-
-// user playlists
+// retrieve all user playlist
 
 document
   .getElementById("showAllPlaylists")
@@ -142,17 +106,19 @@ document
 
       const playlists = await response.json();
       const playlistsElement = document.getElementById("playlists");
+      playlistsElement.style.opacity = 1;
       playlistsElement.innerHTML = ""; // Clear any existing playlists
 
       playlists.forEach((playlist) => {
         const playlistElement = document.createElement("li");
         playlistElement.innerHTML = `
-        <div class="playlist-container">
+        <div class="playlist-container" onclick="sendData(this, ${playlist.count})">
           <div class="image">
             <img src="/assets/icons/LogosSpotifyIcon.svg" alt="">
           </div>
           <div class="playlist-info">
-            <p id="playlistName">${playlist.name} <span id="count">(${playlist.count})</span></p>
+            <p id="playlistName">${playlist.name} <span id="count">.${playlist.count} songs</span></p>
+            
             <p class="creator-info">playlist <span id="playlistCreator">${playlist.creator}</span></p>
           </div>
         </div>
@@ -163,6 +129,20 @@ document
       console.error("Error fetching playlists:", error);
     }
   });
+
+function sendData(element, identifier) {
+  const playlistName = element.querySelector("#playlistName").innerText;
+  const playlistCreator = element.querySelector("#playlistCreator").innerText;
+  const counter = element.querySelector("#count").innerText;
+  // const count = counter.substring(counter.indexOf("("), counter.indexOf(")"));
+  // const userPlaylistImage = element.querySelector('#userplaylistimage').src;
+
+  localStorage.setItem("playlistName", playlistName);
+  localStorage.setItem("playlistCreator", playlistCreator);
+  localStorage.setItem("playlistCount", counter);
+
+  window.location.href = "/playlist.html"; // Replace with your target page
+}
 
 // new
 
@@ -189,32 +169,7 @@ albumCards.forEach((card) => {
   });
 });
 
-const playlistCards = document.querySelectorAll("playlist-card");
-playlistCards.forEach((card) => {
-  card.addEventListener("click", (e) => {
-    e.preventDefault();
-
-    const playlistname = card.dataset.playlistName;
-    const creatorname = card.dataset.playlistCreator;
-    const image = card.querySelector(".playlist-image").src;
-
-    const data = {
-      playlistname,
-      creatorname,
-      image,
-    };
-    sessionStorage.setItem("selected-playlist", JSON.stringify(data));
-    location.href = card.href;
-  });
-});
-
-document
-  .getElementById("createPlaylist")
-  .addEventListener("click", function () {
-    var hintContainer = document.querySelector(".hint-container");
-    hintContainer.style.display = "block"; // Show the hint-container
-  });
-
+//Retrieve All Artists
 document.addEventListener("DOMContentLoaded", function () {
   fetch("https://localhost:7259/api/Artist/AllArtists")
     .then((response) => response.json())
@@ -291,6 +246,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
           // Store the data in localStorage
           localStorage.setItem("albumName", album.albumname);
+          localStorage.setItem("Username", username);
           // localStorage.setItem("albumPic", albumPic);
           localStorage.setItem("albumArtist", album.artistname);
 
@@ -333,7 +289,7 @@ document.addEventListener("DOMContentLoaded", function () {
                       <span class="fa fa-play"></span>
                   </div>
                   <h4 class="album-title" id="playlist-name">
-                      ${playlist.name} <span id="count">(${playlist.count} songs)</span>
+                      ${playlist.name} <span id="count">${playlist.count} songs</span>
                   </h4>
                   <p id="playlist-creator">by ${playlist.creator}</p>
               `;
@@ -363,7 +319,7 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 });
 
-// test
+// selected cards
 
 document.querySelectorAll(".artist-card").forEach((item) => {
   item.addEventListener("click", (event) => {
@@ -400,3 +356,83 @@ document.querySelectorAll(".album-card").forEach((item) => {
     window.location.href = item.getAttribute("href");
   });
 });
+
+const playlistCards = document.querySelectorAll("playlist-card");
+playlistCards.forEach((card) => {
+  card.addEventListener("click", (e) => {
+    e.preventDefault();
+
+    const playlistname = card.dataset.playlistName;
+    const creatorname = card.dataset.playlistCreator;
+    const image = card.querySelector(".playlist-image").src;
+
+    const data = {
+      playlistname,
+      creatorname,
+      image,
+    };
+    sessionStorage.setItem("selected-playlist", JSON.stringify(data));
+    location.href = card.href;
+  });
+});
+
+/// test Refresh token
+// const userName = "aminabdo"; // Replace with the actual username
+// const token = sessionStorage.getItem("myToken"); // Replace with your actual JWT token
+
+// function refreshToken() {
+//     fetch('https://localhost:7259/api/Auth/RefreshToken', {
+//         method: 'POST',
+//         headers: {
+//             'Content-Type': 'application/json',
+//             'Authorization': 'Bearer ' + token
+//         },
+//         body: JSON.stringify({ userName: userName })
+//     })
+//     .then(response => {
+//         if (!response.ok) {
+//             throw new Error('Network response was not ok');
+//         }
+//         return response.json();
+//     })
+//     .then(data => {
+//         console.log('New JWT Token:', data);
+//         // Update the JWT token in localStorage or wherever you store it
+//         localStorage.setItem('jwtToken', data);
+//     })
+//     .catch(error => {
+//         console.error('There was a problem with the fetch operation:', error);
+//     });
+// }
+
+// // Call refreshToken every 1 minute (60000 milliseconds)
+// setInterval(refreshToken, 30000);
+
+// function refreshToken() {
+//   const userName = "aminabdo";
+//   // Replace with the actual username
+//   fetch("https://localhost:7259/api/Auth/RefreshToken", {
+//     method: "POST",
+//     headers: {
+//       "Content-Type": "application/json",
+//       'Authorization': 'Bearer ' + Token // Assuming you store the JWT token in localStorage
+//     },
+//     body: JSON.stringify({ userName: userName }),
+//   })
+//     .then((response) => {
+//       if (!response.ok) {
+//         throw new Error("Network response was not ok");
+//       }
+//       return response.json();
+//     })
+//     .then((data) => {
+//       localStorage.setItem("jwtToken", data.token); // Update the JWT token in localStorage
+//       document.cookie = `refreshToken=${data.refreshToken}; path=/`; // Update the refresh token in cookies
+//     })
+//     .catch((error) => {
+//       console.error("There was a problem with the fetch operation:", error);
+//     });
+// }
+
+// // Call refreshToken every 3 minutes (180000 milliseconds)
+// setInterval(refreshToken, 18000);

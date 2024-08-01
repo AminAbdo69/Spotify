@@ -1,47 +1,97 @@
-
-  // Get the modal
-  var modal = document.getElementById("myModal");
-
-  // Get the elements that open the modal
-  var playIcon = document.getElementById("playicon");
-  var heartIcon = document.getElementById("hearticon");
-  var ellipsisIcon = document.getElementById("ellipsisicon");
-
-  // Get the <span> element that closes the modal
-  var span = document.getElementsByClassName("close")[0];
-
-  // When the user clicks on any of the elements, open the modal
-  playIcon.onclick = function() {
-    modal.style.display = "block";
-  }
-  heartIcon.onclick = function() {
-    modal.style.display = "block";
-  }
-  ellipsisIcon.onclick = function() {
-    modal.style.display = "block";
-  }
-
-  // When the user clicks on <span> (x), close the modal
-  span.onclick = function() {
-    modal.style.display = "none";
-  }
-
-  // When the user clicks anywhere outside of the modal, close it
-  window.onclick = function(event) {
-    if (event.target == modal) {
-      modal.style.display = "none";
-    }
-  }
-
-  var songss = document.querySelectorAll("#albumSongs li");
-
-  // Add click event listeners to each song
-  songss.forEach(function(song) {
-    song.addEventListener('click', function() {
-      modal.style.display = "block";
-    });
+// create playlist buttons and browse podcasts
+document
+  .getElementById("createPlaylist")
+  .addEventListener("click", function () {
+    var hintContainer = document.querySelector(".hint-container");
+    hintContainer.style.display = "block"; // Show the hint-container
   });
 
+document
+  .getElementById("Browsepodcasts")
+  .addEventListener("click", function () {
+    var hintContainer = document.querySelector(".hint-container2");
+    hintContainer.style.display = "block"; // Show the hint-container
+  });
+
+document.getElementById("notnow").addEventListener("click", function () {
+  var hintContainer = document.querySelector(".hint-container");
+  hintContainer.style.display = "none"; // Show the hint-container
+});
+
+document.getElementById("notnow2").addEventListener("click", function () {
+  var hintContainer = document.querySelector(".hint-container2");
+  hintContainer.style.display = "none"; // Show the hint-container
+});
+
+document.addEventListener("click", function (event) {
+  var hintContainer = document.querySelector(".hint-container");
+  var createPlaylistButton = document.getElementById("createPlaylist");
+
+  // Check if the click is outside the hint-container and the createPlaylist button
+  if (
+    !hintContainer.contains(event.target) &&
+    event.target !== createPlaylistButton
+  ) {
+    hintContainer.style.display = "none"; // Hide the hint-container
+  }
+});
+
+document.addEventListener("click", function (event) {
+  var hintContainer = document.querySelector(".hint-container2");
+  var createPlaylistButton = document.getElementById("Browsepodcasts");
+
+  // Check if the click is outside the hint-container and the createPlaylist button
+  if (
+    !hintContainer.contains(event.target) &&
+    event.target !== createPlaylistButton
+  ) {
+    hintContainer.style.display = "none"; // Hide the hint-container
+  }
+});
+
+
+// Get the modal
+var modal = document.getElementById("myModal");
+
+// Get the elements that open the modal
+var playIcon = document.getElementById("playicon");
+var heartIcon = document.getElementById("hearticon");
+var ellipsisIcon = document.getElementById("ellipsisicon");
+
+// Get the <span> element that closes the modal
+var span = document.getElementsByClassName("close")[0];
+
+// When the user clicks on any of the elements, open the modal
+playIcon.onclick = function () {
+  modal.style.display = "block";
+};
+heartIcon.onclick = function () {
+  modal.style.display = "block";
+};
+ellipsisIcon.onclick = function () {
+  modal.style.display = "block";
+};
+
+// When the user clicks on <span> (x), close the modal
+span.onclick = function () {
+  modal.style.display = "none";
+};
+
+// When the user clicks anywhere outside of the modal, close it
+window.onclick = function (event) {
+  if (event.target == modal) {
+    modal.style.display = "none";
+  }
+};
+
+var songss = document.querySelectorAll("#albumSongs li");
+
+// Add click event listeners to each song
+songss.forEach(function (song) {
+  song.addEventListener("click", function () {
+    modal.style.display = "block";
+  });
+});
 
 // refresh token
 
@@ -97,16 +147,15 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("artist-name").textContent = albumArtist;
   document.getElementById("album-title").textContent = albumName;
 
-
   fetch(`https://localhost:7259/api/Artist/AlbumSongs?albunmname=${albumName}`)
-          .then(response => response.json())
-          .then(songs => {
-            const songList = document.getElementById('albumSongs');
-            songList.innerHTML = ''; // Clear existing content
+    .then((response) => response.json())
+    .then((songs) => {
+      const songList = document.getElementById("albumSongs");
+      songList.innerHTML = ""; // Clear existing content
 
-            songs.forEach(song => {
-              const songItem = document.createElement('li');
-              songItem.innerHTML = `
+      songs.forEach((song) => {
+        const songItem = document.createElement("li");
+        songItem.innerHTML = `
                 <span class="song-title">
                   ${song.songName} <br>
                   <span class="artistName">${song.artistName}</span>
@@ -117,8 +166,8 @@ document.addEventListener("DOMContentLoaded", () => {
                   <i class="fa-solid fa-ellipsis"></i>
                 </span>
               `;
-              songList.appendChild(songItem);
-            });
-          })
-          .catch(error => console.error('Error fetching songs:', error));
+        songList.appendChild(songItem);
+      });
+    })
+    .catch((error) => console.error("Error fetching songs:", error));
 });

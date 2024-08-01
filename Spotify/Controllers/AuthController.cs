@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using Spotify.Classes.DTO;
+using Spotify.Classes.DTO.UsersDTO;
 using Spotify.Data;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -18,6 +18,9 @@ namespace Spotify.Controllers
     [ApiController]
     public class AuthController(DataBase db, IConfiguration config ,IUserService userService, IWebHostEnvironment environment) : ControllerBase
     {
+
+        
+
         [HttpPost("register")]
         public async Task<ActionResult<User>> Register([FromForm]UserRegisterDTO request)
         {
@@ -157,31 +160,47 @@ namespace Spotify.Controllers
                 {
                     return BadRequest("Wrong Password Entered");
                 }
+            // create token
+            string tokenValue = CreateToken(user.UserId, user.Email);
 
-                string? Token = CreateToken(request.UserName, Role: "User");
-                var refreshToken = GenrateRefreshToken();
-                SetRefreshToken(request.UserName, refreshToken);
-                if (Token == null)
-                {
-                    return StatusCode(500, "An error occurred while generating the token.");
-                }
+            if (tokenValue == null)
+            {
+                return StatusCode(500, "An error occurred while generating the token.");
+            }
 
-                return Ok(Token);            
+            // create refresh token
+            var refreshToken = GenrateRefreshToken();
+
+            SetRefreshToken(user.UserName, refreshToken);
+
+
+
+            return Ok(tokenValue);
+                //string? Token = CreateToken(request.UserName, Role: "User");
+                //var refreshToken = GenrateRefreshToken();
+                //SetRefreshToken(request.UserName, refreshToken);
+                //if (Token == null)
+                //{
+                //    return StatusCode(500, "An error occurred while generating the token.");
+                //}
+
+                //return Ok(Token);            
         }
+            
 
-        [HttpPost("refreshToken") , Authorize]
+        [HttpPost("RefreshToken") ]
         public  ActionResult<string> RefrshToken(string userName )
         {
-            var refreshToken = Request.Cookies["refreshToken"];
+
             //var userName = userService.GetMyName();
-            var ROLE = "User";
+            //var ROLE = "User";
 
+            var refreshToken = Request.Cookies["refreshToken"];
 
-
-            User? user =  db.Users.FirstOrDefault(u => u.UserName == userName);
+            var user = db.Users.FirstOrDefault(u => u.UserName == userName);
             if (user == null)
             {
-                return NotFound("Invalid user");
+                return NotFound("Invalid user.");
             }
 
             if (!user.RefreshToken.Equals(refreshToken))
@@ -192,10 +211,9 @@ namespace Spotify.Controllers
             {
                 return Unauthorized("Token Expired.");
             }
-
-            string token = CreateToken(user.UserName, ROLE); // new JWT token
-            var newRefrshToken = GenrateRefreshToken(); // new refresh token
-            SetRefreshToken(user.UserName, newRefrshToken); // udate token ion cookie and db
+            string token = CreateToken(user.UserId, user.Email);// new JWT token
+            var newRefrshToken = GenrateRefreshToken();// new refresh token
+            SetRefreshToken(user.UserName , newRefrshToken);// udate token ion cookie and db
 
             return Ok(token);
         }
@@ -214,10 +232,14 @@ namespace Spotify.Controllers
             return Ok(result);
         }
 
-        private string getmyname()
+        [HttpGet("getUser"), Authorize]
+        public ActionResult<User> Getme(int id)
         {
-            var userName = userService.GetMyName();
-            return userName;
+
+            User user = db.Users.FirstOrDefault(u=>u.UserId == id);
+
+
+            return Ok(user);
         }
 
         #region Helpers
@@ -239,28 +261,51 @@ namespace Spotify.Controllers
         }
 
 
-        private string CreateToken(string Username, string Role)
+
+        private string CreateToken(int id, string Email)
         {
-                List<Claim> claims =
-                [
-                    new Claim(ClaimTypes.Name, Username),
-                    new Claim(ClaimTypes.Role, Role)
-                ];
 
-                byte[] AppToken = Encoding.UTF8.GetBytes(config.GetSection("AppSettings:Token").Value);
+            //List<Claim> claims =
+            //[
+            //    new Claim(ClaimTypes.Name, Username),
+            //    new Claim(ClaimTypes.Role, Role)
+            //];
 
-                var Key = new SymmetricSecurityKey(AppToken);
+            //byte[] AppToken = Encoding.UTF8.GetBytes(config.GetSection("AppSettings:Token").Value);
 
-                var credentials = new SigningCredentials(Key, SecurityAlgorithms.HmacSha512);
+            //var Key = new SymmetricSecurityKey(AppToken);
 
-                var jwtSecurityToken = new JwtSecurityToken(
-                    claims: claims,
-                    expires: DateTime.Now.AddMinutes(15),
-                    signingCredentials: credentials);
+            //var credentials = new SigningCredentials(Key, SecurityAlgorithms.HmacSha512);
 
-                var jwtToken = new JwtSecurityTokenHandler().WriteToken(jwtSecurityToken);
+            //var jwtSecurityToken = new JwtSecurityToken(
+            //    claims: claims,
+            //    expires: DateTime.Now.AddMinutes(15),
+            //    signingCredentials: credentials);
 
-                return jwtToken; 
+            //var jwtToken = new JwtSecurityTokenHandler().WriteToken(jwtSecurityToken);
+
+            //return jwtToken; 
+
+            var claims = new[]
+            {
+                new Claim(JwtRegisteredClaimNames.Sub , config["Jwt:Subject"]),
+                new Claim(JwtRegisteredClaimNames.Jti , Guid.NewGuid().ToString()),
+                new Claim("UserId" ,id.ToString()),
+                new Claim("Email" ,Email.ToString())
+
+            };
+
+            var Key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["Jwt:Key"]));
+            var signIn = new SigningCredentials(Key, SecurityAlgorithms.HmacSha256);
+            var token = new JwtSecurityToken(
+                config["Jwt:Issuer"],
+                config["Jwt:Audience"],
+                claims,
+                expires: DateTime.Now.AddMonths(2),
+                signingCredentials: signIn
+                );
+            string tokenValue = new JwtSecurityTokenHandler().WriteToken(token);
+            return tokenValue;
         }
 
         private RefreshToken GenrateRefreshToken()
@@ -276,14 +321,16 @@ namespace Spotify.Controllers
 
         private void SetRefreshToken(string Username  , RefreshToken refreshToken)
         {
-            var cookieOption = new CookieOptions
+            var cookieOptions = new CookieOptions
             {
                 HttpOnly = true,
                 Secure = true,
                 Expires = refreshToken.Expires,
                 SameSite = SameSiteMode.None,
             };
-            Response.Cookies.Append("refreshToken", refreshToken.Token , cookieOption);
+            Response.Cookies.Append("refreshToken", refreshToken.Token, cookieOptions);
+            
+
             User user = db.Users.FirstOrDefault(u => u.UserName == Username);
 
             user.RefreshToken = refreshToken.Token;

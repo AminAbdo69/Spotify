@@ -40,14 +40,14 @@
       <div class="navigation">
         <ul>
           <li>
-            <a href="#">
+            <a href="index.html">
               <span class="fa fa-home"></span>
               <span>Home</span>
             </a>
           </li>
 
           <li>
-            <a href="#">
+            <a href="index2.html">
               <span class="fa fa-search"></span>
               <span>Search</span>
             </a>
@@ -80,8 +80,15 @@
                         placeholder="e.g Sad Rap"
                         id="playlistname"
                       />
+                      <label for="playlistImage">Profile Image</label>
+                      <input
+                        type="file"
+                        id="playlistImage"
+                        name="playlistImage"
+                        accept=".png, .jpeg, .jpg, .avif"
+                        required
+                      />
                       <div class="buttons">
-
                         <button type="submit" id="addplaylist">
                           Add Playlist
                         </button>
@@ -99,15 +106,18 @@
           </li>
           <li>
             <div class="sidebar-scroll">
-              <ul id="playlists" class="container-playlist">
+              <ul id="playlists" class="container-playlist" style="opacity: 0">
                 <div class="playlist-container">
                   <div class="image">
-                    <img src="/assets/icons/LogosSpotifyIcon.svg" alt="">
+                    <img src="/assets/icons/LogosSpotifyIcon.svg" alt="" />
                   </div>
                   <div class="playlist-info">
-                    <p id="playlistName">last peace <span id="count">(4)</span></p>
-                    <p class="creator-info">playlist <span id="playlistCreator">aminabdo</span> </p>
-                    
+                    <p id="playlistName">
+                      last peace <span id="count">(4)</span>
+                    </p>
+                    <p class="creator-info">
+                      playlist <span id="playlistCreator">aminabdo</span>
+                    </p>
                   </div>
                 </div>
               </ul>
@@ -115,8 +125,6 @@
           </li>
         </ul>
       </div>
-
-      
     </div>
 
     <div class="main-container">
@@ -166,10 +174,8 @@
             <p>playlist</p>
             <h1 class="album-title" id="playlistName">Name Here</h1>
             <div class="album-info">
-              
               <a class="artist-name" href="" id="username">marawan pablo.</a>
               <p id="numSongs">0</p>
-              
             </div>
           </div>
         </div>
@@ -181,52 +187,49 @@
                 <span class="fa fa-play"></span>
               </div>
               <i class="fa-regular fa-heart" id="likeBtn"></i>
-              <i class="fa-solid fa-ellipsis" ></i>
+              <i class="fa-solid fa-ellipsis"></i>
             </div>
             <div class="track-icons">
-                <i class="fa-solid fa-list-ul"></i>
+              <i class="fa-solid fa-list-ul"></i>
             </div>
           </div>
-          <hr>
+          <hr />
           <ol type="1" id="playlistSongs">
             <li>
-                <span class="song-title">AMAN (Intro) <br>
-                  <span class="artistName">marawan Pablo</span>
-                </span>
-                <span class="duration">
-                  <i class="fa-regular fa-heart"></i>
-                  <span class="time">2:58</span>
-                  <i class="fa-solid fa-ellipsis"></i>
-                </span>
+              <span class="song-title"
+                >AMAN (Intro) <br />
+                <span class="artistName">marawan Pablo</span>
+              </span>
+              <span class="duration">
+                <i class="fa-regular fa-heart"></i>
+                <span class="time">2:58</span>
+                <i class="fa-solid fa-ellipsis"></i>
+              </span>
             </li>
             <li>
-                <span class="song-title">Daheya <br>
-                  <span class="artistName">marawan Pablo</span>
-                </span>
-                <span class="duration">
-                  <i class="fa-regular fa-heart"></i>
-                  <span class="time">2:40</span>
-                  <i class="fa-solid fa-ellipsis"></i>
-                </span>
+              <span class="song-title"
+                >Daheya <br />
+                <span class="artistName">marawan Pablo</span>
+              </span>
+              <span class="duration">
+                <i class="fa-regular fa-heart"></i>
+                <span class="time">2:40</span>
+                <i class="fa-solid fa-ellipsis"></i>
+              </span>
             </li>
             <!-- Add other songs here -->
-        </ol>
+          </ol>
 
-        <form action="" id="AddSongtoPlaylist">
-          <div class="add-card">
-            <label>Song Name</label>
-            <div class="inputcontainer">
-              <input
-                type="text"
-                placeholder="e.g Donia"
-                id="songName2"
-              />
+          <form action="" id="AddSongtoPlaylist">
+            <div class="add-card">
+              <label>Song Name</label>
+              <div class="inputcontainer">
+                <input type="text" placeholder="e.g Donia" id="songName2" />
 
-              <button>Add song</button>
+                <button>Add song</button>
+              </div>
             </div>
-          </div>
-        </form>
-        
+          </form>
         </div>
       </div>
     </div>

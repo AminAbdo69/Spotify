@@ -1,30 +1,38 @@
+//show page data
+
+var Token = sessionStorage.getItem("myToken");
+console.log(Token);
+
 // Retrieve the data from localStorage
-const playlistName = localStorage.getItem("playlistName");
+const playlistNamet = localStorage.getItem("playlistName");
+var playlistName = playlistNamet.substring(0, playlistNamet.indexOf(" ."));
 const playlistPic = "assets/images/the last peace of art4.png";
 const playlistCreator = localStorage.getItem("playlistCreator");
-const playlistCount = localStorage.getItem("playlistCount");
+const playlistCountt = localStorage.getItem("playlistCount");
+const playlistCount = playlistCountt.substring(0, playlistCountt.indexOf(" s"));
 console.log(playlistName);
 console.log(playlistCount);
 // console.log(playlistPic);
 console.log(playlistCreator);
 // Display the data
-document.getElementById("playlistName").innerText = playlistName;
+
+document.querySelectorAll("#username").forEach((element) => {
+  element.textContent = playlistCreator;
+});
+
+document.querySelectorAll("#playlistName").forEach((element) => {
+  element.textContent = playlistName;
+});
+var Soungscount = document.getElementById("numSongs");
+Soungscount.innerText = playlistCount;
+
 document.getElementById("albumImage").src = playlistPic;
-document.getElementById("username").textContent = playlistCreator;
-document.getElementById("numSongs").innerText = playlistCount;
 
-document.addEventListener("DOMContentLoaded", () => {
-  // Retrieve the data from localStorage
-  const playlistName = localStorage.getItem("playlistName");
-  // const playlistPic = localStorage.getItem('playlistPic');
-  const playlistCreator = localStorage.getItem("playlistCreator");
-
-  // Display the data
-  if (playlistName && playlistPic && playlistCreator) {
-    document.getElementById("playlistName").textContent = playlistName;
-    // document.getElementById('playlistImage').src = playlistPic;
-    document.getElementById("playlistCreator").textContent = playlistCreator;
-
+if (
+  localStorage.getItem("userplaylistData") === null ||
+  localStorage.getItem("userplaylistData") === ""
+) {
+  document.addEventListener("DOMContentLoaded", () => {
     // Make a request to get the playlist's songs
     fetch(
       `https://localhost:7259/api/User/GetPlaylistSongs?playlistName=${playlistName}`
@@ -37,39 +45,50 @@ document.addEventListener("DOMContentLoaded", () => {
         songs.forEach((song) => {
           const songItem = document.createElement("li");
           songItem.innerHTML = `
-              <span class="song-title">
-                ${song.songName} <br>
-                <span class="artistName">${song.artistName}</span>
-              </span>
-              <span class="duration">
-                <i class="fa-regular fa-heart"></i>
-                <span class="time">${song.duration}</span>
-                <i class="fa-solid fa-ellipsis"></i>
-              </span>
-            `;
+                <span class="song-title">
+                  ${song.songName} <br>
+                  <span class="artistName">${song.artistName}</span>
+                </span>
+                <span class="duration">
+                  <i class="fa-regular fa-heart"></i>
+                  <span class="time">${song.duration}</span>
+                  <i class="fa-solid fa-ellipsis"></i>
+                </span>
+              `;
           songList.appendChild(songItem);
         });
       })
       .catch((error) => console.error("Error fetching songs:", error));
-  }
-});
+  });
+} else {
+  document.addEventListener("DOMContentLoaded", () => {
+    fetch(
+      `https://localhost:7259/api/User/GetPlaylistSongs?playlistName=${playlistName}`
+    )
+      .then((response) => response.json())
+      .then((songs) => {
+        const songList = document.getElementById("playlistSongs");
+        songList.innerHTML = ""; // Clear existing content
 
-//show page data
-
-var Token = sessionStorage.getItem("myToken");
-console.log(Token);
-
-document.querySelectorAll("#username").forEach((element) => {
-  element.textContent = sessionStorage.getItem("username");
-});
-
-document.querySelectorAll("#playlistName").forEach((element) => {
-  element.textContent = localStorage.getItem("playlistName");
-});
-
-var Soungscount = document.getElementById("numSongs");
-Soungscount.innerText = localStorage.getItem("playlistCount");
-
+        songs.forEach((song) => {
+          const songItem = document.createElement("li");
+          songItem.innerHTML = `
+                <span class="song-title">
+                  ${song.songName} <br>
+                  <span class="artistName">${song.artistName}</span>
+                </span>
+                <span class="duration">
+                  <i class="fa-regular fa-heart"></i>
+                  <span class="time">${song.duration}</span>
+                  <i class="fa-solid fa-ellipsis"></i>
+                </span>
+              `;
+          songList.appendChild(songItem);
+        });
+      })
+      .catch((error) => console.error("Error fetching songs:", error));
+  });
+}
 
 //create playlist show form
 document
@@ -92,15 +111,63 @@ document.addEventListener("click", function (event) {
   }
 });
 
+// use form
+
+document
+  .getElementById("playlistForm")
+  .addEventListener("submit", async function (event) {
+    event.preventDefault(); // Prevent the default form submission behavior
+    const playlistname = document.getElementById("playlistname").value;
+    sessionStorage.setItem("playlistName", playlistname);
+    const playlistcreator = username;
+
+    const formData = new FormData();
+    formData.append(
+      "playlistname",
+      document.getElementById("playlistname").value
+    );
+    formData.append("image", document.getElementById("playlistImage").files[0]);
+    formData.append("playlistcreator", username); // Replace with the actual username
+
+    try {
+      // Make an HTTP POST request to your API endpoint
+      const response = await fetch(
+        "https://localhost:7259/api/User/AddPlaylist",
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
+
+      // await fetch(
+      //   "https://localhost:7259/api/User/AddPlaylist",
+      //   {
+      //     method: "POST",
+      //     // headers: {
+      //     //   "Content-Type": "application/json",
+      //     // },
+      //     // // Authorization: `Bearer ${Token}`,
+      //     body: formData,
+      //   }
+      // );
+
+      if (!response.ok) {
+        throw new Error(`Error: ${response.status} ${response.statusText}`);
+      }
+
+      const dataa = await response.text();
+      console.log(dataa);
+      // location.href = "/playlist.html";
+    } catch (error) {
+      console.error("Error logging in:", error);
+      // Handle login error (e.g., show an error message to the user)
+    }
+  });
+
 // show all playlists
 document
   .getElementById("showAllPlaylists")
   .addEventListener("click", async function () {
-    var theplaylistname = document.getElementById("playlistName");
-    theplaylistname.innerText = sessionStorage.getItem("playlistName");
-
-    var theUsername = document.getElementById("username");
-    theUsername.innerText = sessionStorage.getItem("username");
     const username = sessionStorage.getItem("username"); // Replace with the actual username
     try {
       const response = await fetch(
@@ -122,17 +189,19 @@ document
 
       const playlists = await response.json();
       const playlistsElement = document.getElementById("playlists");
+      playlistsElement.style.opacity = 1;
       playlistsElement.innerHTML = ""; // Clear any existing playlists
 
       playlists.forEach((playlist) => {
         const playlistElement = document.createElement("li");
         playlistElement.innerHTML = `
-        <div class="playlist-container">
+        <div class="playlist-container" onclick="sendData(this, ${playlist.count})">
           <div class="image">
             <img src="/assets/icons/LogosSpotifyIcon.svg" alt="">
           </div>
           <div class="playlist-info">
-            <p id="playlistName">${playlist.name} <span id="count">(${playlist.count})</span></p>
+            <p id="playlistName">${playlist.name} <span id="count">.${playlist.count} songs</span></p>
+            
             <p class="creator-info">playlist <span id="playlistCreator">${playlist.creator}</span></p>
           </div>
         </div>
@@ -144,18 +213,26 @@ document
     }
   });
 
+function sendData(element, identifier) {
+  const playlistName = element.querySelector("#playlistName").innerText;
+  const playlistCreator = element.querySelector("#playlistCreator").innerText;
+  const counter = element.querySelector("#count").innerText;
+  // const count = counter.substring(counter.indexOf("("), counter.indexOf(")"));
+  // const userPlaylistImage = element.querySelector('#userplaylistimage').src;
+
+  localStorage.setItem("playlistName", playlistName);
+  localStorage.setItem("playlistCreator", playlistCreator);
+  localStorage.setItem("playlistCount", counter);
+
+  window.location.href = "/playlist.html"; // Replace with your target page
+}
+
 // add song to playlist
 document
   .getElementById("AddSongtoPlaylist")
   .addEventListener("submit", async function (event) {
     event.preventDefault(); // Prevent the default form submission behavior
-    var theplaylistname = document.getElementById("playlistName");
-    theplaylistname.innerText = sessionStorage.getItem("playlistName");
-
-    var theUsername = document.getElementById("username");
-    theUsername.innerText = sessionStorage.getItem("username");
-
-    const playlistName = sessionStorage.getItem("playlistName");
+    const playlistName = localStorage.getItem("playlistName");
     const songName = document.getElementById("songName2").value;
     console.log(songName);
     const data = {
@@ -223,7 +300,7 @@ function fetchPlaylistSongs(playlistName) {
           <i class="fa-solid fa-ellipsis"></i>
         </span>
       `;
-        Soungscount.innerText = ". " + song.count;
+        document.getElementById("numSongs").innerText = ". " + song.count;
         console.log(song.count);
         playlistSongsElement.appendChild(songElement);
       });
@@ -235,7 +312,7 @@ function fetchPlaylistSongs(playlistName) {
 
 const loveBtn = document.getElementById("likeBtn");
 loveBtn.addEventListener("click", function () {
-  const username = sessionStorage.getItem("username");
+  const username = localStorage.getItem("playlistCreator");
   const playlistnamee = localStorage.getItem("playlistName");
 
   const likedPlaylist = {

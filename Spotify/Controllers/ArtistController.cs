@@ -5,7 +5,9 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using Spotify.Classes.DTO;
+using Spotify.Classes.DTO.AlbumDTO;
+using Spotify.Classes.DTO.ArtistDTO;
+using Spotify.Classes.DTO.SongDTO;
 using Spotify.Data;
 using Spotify.Services.UserServices;
 using System;
@@ -76,26 +78,7 @@ namespace Spotify.Controllers
             return Ok("your request has been send successfully");
 
         }
-        private string SaveProfileImage(string Username, IFormFile Image)
-        {
-            var uploadFolder = Path.Combine(environment.ContentRootPath, "ProfileArtistImages");
-
-            if (!Directory.Exists(uploadFolder))
-            {
-                Directory.CreateDirectory(uploadFolder);
-            }
-
-            var extention = Path.GetExtension(Image.FileName).ToLowerInvariant();
-
-            var imagePath = Path.Combine(uploadFolder, $"{Username}{extention}");
-
-            using (var fileStream = new FileStream(imagePath, FileMode.Create))
-            {
-                Image.CopyTo(fileStream);
-            }
-
-            return Path.Combine("ProfileArtistImages", $"{Username}{extention}");
-        }
+        
 
         [HttpGet("ArtistImage/{Username}")]
         public IActionResult GetArtistImage(string Username)
@@ -126,7 +109,7 @@ namespace Spotify.Controllers
         }
 
         [HttpPost("Artistlogin")]
-        public async Task<ActionResult<Artist>> Login(ArtistLoginDTO request)
+        public ActionResult<Artist> Login(ArtistLoginDTO request)
         {
 
             if (
@@ -137,7 +120,7 @@ namespace Spotify.Controllers
                 return BadRequest("Please provide the required info.");
             }
 
-            Artist? artist = await db.Artists.FirstOrDefaultAsync(u => u.Username == request.Username);
+            Artist? artist =  db.Artists.FirstOrDefault(u => u.Username == request.Username);
 
             if (artist == null)
             {
@@ -267,11 +250,15 @@ namespace Spotify.Controllers
 
             foreach (Artist artist in artists)
             {
-                allArtists.Add(new ArtistOutDTO()
+                if (artist.IsActive)
                 {
-                    name = artist.Username,
-                    pic = artist.ProfilePicture
-                });
+                    allArtists.Add(new ArtistOutDTO()
+                    {
+                        name = artist.Username,
+                        pic = artist.ProfilePicture
+                    });
+                }
+                
             }
             return Ok(allArtists);
         }
@@ -314,24 +301,44 @@ namespace Spotify.Controllers
 
         [HttpPost("AddAlbum")]
 
-        public ActionResult<string> AddAlbum(AlbumDTO albumDTO)
+        public ActionResult<string> AddAlbum([FromForm]AlbumDTO albumDTO)
         {
             Artist artist = db.Artists.FirstOrDefault(a => a.Username == albumDTO.ArtistName);
             if (artist == null)
             {
                 return NotFound("Invalid Artist.");
             }
+            if (!artist.IsActive)
+            {
+                return BadRequest("Acctivate your account first.");
+            }
 
             if (String.IsNullOrEmpty(albumDTO.AlbumName))
             {
                 return BadRequest("invalid Album Name.");
             }
+            if (albumDTO.Image == null || albumDTO.Image.Length == 0)
+            {
+                return BadRequest("No image for your album was uploaded.");
+            }
+
+            var extention = Path.GetExtension(albumDTO.Image.FileName).ToLowerInvariant();
+            var allowedExtentions = new string[] { ".png", ".jpeg", ".jpg", ".avif" };
+
+            if (!allowedExtentions.Contains(extention))
+            {
+                return BadRequest("Unsupport image format.");
+            }
+
+            var filePath = SaveProfileImage(albumDTO.AlbumName, albumDTO.Image);
             Album album1 = new()
             {
                 ArtistId = artist.ArtistId,
                 AlbumName = albumDTO.AlbumName,
-                ReleaseDate = DateTime.Now
+                ReleaseDate = DateTime.Now,
+                picture = filePath
             };
+           
 
 
             bool albumExists = db.Albums.Any(a => a.ArtistId == artist.ArtistId && a.AlbumName == albumDTO.AlbumName);
@@ -339,6 +346,8 @@ namespace Spotify.Controllers
             {
                 return Conflict($"This album has already been created by {artist.Username}.");
             }
+            
+
             artist.CreatedAlbums.Add(album1);
             db.Artists.Update(artist);
             db.Albums.Add(album1);
@@ -370,13 +379,16 @@ namespace Spotify.Controllers
 
             foreach (Song song in album.AlbumSongs)
             {
-
-                AlbumSongs.Add(new SongOutDTO2()
+                if (song.artist.IsActive)
                 {
-                    SongName = song.SongName,
-                    Duration = song.Duration,
-                    ArtistName = song.artist.Username
-                });
+                    AlbumSongs.Add(new SongOutDTO2()
+                    {
+                        SongName = song.SongName,
+                        Duration = song.Duration,
+                        ArtistName = song.artist.Username
+                    });
+                }
+                
             }
             return Ok(AlbumSongs);
         }
@@ -393,13 +405,16 @@ namespace Spotify.Controllers
 
             foreach (Album album in albums)
             {
-                allAlbums.Add(new AlbumOutDTO2()
-                {
-                    albumname = album.AlbumName,
-                    artistname = album.Artist.Username,
-                    picture = album.picture,
-                    songs = album.Nsongs
-                });
+                if(album.Artist.IsActive) {
+                    allAlbums.Add(new AlbumOutDTO2()
+                    {
+                        albumname = album.AlbumName,
+                        artistname = album.Artist.Username,
+                        picture = album.picture,
+                        songs = album.Nsongs
+                    });
+                }
+                
             }
             return Ok(allAlbums);
         }
@@ -440,7 +455,7 @@ namespace Spotify.Controllers
 
 
         [HttpPost("AddSong")]
-        public ActionResult<string> AddSong(AddSongDTO songDTO)
+        public ActionResult<string> AddSong([FromForm]AddSongDTO songDTO)
         {
             if (String.IsNullOrEmpty(songDTO.Songname))
             {
@@ -456,10 +471,49 @@ namespace Spotify.Controllers
             {
                 return NotFound("not found this artist");
             }
+            if (!artist.IsActive)
+            {
+                return BadRequest("Acctivate your account first.");
+            }
             if (songDTO.Duration < 0 || songDTO.Duration > 10.0)
             {
                 return BadRequest("Invalid song Duration.");
             }
+            if (songDTO.Image == null || songDTO.Image.Length == 0)
+            {
+                return BadRequest("No image for yourprofile was uploaded.");
+            }
+
+            var extention = Path.GetExtension(songDTO.Image.FileName).ToLowerInvariant();
+            var allowedExtentions = new string[] { ".png", ".jpeg", ".jpg", ".avif" };
+
+            if (!allowedExtentions.Contains(extention))
+            {
+                return BadRequest("Unsupport image format.");
+            }
+
+            var filePath = SaveProfileImage(songDTO.Songname, songDTO.Image);
+
+
+
+
+            if (songDTO.Audio == null || songDTO.Audio.Length == 0)
+            {
+                return BadRequest("No audio file was uploaded.");
+            }
+
+            var extension2 = Path.GetExtension(songDTO.Audio.FileName).ToLowerInvariant();
+            var allowedExtensions2 = new string[] { ".mp3", ".wav" };
+
+            if (!allowedExtensions2.Contains(extension2))
+            {
+                return BadRequest("Unsupported audio format.");
+            }
+
+            var filePath2 = SaveAudioFile(songDTO.Songname, songDTO.Audio);
+
+
+
             Song song1 = new()
             {
                 AlbumId = album.AlbumId,
@@ -467,6 +521,8 @@ namespace Spotify.Controllers
                 SongName = songDTO.Songname,
                 Duration = songDTO.Duration,
                 ReleaseDate = DateTime.Now,
+                picture = filePath,
+                path = filePath2
             };
 
             bool songExistsInAlbum = db.Songs.Any(s => s.AlbumId == album.AlbumId && s.SongName == songDTO.Songname);
@@ -579,7 +635,48 @@ namespace Spotify.Controllers
             db.SaveChanges();
         }
 
-        
+
+        private string SaveProfileImage(string Username, IFormFile Image)
+        {
+            var uploadFolder = Path.Combine(environment.ContentRootPath, "ProfileArtistImages");
+
+            if (!Directory.Exists(uploadFolder))
+            {
+                Directory.CreateDirectory(uploadFolder);
+            }
+
+            var extention = Path.GetExtension(Image.FileName).ToLowerInvariant();
+
+            var imagePath = Path.Combine(uploadFolder, $"{Username}{extention}");
+
+            using (var fileStream = new FileStream(imagePath, FileMode.Create))
+            {
+                Image.CopyTo(fileStream);
+            }
+
+            return Path.Combine("ProfileArtistImages", $"{Username}{extention}");
+        }
+
+        private string SaveAudioFile(string username, IFormFile audioFile)
+        {
+            var uploadFolder = Path.Combine(environment.ContentRootPath, "ArtistAudioFiles");
+
+            if (!Directory.Exists(uploadFolder))
+            {
+                Directory.CreateDirectory(uploadFolder);
+            }
+
+            var extension = Path.GetExtension(audioFile.FileName).ToLowerInvariant();
+            var audioPath = Path.Combine(uploadFolder, $"{username}{extension}");
+
+            using (var fileStream = new FileStream(audioPath, FileMode.Create))
+            {
+                audioFile.CopyTo(fileStream);
+            }
+
+            return Path.Combine("ArtistAudioFiles", $"{username}{extension}");
+        }
+
         #endregion
 
         #region Register Validation

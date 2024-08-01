@@ -106,7 +106,30 @@ section .log-in form input {
   border-radius: 4px;
   box-shadow: 0 0 0 1px #878787;
 }
+section .log-in form .profileImage {
+	width: 0.1px;
+	height: 0.1px;
+	opacity: 0;
+	overflow: hidden;
+	position: absolute;
+	z-index: -1;
+}
 
+.profileImage + label {
+  font-size: 1.25em;
+  font-weight: 700;
+  color: white;
+  background-color: black;
+  display: inline-block;
+}
+
+.profileImage:focus + label,
+.profileImage + label:hover {
+  background-color: red;
+}
+.profileImage + label {
+	cursor: pointer; /* "hand" cursor */
+}
 .switch {
   margin: 0;
   padding: 0;

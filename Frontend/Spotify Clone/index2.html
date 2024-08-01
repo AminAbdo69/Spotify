@@ -80,8 +80,15 @@
                         placeholder="e.g Sad Rap"
                         id="playlistname"
                       />
+                      <label for="playlistImage">Profile Image</label>
+                      <input
+                        type="file"
+                        id="playlistImage"
+                        name="playlistImage"
+                        accept=".png, .jpeg, .jpg, .avif"
+                        required
+                      />
                       <div class="buttons">
-
                         <button type="submit" id="addplaylist">
                           Add Playlist
                         </button>
@@ -99,15 +106,22 @@
           </li>
           <li>
             <div class="sidebar-scroll">
-              <ul id="playlists" class="container-playlist">
+              <ul id="playlists" class="container-playlist" style="opacity: 0">
                 <div class="playlist-container">
                   <div class="image">
-                    <img src="/assets/icons/LogosSpotifyIcon.svg" alt="">
+                    <img
+                      src="/assets/icons/LogosSpotifyIcon.svg"
+                      alt=""
+                      id="userplaylistimage"
+                    />
                   </div>
                   <div class="playlist-info">
-                    <p id="playlistName">last peace <span id="count">(4)</span></p>
-                    <p class="creator-info">playlist <span id="playlistCreator">aminabdo</span> </p>
-                    
+                    <p id="playlistName">
+                      last peace <span id="count">(4)</span>
+                    </p>
+                    <p class="creator-info">
+                      playlist <span id="playlistCreator">aminabdo</span>
+                    </p>
                   </div>
                 </div>
               </ul>
@@ -115,8 +129,6 @@
           </li>
         </ul>
       </div>
-
-      
     </div>
 
     <div class="main-container">
