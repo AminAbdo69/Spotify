@@ -1,10 +1,52 @@
+// Get the modal
+var modal = document.getElementById("myModal");
+
+// Get the elements that open the modal
+var playIcon = document.getElementById("playicon");
+var followwBtn = document.getElementById("followBtn");
+var ellipsisIcon = document.getElementById("ellipsisicon");
+
+// Get the <span> element that closes the modal
+var span = document.getElementsByClassName("close")[0];
+
+// When the user clicks on any of the elements, open the modal
+playIcon.onclick = function () {
+  modal.style.display = "block";
+};
+followwBtn.onclick = function () {
+  modal.style.display = "block";
+};
+ellipsisIcon.onclick = function () {
+  modal.style.display = "block";
+};
+
+// When the user clicks on <span> (x), close the modal
+span.onclick = function () {
+  modal.style.display = "none";
+};
+
+// When the user clicks anywhere outside of the modal, close it
+window.onclick = function (event) {
+  if (event.target == modal) {
+    modal.style.display = "none";
+  }
+};
+
+var songslist = document.querySelectorAll("#song-list li");
+
+// Add click event listeners to each song
+songslist.forEach(function (songg) {
+  songg.addEventListener("click", function () {
+    modal.style.display = "block";
+  });
+});
+
 var TheArtistName = document.getElementById("artist-name");
 var TheArtistpic = document.getElementById("artist-pic");
 
 const artist = localStorage.getItem("artist");
 // const artistPic = localStorage.getItem('artistPic');
 const artistPic = "assets/images/the last peace of art.png";
-
 
 TheArtistName.innerText = artist;
 TheArtistpic.src = artistPic;
@@ -39,23 +81,23 @@ document.addEventListener("DOMContentLoaded", () => {
     .catch((error) => console.error("Error fetching songs:", error));
 });
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener("DOMContentLoaded", () => {
   // Retrieve the data from localStorage
-  const artist = localStorage.getItem('artist');
+  const artist = localStorage.getItem("artist");
 
   // Make a request to get the artist's albums
   fetch(`https://localhost:7259/api/Artist/ArtistAlbums?artistName=${artist}`)
-    .then(response => response.json())
-    .then(albums => {
-      const albumList = document.getElementById('Popular-Albums');
-      albumList.innerHTML = ''; // Clear existing content
+    .then((response) => response.json())
+    .then((albums) => {
+      const albumList = document.getElementById("Popular-Albums");
+      albumList.innerHTML = ""; // Clear existing content
 
-      albums.forEach(album => {
-        const albumCard = document.createElement('a');
-        albumCard.className = 'item album-card';
+      albums.forEach((album) => {
+        const albumCard = document.createElement("a");
+        albumCard.className = "item album-card";
         albumCard.dataset.artist = artist;
         albumCard.dataset.artistPic = album.albumPic; // Assuming albumPic is part of AlbumOutDTO
-        albumCard.href = './album.html';
+        albumCard.href = "./album.html";
 
         albumCard.innerHTML = `
           <img class="album-image" src="assets/images/the last peace of art.png" />
@@ -66,26 +108,26 @@ document.addEventListener('DOMContentLoaded', () => {
           <p id="album-creator">${artist} - ${album.nsongs} songs</p>
         `;
 
-        albumCard.addEventListener('click', event => {
+        albumCard.addEventListener("click", (event) => {
           event.preventDefault(); // Prevent the default link behavior
 
           // Store the data in localStorage
-          localStorage.setItem('albumName', album.albumname);
-          localStorage.setItem('albumPic', album.albumPic);
-          localStorage.setItem('albumArtist', artist);
+          localStorage.setItem("albumName", album.albumname);
+          localStorage.setItem("albumPic", album.albumPic);
+          localStorage.setItem("albumArtist", artist);
 
           // Redirect to the new page
-          window.location.href = albumCard.getAttribute('href');
+          window.location.href = albumCard.getAttribute("href");
         });
 
         albumList.appendChild(albumCard);
       });
     })
-    .catch(error => console.error('Error fetching albums:', error));
+    .catch((error) => console.error("Error fetching albums:", error));
 
-    const showAllButton = document.getElementById("showAll2");
-    showAllButton.addEventListener("click", function () {
-      const playlistList = document.getElementById("Popular-Albums");
-      playlistList.style.overflowX = "auto";
-    });
+  const showAllButton = document.getElementById("showAll2");
+  showAllButton.addEventListener("click", function () {
+    const playlistList = document.getElementById("Popular-Albums");
+    playlistList.style.overflowX = "auto";
+  });
 });

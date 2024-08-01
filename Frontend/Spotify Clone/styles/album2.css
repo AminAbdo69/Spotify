@@ -7,56 +7,6 @@ body {
   font-family: "Montserrat", sans-serif;
 }
 
-/* Modal styles */
-.modal {
-  display: none; /* Hidden by default */
-  position: fixed; /* Stay in place */
-  z-index: 1; /* Sit on top */
-  left: 0;
-  top: 0;
-  width: 100%; /* Full width */
-  height: 100%; /* Full height */
-  overflow: auto; /* Enable scroll if needed */
-  background-color: rgb(0,0,0); /* Fallback color */
-  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
-}
-
-.modal-content {
-  background-color: #fefefe;
-  margin: 15% auto; /* 15% from the top and centered */
-  padding: 20px;
-  border: 1px solid #888;
-  width: 500px;
-  border-radius:20px; /* Could be more or less, depending on screen size */
-}
-.modal-content button {
-  border: 1px solid black;
-  border-radius:15px;
-  padding-block: 10px;
-  padding-inline: 15px;
-  margin-top: 20px;
-}
-.modal-content p  {
-  font-size: 25px;
-  font-weight: bold;
-}
-.close {
-  color: #aaa;
-  float: right;
-  font-size: 28px;
-  font-weight: bold;
-}
-
-.close:hover,
-.close:focus {
-  color: black;
-  text-decoration: none;
-  cursor: pointer;
-}
-
-input {
-  color: white;
-}
 .sidebar {
   position: fixed;
   left: 0;
@@ -124,24 +74,23 @@ input {
   width: 48px;
   height: 48px;
 }
-.sidebar .navigation .playlist-container .creator-info{
+.sidebar .navigation .playlist-container .creator-info {
   color: #8f8f8f;
   font-size: 15px;
 }
-.sidebar .navigation .playlist-container .playlistName{
+.sidebar .navigation .playlist-container .playlistName {
   font-size: 20px;
   font-weight: bold;
 }
 .sidebar .navigation .playlist-container:hover {
   background: var(--sidebar-scroll-bg);
 }
+
 .sidebar-scroll {
   height: 200px;
   width: 100%;
   overflow-y: auto;
 }
-
-
 
 .create-playlist {
   background: var(--sidebar-scroll-bg);
@@ -179,7 +128,6 @@ input {
 }
 .create-playlist .hint-container form {
   margin-top: 10px;
-
 }
 .create-playlist .hint-container form input {
   display: block;
@@ -341,7 +289,7 @@ input {
 .topbar .navbar button:focus {
   background-color: #f2f2f2;
 }
-.spotify-playlists {
+/* .spotify-playlists {
   padding-inline-start: var(--content-spacing);
   margin-block: 25px;
 }
@@ -412,30 +360,27 @@ input {
 .spotify-playlists hr {
   margin: 70px 0px 0px;
   border-color: #636363;
-}
-
+} */
 
 .album {
   display: flex;
   flex-direction: column;
   color: white;
   background-color: #181818;
-  
+
   background: linear-gradient(to bottom, #8e8b8b8a, #000);
-  
 }
-.album-header{
+.album-header {
   display: flex;
   flex-direction: row;
   padding: 20px;
   margin-bottom: 30px;
-
 }
 .album-image-box .album-image {
   width: 250px;
   height: 250px;
   margin-right: 21px;
-  
+
   border-radius: 25px;
 }
 .album-content h1 {
@@ -449,8 +394,6 @@ input {
   flex-direction: row;
   align-items: center;
   gap: 10px;
-  font-size: 20px;
-  font-weight: bold;
 }
 .album-content .album-info img {
   width: 30px;
@@ -466,7 +409,7 @@ input {
   padding: 20px;
   margin-bottom: 100px;
 }
-.album-playlist  .track {
+.album-playlist .track {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
@@ -480,7 +423,7 @@ input {
 .album-playlist .track-icons i {
   font-size: 40px;
   color: #7a7a7a;
-  transition: all ease 0.4s
+  transition: all ease 0.4s;
 }
 .album-playlist .track-icons i:hover {
   color: white;
@@ -497,7 +440,7 @@ input {
   background-color: #26db66;
   transform: scale(1.2);
 }
-.album-playlist .track-name{
+.album-playlist .track-name {
   display: flex;
   gap: 15px;
   padding-inline: 20px;
@@ -506,124 +449,49 @@ input {
   font-weight: 600;
 }
 
-.album-playlist  ol {
+.album-playlist ol {
   margin: 20px 0;
   padding: 0;
   width: 100%;
 }
-.album-playlist  li {
+.album-playlist li {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  
+
   padding: 30px 50px;
 
   height: 80px;
 }
 
-.album-playlist  li:hover {
+.album-playlist li:hover {
   background-color: #4d494946;
 }
-.album-playlist  .song-title {
+.album-playlist .song-title {
   font-weight: bold;
 }
-.album-playlist  .song-title .artistName{
+.album-playlist .song-title .artistName {
   color: #7a7a7a;
 }
-.album-playlist  .song-title .artistName:hover {
+.album-playlist .song-title .artistName:hover {
   color: white;
   border-bottom: 1px solid #fff;
 }
-.album-playlist  .duration  {
+.album-playlist .duration {
   display: flex;
   flex-direction: row;
   color: #666;
   text-align: center;
 }
-.album-playlist  .duration .time {
+.album-playlist .duration .time {
   margin-inline: 30px;
 }
-.album-playlist  .duration i{
+.album-playlist .duration i {
   opacity: 0;
-} 
-.album-playlist  li:hover .duration i {
+}
+.album-playlist li:hover .duration i {
   opacity: 1;
 }
-.album-playlist .add-card {
-  margin-bottom: 100px;
-}
-.album-playlist .add-card label {
-  font-size: 40px;
-  font-weight: 800;
-  letter-spacing: 3px;
-}
-.album-playlist .add-card input {
-  display: block;
-  padding: 14px;
-  width: 500px;
-  height: 2.6em;
-  margin: 20px;
-  font-size: 15px;
-  font-weight: 500;
-  background: rgb(18, 18, 18);
-  outline: none;
-  border-color: transparent;
-  border-bottom: 1px solid black;
-  appearance: none;
-  border-radius: 4px;
-  box-shadow: 0 0 0 1px #878787;
-}
-
-.album-playlist .add-card .inputcontainer {
-  display: flex;
-  text-align: center;
-}
-.album-playlist .add-card .inputcontainer button {
-  --color: #3be477;
-  font-family: inherit;
-  display: inline-block;
-  width: 6em;
-  height: 2.6em;
-  line-height: 2.5em;
-  overflow: hidden;
-  cursor: pointer;
-  margin: 20px;
-  font-size: 17px;
-  z-index: 1;
-  color: var(--color);
-  border: 2px solid var(--color);
-  border-radius: 6px;
-  position: relative;
-}
-
-
-.album-playlist .add-card .inputcontainer button::before {
-  position: absolute;
-  content: "";
-  background: var(--color);
-  width: 150px;
-  height: 200px;
-  z-index: -1;
-  border-radius: 50%;
-}
-
-.album-playlist .add-card .inputcontainer button:hover {
-  color: white;
-}
-
-.album-playlist .add-card .inputcontainer button:before {
-  top: 100%;
-  left: 100%;
-  transition: 0.3s all;
-}
-
-.album-playlist .add-card .inputcontainer button:hover::before {
-  top: -30px;
-  left: -30px;
-}
-
-
-
 .music-player {
   --primary-color: #ddd;
   --secondary-color: #999;
@@ -708,14 +576,11 @@ i:hover {
   gap: 0.5em;
   padding: 10px;
   color: var(--secondary-color);
-  
-
 }
 .control-buttons {
   display: flex;
   align-items: center;
   gap: 2em;
-  
 }
 .play-pause {
   display: inline-block;
@@ -780,38 +645,3 @@ i:hover {
 .volume-bar .progress-bar:hover .progress::after {
   --size: 0.8em;
 }
-
-.preview {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background: linear-gradient(to right, #ae2896, #509bf5);
-  padding: 15px 40px;
-  display: flex;
-  justify-content: space-between;
-  z-index: 5;
-}
-.preview h6 {
-  color: #ffffff;
-  text-transform: uppercase;
-  font-weight: 400;
-  font-size: 12px;
-  margin-bottom: 10px;
-}
-.preview p {
-  color: #ffffff;
-  font-size: 14px;
-  font-weight: 500;
-}
-.preview button {
-  background-color: #ffffff;
-  color: #000000;
-  font-size: 16px;
-  font-weight: bold;
-  padding: 14px 30px;
-  border: 0px;
-  border-radius: 40px;
-  cursor: pointer;
-}
-

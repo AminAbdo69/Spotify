@@ -30,6 +30,14 @@
     <link rel="stylesheet" href="styles/artist.css" />
   </head>
   <body>
+    <div id="myModal" class="modal">
+      <div class="modal-content">
+        <span class="close">&times;</span>
+        <p>You must log in or Sign Up first</p>
+        <button id="loginBtn"><a href="Login.html">Login</a></button>
+        <button id="signupBtn"><a href="SignUp.html">Sign Up</a></button>
+      </div>
+    </div>
     <div class="sidebar">
       <div class="logo">
         <a href="#">
@@ -151,10 +159,10 @@
           <div class="track">
             <div class="track-icons">
               <div class="play">
-                <span class="fa fa-play"></span>
+                <span class="fa fa-play"  id="playicon"></span>
               </div>
               <button id="followBtn">Follow</button>
-              <i class="fa-solid fa-ellipsis"></i>
+              <i class="fa-solid fa-ellipsis" id="ellipsisicon"></i>
             </div>
             
           </div>
@@ -247,8 +255,10 @@
           </div>
     
         </div>
-      </div>
+      
     </div>
+
+
 
     <div class="preview">
       <div class="text">
@@ -259,20 +269,7 @@
         </p>
       </div>
       <div class="button">
-        <button type="button">Sign up free</button>
-      </div>
-    </div>
-
-    <div class="preview">
-      <div class="text">
-        <h6>Preview of Spotify</h6>
-        <p>
-          Sign up to get unlimited songs and podcasts with occasional ads. No
-          credit card needed.
-        </p>
-      </div>
-      <div class="button">
-        <button type="button">Sign up free</button>
+        <button type="button"><a href="SignUp.html">Sign up free</a></button>
       </div>
     </div>
     <script

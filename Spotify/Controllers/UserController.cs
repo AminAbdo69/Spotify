@@ -110,8 +110,6 @@ namespace Spotify.Controllers
 
         }
 
-
-
         [HttpPost("AddPlaylistSong") , Authorize]
         public ActionResult<string> AddPlaylistSong(AddPlaylistSongDTO request)
         {
@@ -170,45 +168,9 @@ namespace Spotify.Controllers
                     count = playlist.PlaylistsoungCount,
                 });
             }
+
             return Ok(PlaylistSongs);
-
         }
-
-        //[HttpGet("GetPlaylistSongs")]
-        //public ActionResult<List<PlaylistSongOut>> GetPlaylistSongs(string playlistName)
-        //{
-        //    if (String.IsNullOrEmpty(playlistName))
-        //    {
-        //        return BadRequest("Invalid playlist name.");
-        //    }
-
-        //    var playlist = db.Playlists
-        //        .Include(p => p.PlaylistSongs)
-        //        .ThenInclude(ps => ps.Song)
-        //        .ThenInclude(s => s.Artist)
-        //        .SingleOrDefault(p => p.PlaylistName == playlistName);
-
-        //    if (playlist == null)
-        //    {
-        //        return NotFound("Playlist doesn't exist.");
-        //    }
-
-        //    List<PlaylistSongOut> playlistSongs = new List<PlaylistSongOut>();
-
-        //    foreach (var playlistSong in playlist.PlaylistSongs)
-        //    {
-        //        var song = playlistSong.Song;
-        //        playlistSongs.Add(new PlaylistSongOut()
-        //        {
-        //            SongName = song.SongName,
-        //            Duration = song.Duration,
-        //            artistName = song.Artist.Username
-        //        });
-        //    }
-
-        //    return Ok(playlistSongs);
-        //}
-
 
 
         [HttpGet("AllPlaylists")]
@@ -231,6 +193,36 @@ namespace Spotify.Controllers
                 });
             }
             return Ok(allPlaylists);
+        }
+
+        [HttpPost("LikePlaylist")]
+        public ActionResult<string> LikeAlbum(LikedPlaylistDTO likedPlaylist)
+        {
+            var playlist = db.Playlists
+                .Include(p => p.PLaylistLovers)
+                .SingleOrDefault(p => p.PlaylistName == likedPlaylist.playlistname);
+
+            if (playlist == null)
+            {
+                return NotFound("Playlist not found.");
+            }
+
+            User user = db.Users.FirstOrDefault(u => u.UserName == likedPlaylist.username);
+            if (user == null)
+            {
+                return NotFound("User not found.");
+            }
+
+
+            if (playlist.PLaylistLovers.Contains(user))
+            {
+                return BadRequest($"{likedPlaylist.username} is already liked {likedPlaylist.playlistname}.");
+            }
+
+            user.LikedPlaylists.Add(playlist);
+            playlist.PLaylistLovers.Add(user);
+            db.SaveChanges();
+            return Ok($"{likedPlaylist.username} has liked {likedPlaylist.playlistname} successfully.");
         }
 
         #endregion

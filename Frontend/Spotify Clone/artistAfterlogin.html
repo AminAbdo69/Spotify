@@ -27,7 +27,7 @@
     <!-- Stylesheets -->
     <link rel="stylesheet" href="styles/preflight.css" />
     <link rel="stylesheet" href="styles/global.css" />
-    <link rel="stylesheet" href="styles/playlist.css" />
+    <link rel="stylesheet" href="styles/artist2.css" />
   </head>
   <body>
     <div class="sidebar">
@@ -145,90 +145,122 @@
           </ul>
           <ul>
             <li>
-              <p id="username" class="username">username</p>
+              <p class="username">username</p>
             </li>
           </ul>
         </div>
       </div>
 
-      <div class="album">
-        <div class="album-header">
-          <div class="album-image-box">
-            <img
-              class="album-image"
-              id="albumImage"
-              src="./assets/images/item-3.jpg"
-              alt=""
-            />
-          </div>
-
-          <div class="album-content">
-            <p>playlist</p>
-            <h1 class="album-title" id="playlistName">Name Here</h1>
-            <div class="album-info">
-              
-              <a class="artist-name" href="" id="username">marawan pablo.</a>
-              <p id="numSongs">0</p>
-              
-            </div>
-          </div>
+      <div class="artist-header2">
+        <div class="image-container2">
+          <img id="artist-pic" src="/assets/images/the last peace of art3.jpg" alt="">
         </div>
+        <div class="artist-info2">
+          <h2 id="artist-name">Marwan Pablo</h2>
+          <p id="artist-followers">Followers (24654)</p>
+        </div>
+      </div>
 
-        <div class="album-playlist">
+        <div class="artist-songs">
           <div class="track">
             <div class="track-icons">
               <div class="play">
-                <span class="fa fa-play"></span>
+                <span class="fa fa-play"  id="playicon"></span>
               </div>
-              <i class="fa-regular fa-heart" id="likeBtn"></i>
-              <i class="fa-solid fa-ellipsis" ></i>
+              <button id="followBtn">Follow</button>
+              <i class="fa-solid fa-ellipsis" id="ellipsisicon"></i>
             </div>
-            <div class="track-icons">
-                <i class="fa-solid fa-list-ul"></i>
-            </div>
+            
           </div>
-          <hr>
-          <ol type="1" id="playlistSongs">
+          <hr />
+          <ol type="1" id="song-list">
             <li>
-                <span class="song-title">AMAN (Intro) <br>
-                  <span class="artistName">marawan Pablo</span>
-                </span>
-                <span class="duration">
-                  <i class="fa-regular fa-heart"></i>
-                  <span class="time">2:58</span>
-                  <i class="fa-solid fa-ellipsis"></i>
-                </span>
+              <span class="song-title"
+                >AMAN (Intro) <br />
+                <span class="artistName">marawan Pablo</span>
+              </span>
+              <span class="duration">
+                <i class="fa-regular fa-heart"></i>
+                <span class="time">2:58</span>
+                <i class="fa-solid fa-ellipsis"></i>
+              </span>
             </li>
             <li>
-                <span class="song-title">Daheya <br>
-                  <span class="artistName">marawan Pablo</span>
-                </span>
-                <span class="duration">
-                  <i class="fa-regular fa-heart"></i>
-                  <span class="time">2:40</span>
-                  <i class="fa-solid fa-ellipsis"></i>
-                </span>
+              <span class="song-title"
+                >Daheya <br />
+                <span class="artistName">marawan Pablo</span>
+              </span>
+              <span class="duration">
+                <i class="fa-regular fa-heart"></i>
+                <span class="time">2:40</span>
+                <i class="fa-solid fa-ellipsis"></i>
+              </span>
             </li>
             <!-- Add other songs here -->
-        </ol>
-
-        <form action="" id="AddSongtoPlaylist">
-          <div class="add-card">
-            <label>Song Name</label>
-            <div class="inputcontainer">
-              <input
-                type="text"
-                placeholder="e.g Donia"
-                id="songName2"
-              />
-
-              <button>Add song</button>
+          </ol>
+          <div class="spotify-playlists Popular-Albums">
+            <div class="title">
+              <h2>Spotify Albums</h2>
+              <button id="showAll2">show all</button>
+            </div>
+    
+            <div class="list" id="Popular-Albums">
+              <a
+                class="item album-card"
+                data-artist="amin"
+                data-artist-pic="/assets/images/the last peace of art3.jpg  "
+                href="./album.html"
+              >
+                <img
+                  class="album-image"
+                  src="assets/images/the last peace of art.png"
+                />
+                <div class="play">
+                  <span class="fa fa-play"></span>
+                </div>
+                <h4 class="album-title" id="album-name">Today's Top Hits</h4>
+                <p id="album-creator">Rema & Selena Gomez are on top of the...</p>
+              </a>
+    
+              <a class="item album-card" href="./album.html">
+                <img src="assets/images/the last peace of art2.png" />
+                <div class="play">
+                  <span class="fa fa-play"></span>
+                </div>
+                <h4 class="album-title">RapCaviar</h4>
+                <p>New Music from Lil Baby, Juice WRLD an...</p>
+              </a>
+    
+              <div class="item">
+                <img src="assets/images/the last peace of art4.png" />
+                <div class="play">
+                  <span class="fa fa-play"></span>
+                </div>
+                <h4>All out 2010s</h4>
+                <p>The biggest spmgs pf tje 2010s. Cover:...</p>
+              </div>
+    
+              <div class="item">
+                <img src="assets/images/item-1.jpg" />
+                <div class="play">
+                  <span class="fa fa-play"></span>
+                </div>
+                <h4>Rock Classics</h4>
+                <p>Rock Legends & epic songs that continue t...</p>
+              </div>
+    
+              <div class="item">
+                <img src="assets/images/item-3.jpg" />
+                <div class="play">
+                  <span class="fa fa-play"></span>
+                </div>
+                <h4>Viva Latino</h4>
+                <p>Today's top Latin hits elevando nuestra...</p>
+              </div>
             </div>
           </div>
-        </form>
-        
+    
         </div>
-      </div>
     </div>
     <div class="music-player">
       <div class="song-bar">
@@ -281,6 +313,6 @@
       src="https://kit.fontawesome.com/408aac1832.js"
       crossorigin="anonymous"
     ></script>
-    <script src="./scripts/playlist.js"></script>
+    <script src="./scripts/artist2.js"></script>
   </body>
 </html>

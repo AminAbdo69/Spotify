@@ -1,19 +1,9 @@
-// const ArtistCards = document.querySelectorAll("artist-card");
-// ArtistCards.forEach((card) => {
-//   card.addEventListener("click", (e) => {
-//     e.preventDefault();
 
-//     const artistname = card.dataset.artist;
-//     const image = card.dataset.artistPic;
 
-//     const data = {
-//       artistname,
-//       image,
-//     };
-//     sessionStorage.setItem("selected-artist", JSON.stringify(data));
-//     location.href = card.href;
-//   });
-// });
+
+
+
+
 
 const albumCards = document.querySelectorAll(".album-card");
 albumCards.forEach((card) => {
@@ -63,42 +53,7 @@ document
     var hintContainer = document.querySelector(".hint-container");
     hintContainer.style.display = "block"; // Show the hint-container
   });
-//Retrieve All Artists
 
-// document.addEventListener("DOMContentLoaded", function () {
-//   fetch("https://localhost:7259/api/Artist/AllArtists")
-//     .then((response) => response.json())
-//     .then((data) => {
-//       const artistList = document.getElementById("Popular-artists");
-//       artistList.innerHTML = ""; // Clear existing content
-
-//       data.forEach((artist) => {
-//         const artistCard = document.createElement("a");
-//         artistCard.className = "item artist-card";
-//         artistCard.dataset.artist = artist.name;
-//         artistCard.dataset.artistPic = artist.pic;
-//         artistCard.href = "./artist.html";
-
-//         artistCard.innerHTML = `
-//                     <img id="artistImage" class="artist-image" src="assets/images/the last peace of art.png" />
-//                     <div class="play">
-//                         <span class="fa fa-play"></span>
-//                     </div>
-//                     <h4 class="artist-title" id="artistName">${artist.name}</h4>
-//                     <p>Artist.</p>
-//                 `;
-
-//         artistList.appendChild(artistCard);
-//       });
-//     })
-//     .catch((error) => console.error("Error fetching artists:", error));
-
-//   const showAllButton = document.getElementById("showAll1");
-//   showAllButton.addEventListener("click", function () {
-//     const playlistList = document.getElementById("Popular-artists");
-//     playlistList.style.overflowX = "auto";
-//   });
-// });
 
 document.addEventListener("DOMContentLoaded", function () {
   fetch("https://localhost:7259/api/Artist/AllArtists")
@@ -286,22 +241,4 @@ document.querySelectorAll(".album-card").forEach((item) => {
   });
 });
 
-// test3
 
-// document.querySelectorAll(".playlist-card").forEach((card) => {
-//   card.addEventListener("click", (event) => {
-//     event.preventDefault(); // Prevent the default link behavior
-
-//     // Get the data attributes
-//     const playlistName = card.getAttribute("data-playlist-name");
-//     const playlistCreator = card.getAttribute("data-playlist-creator");
-//     const playlistPic = card.getAttribute("data-playlist-pic");
-
-//     // Store the data in localStorage
-//     localStorage.setItem("playlistName", playlistName);
-//     localStorage.setItem("playlistCreator", playlistCreator);
-//     localStorage.setItem("playlistPic", playlistPic);
-//     // Redirect to the new page
-//     window.location.href = card.getAttribute("href");
-//   });
-// });

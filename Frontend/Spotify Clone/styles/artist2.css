@@ -7,56 +7,6 @@ body {
   font-family: "Montserrat", sans-serif;
 }
 
-/* Modal styles */
-.modal {
-  display: none; /* Hidden by default */
-  position: fixed; /* Stay in place */
-  z-index: 1; /* Sit on top */
-  left: 0;
-  top: 0;
-  width: 100%; /* Full width */
-  height: 100%; /* Full height */
-  overflow: auto; /* Enable scroll if needed */
-  background-color: rgb(0,0,0); /* Fallback color */
-  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
-}
-
-.modal-content {
-  background-color: #fefefe;
-  margin: 15% auto; /* 15% from the top and centered */
-  padding: 20px;
-  border: 1px solid #888;
-  width: 500px;
-  border-radius:20px; /* Could be more or less, depending on screen size */
-}
-.modal-content button {
-  border: 1px solid black;
-  border-radius:15px;
-  padding-block: 10px;
-  padding-inline: 15px;
-  margin-top: 20px;
-}
-.modal-content p  {
-  font-size: 25px;
-  font-weight: bold;
-}
-.close {
-  color: #aaa;
-  float: right;
-  font-size: 28px;
-  font-weight: bold;
-}
-
-.close:hover,
-.close:focus {
-  color: black;
-  text-decoration: none;
-  cursor: pointer;
-}
-
-input {
-  color: white;
-}
 .sidebar {
   position: fixed;
   left: 0;
@@ -135,13 +85,13 @@ input {
 .sidebar .navigation .playlist-container:hover {
   background: var(--sidebar-scroll-bg);
 }
+
+
 .sidebar-scroll {
   height: 200px;
   width: 100%;
   overflow-y: auto;
 }
-
-
 
 .create-playlist {
   background: var(--sidebar-scroll-bg);
@@ -179,7 +129,6 @@ input {
 }
 .create-playlist .hint-container form {
   margin-top: 10px;
-
 }
 .create-playlist .hint-container form input {
   display: block;
@@ -341,7 +290,7 @@ input {
 .topbar .navbar button:focus {
   background-color: #f2f2f2;
 }
-.spotify-playlists {
+/* .spotify-playlists {
   padding-inline-start: var(--content-spacing);
   margin-block: 25px;
 }
@@ -412,30 +361,53 @@ input {
 .spotify-playlists hr {
   margin: 70px 0px 0px;
   border-color: #636363;
-}
+} */
 
+.main-container .artist-header2 {
+  position: relative;
+  color: var(--text-base);
+}
+.artist-header2 .artist-info2 h2 {
+  position: absolute;
+  top: 120px;
+  left: 20px;
+  font-size: 60px;
+  letter-spacing: 5px;
+  font-weight: 900;
+}
+.artist-header2 .artist-info2 p {
+  position: absolute;
+  top: 260px;
+  left: 20px;
+  font-size: 20px;
+  letter-spacing: 5px;
+  font-weight: bolder;
+}
+.artist-header2 .image-container2 img {
+  width: 100%;
+  height: 40vh;
+  border-radius: 15px;
+}
 
 .album {
   display: flex;
   flex-direction: column;
   color: white;
   background-color: #181818;
-  
+
   background: linear-gradient(to bottom, #8e8b8b8a, #000);
-  
 }
-.album-header{
+.album-header {
   display: flex;
   flex-direction: row;
   padding: 20px;
   margin-bottom: 30px;
-
 }
 .album-image-box .album-image {
   width: 250px;
   height: 250px;
   margin-right: 21px;
-  
+
   border-radius: 25px;
 }
 .album-content h1 {
@@ -449,8 +421,6 @@ input {
   flex-direction: row;
   align-items: center;
   gap: 10px;
-  font-size: 20px;
-  font-weight: bold;
 }
 .album-content .album-info img {
   width: 30px;
@@ -459,30 +429,31 @@ input {
   object-fit: cover;
 }
 
-.album-playlist {
+.artist-songs {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   padding: 20px;
   margin-bottom: 100px;
+  color: var(--text-base);
 }
-.album-playlist  .track {
+.artist-songs .track {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
 }
-.album-playlist .track-icons {
+.artist-songs .track-icons {
   display: flex;
   align-items: center;
   gap: 35px;
   margin-bottom: 30px;
 }
-.album-playlist .track-icons i {
+.artist-songs .track-icons i {
   font-size: 40px;
   color: #7a7a7a;
-  transition: all ease 0.4s
+  transition: all ease 0.4s;
 }
-.album-playlist .track-icons i:hover {
+.artist-songs .track-icons i:hover {
   color: white;
   transform: scale(1.2);
 }
@@ -493,11 +464,20 @@ input {
   color: #000;
   transition: all ease 0.4s;
 }
+.track-icons button {
+  border: 1px solid rgba(126, 125, 125, 0.799);
+  border-radius: 50px;
+  padding-inline: 15px;
+  padding-block: 5px;
+}
+.track-icons button:hover {
+  border-color: white;
+}
 .track-icons .play:hover .fa {
   background-color: #26db66;
   transform: scale(1.2);
 }
-.album-playlist .track-name{
+.artist-songs .track-name {
   display: flex;
   gap: 15px;
   padding-inline: 20px;
@@ -506,123 +486,164 @@ input {
   font-weight: 600;
 }
 
-.album-playlist  ol {
+.artist-songs ol {
   margin: 20px 0;
   padding: 0;
   width: 100%;
 }
-.album-playlist  li {
+.artist-songs li {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  
+
   padding: 30px 50px;
 
   height: 80px;
 }
 
-.album-playlist  li:hover {
+.artist-songs li:hover {
   background-color: #4d494946;
 }
-.album-playlist  .song-title {
+.artist-songs .song-title {
   font-weight: bold;
 }
-.album-playlist  .song-title .artistName{
+.artist-songs .song-title .artistName {
   color: #7a7a7a;
 }
-.album-playlist  .song-title .artistName:hover {
+.artist-songs .song-title .artistName:hover {
   color: white;
   border-bottom: 1px solid #fff;
 }
-.album-playlist  .duration  {
+.artist-songs .duration {
   display: flex;
   flex-direction: row;
   color: #666;
   text-align: center;
 }
-.album-playlist  .duration .time {
+.artist-songs .duration .time {
   margin-inline: 30px;
 }
-.album-playlist  .duration i{
+.artist-songs .duration i {
   opacity: 0;
-} 
-.album-playlist  li:hover .duration i {
+}
+.artist-songs li:hover .duration i {
   opacity: 1;
 }
-.album-playlist .add-card {
-  margin-bottom: 100px;
-}
-.album-playlist .add-card label {
-  font-size: 40px;
-  font-weight: 800;
-  letter-spacing: 3px;
-}
-.album-playlist .add-card input {
-  display: block;
-  padding: 14px;
-  width: 500px;
-  height: 2.6em;
-  margin: 20px;
-  font-size: 15px;
-  font-weight: 500;
-  background: rgb(18, 18, 18);
-  outline: none;
-  border-color: transparent;
-  border-bottom: 1px solid black;
-  appearance: none;
-  border-radius: 4px;
-  box-shadow: 0 0 0 1px #878787;
-}
 
-.album-playlist .add-card .inputcontainer {
+
+.popular-artists {
   display: flex;
-  text-align: center;
+  flex-direction: column;
+  padding-inline-start: var(--content-spacing);
+  color: var(--text-base);
 }
-.album-playlist .add-card .inputcontainer button {
-  --color: #3be477;
-  font-family: inherit;
-  display: inline-block;
-  width: 6em;
-  height: 2.6em;
-  line-height: 2.5em;
-  overflow: hidden;
-  cursor: pointer;
-  margin: 20px;
-  font-size: 17px;
-  z-index: 1;
-  color: var(--color);
-  border: 2px solid var(--color);
-  border-radius: 6px;
-  position: relative;
+
+.spotify-playlists {
+  padding-inline: var(--content-spacing);
 }
 
 
-.album-playlist .add-card .inputcontainer button::before {
-  position: absolute;
-  content: "";
-  background: var(--color);
-  width: 150px;
-  height: 200px;
-  z-index: -1;
+.spotify-playlists .title {
+  display: flex;
+  justify-content: space-between;
+  color: var(--text-base);
+  padding: 10px;
+}
+.spotify-playlists .title button {
+  color: #636363;
+  margin-block: 20px;
+}
+.spotify-playlists .title button:hover {
+  text-decoration: underline;
+}
+.spotify-playlists .list .item .artist-image {
+  width: 100%;
   border-radius: 50%;
 }
 
-.album-playlist .add-card .inputcontainer button:hover {
-  color: white;
+.spotify-playlists .list .artist-card {
+  padding: 0;
 }
 
-.album-playlist .add-card .inputcontainer button:before {
-  top: 100%;
-  left: 100%;
-  transition: 0.3s all;
+.spotify-playlists h2 {
+  color: #ffffff;
+  font-weight: bolder;
+  font-size: 22px;
+  margin-block: 20px;
+}
+.spotify-playlists h2:hover {
+  text-decoration: underline;
+}
+.spotify-playlists .list {
+  display: flex;
+  gap: 8px;
+  width: auto;
+  /* overflow-x: auto; */
+  overflow: hidden;
 }
 
-.album-playlist .add-card .inputcontainer button:hover::before {
-  top: -30px;
-  left: -30px;
+.spotify-playlists .list::-webkit-scrollbar {
+  background: transparent;
 }
+.spotify-playlists .list::-webkit-scrollbar-thumb {
+  background: #ccc;
+  width: 5px;
+}
+.spotify-playlists .list .item {
+  flex: 0 0 auto;
+  width: 225px;
+  padding: 15px;
+  background-color: #181818;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all ease 0.4s;
+}
+.spotify-playlists .list .item:hover {
+  background-color: #252525;
+}
+.spotify-playlists .list .item img {
+  width: 100%;
+  border-radius: 6px;
+  margin-bottom: 10px;
+}
+.spotify-playlists .list .item .play {
+  position: relative;
+}
+.spotify-playlists .list .item .play .fa {
+  position: absolute;
+  right: 10px;
+  top: -60px;
+  padding: 18px;
+  background-color: #1db954;
+  border-radius: 100%;
+  color: #000;
+  opacity: 0;
+  transition: all ease 0.4s;
+}
+.spotify-playlists .list .item:hover .play .fa {
+  opacity: 1;
+  transform: translateY(-20px);
+}
+.spotify-playlists .list .item h4 {
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: bold;
 
-
+  margin-bottom: 10px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.spotify-playlists .list .item p {
+  color: #989898;
+  font-size: 12px;
+  line-height: 20px;
+  font-weight: 600;
+}
+.spotify-playlists hr {
+  margin: 70px 0px 0px;
+  border-color: #636363;
+}
 
 .music-player {
   --primary-color: #ddd;
@@ -708,14 +729,11 @@ i:hover {
   gap: 0.5em;
   padding: 10px;
   color: var(--secondary-color);
-  
-
 }
 .control-buttons {
   display: flex;
   align-items: center;
   gap: 2em;
-  
 }
 .play-pause {
   display: inline-block;
@@ -780,38 +798,3 @@ i:hover {
 .volume-bar .progress-bar:hover .progress::after {
   --size: 0.8em;
 }
-
-.preview {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background: linear-gradient(to right, #ae2896, #509bf5);
-  padding: 15px 40px;
-  display: flex;
-  justify-content: space-between;
-  z-index: 5;
-}
-.preview h6 {
-  color: #ffffff;
-  text-transform: uppercase;
-  font-weight: 400;
-  font-size: 12px;
-  margin-bottom: 10px;
-}
-.preview p {
-  color: #ffffff;
-  font-size: 14px;
-  font-weight: 500;
-}
-.preview button {
-  background-color: #ffffff;
-  color: #000000;
-  font-size: 16px;
-  font-weight: bold;
-  padding: 14px 30px;
-  border: 0px;
-  border-radius: 40px;
-  cursor: pointer;
-}
-

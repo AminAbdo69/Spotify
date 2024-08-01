@@ -8,8 +8,10 @@ using Microsoft.IdentityModel.Tokens;
 using Spotify.Classes.DTO;
 using Spotify.Data;
 using Spotify.Services.UserServices;
+using System;
 using System.Data;
 using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
@@ -18,11 +20,16 @@ namespace Spotify.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ArtistController(DataBase db, IConfiguration config) : ControllerBase
+    public class ArtistController(DataBase db, IConfiguration config ,IWebHostEnvironment environment) : ControllerBase
     {
 
+
+        #region Artist Functions
+
+
+
         [HttpPost("Artistregister")]
-        public ActionResult<string> Register(ArtistRegisterDTO request)
+        public ActionResult<string> Register([FromForm]ArtistRegisterDTO request)
         {
             if (!IsValidUsername(request.Username))
             {
@@ -32,6 +39,18 @@ namespace Spotify.Controllers
             {
                 return BadRequest("Invalid Email");
             }
+            if (request.Image == null || request.Image.Length == 0)
+            {
+                return BadRequest("No image for yourprofile was uploaded.");
+            }
+
+            var extention = Path.GetExtension(request.Image.FileName).ToLowerInvariant();
+            var allowedExtentions = new string[] { ".png", ".jpeg", ".jpg", ".avif" };
+
+            if (!allowedExtentions.Contains(extention))
+            {
+                return BadRequest("Unsupport image format.");
+            }
 
             if (db.Artists.FirstOrDefault(u => u.Username == request.Username) != null)
             {
@@ -40,12 +59,15 @@ namespace Spotify.Controllers
             string password = request.Username + "111";
             CreatePasswordHash(password, out byte[] PasswordHash, out byte[] PasswordSalt);
 
+            var filePath = SaveProfileImage(request.Username, request.Image);
+
             Artist artist = new()
             {
                 Username = request.Username,
                 Email = request.Email,
                 PasswordHash = PasswordHash,
                 PasswordSalt = PasswordSalt,
+                ProfilePicture = filePath
             };
 
             db.Artists.Add(artist);
@@ -54,6 +76,55 @@ namespace Spotify.Controllers
             return Ok("your request has been send successfully");
 
         }
+        private string SaveProfileImage(string Username, IFormFile Image)
+        {
+            var uploadFolder = Path.Combine(environment.ContentRootPath, "ProfileArtistImages");
+
+            if (!Directory.Exists(uploadFolder))
+            {
+                Directory.CreateDirectory(uploadFolder);
+            }
+
+            var extention = Path.GetExtension(Image.FileName).ToLowerInvariant();
+
+            var imagePath = Path.Combine(uploadFolder, $"{Username}{extention}");
+
+            using (var fileStream = new FileStream(imagePath, FileMode.Create))
+            {
+                Image.CopyTo(fileStream);
+            }
+
+            return Path.Combine("ProfileArtistImages", $"{Username}{extention}");
+        }
+
+        [HttpGet("ArtistImage/{Username}")]
+        public IActionResult GetArtistImage(string Username)
+        {
+            if (string.IsNullOrEmpty(Username))
+            {
+                return BadRequest("USername is invalid.");
+            }
+
+            Artist? artist = db.Artists.SingleOrDefault(u => u.Username == Username);
+
+            if (artist == null)
+            {
+                return NotFound("Artist not found.");
+            }
+
+            if (string.IsNullOrEmpty(artist.ProfilePicture))
+            {
+                return NotFound("Image not found.");
+            }
+
+            var filePath = Path.Combine(environment.ContentRootPath, artist.ProfilePicture);
+            var extention = Path.GetExtension(artist.ProfilePicture).ToLowerInvariant();
+
+            var image = System.IO.File.OpenRead(filePath);
+
+            return File(image, $"image/{extention.TrimStart('.')}");
+        }
+
         [HttpPost("Artistlogin")]
         public async Task<ActionResult<Artist>> Login(ArtistLoginDTO request)
         {
@@ -94,71 +165,41 @@ namespace Spotify.Controllers
             return Ok(artist);
         }
 
-        [HttpPost("ChangeData")]
 
-        public ActionResult<string> ChangeData(ChangedataDTO request)
+        [HttpGet("ArtistSongs")]
+        public ActionResult<List<SongoutDTO>> getArtistsongs(string artistName)
         {
-            if (!IsValidPassword(request.NewPassword))
+            if (String.IsNullOrEmpty(artistName))
             {
-                return BadRequest("Invalid Password Structue");
+                return BadRequest("Invalid username.");
             }
-            if (request.NewPassword != request.ConfirmPassword)
-            {
-                return BadRequest("NewPassword not matched with ConfirmPassword , Try again.");
-            }
-            Artist artist = db.Artists.FirstOrDefault(a => a.Username == request.Username);
+            var artist = db.Artists
+                .Include(u => u.Songs)
+                .SingleOrDefault(u => u.Username == artistName);
+
             if (artist == null)
             {
-                return NotFound("Not Found this Artist");
+                return NotFound("artist doesn't exist.");
             }
-            UpdatePassword(artist.Username, request.NewPassword);
+            if (!artist.IsActive)
+            {
+                return Unauthorized("Please activate the account by changing your default password.");
+            }
+            List<SongoutDTO> ArtistSongs = [];
 
-            return Ok("Data has been changed successfully");
+            foreach (Song song in artist.Songs)
+            {
+                ArtistSongs.Add(new SongoutDTO()
+                {
+                    SongName = song.SongName,
+                    Duration = song.Duration,
+                    ReleaseDate = song.ReleaseDate
+                });
+            }
+            return Ok(ArtistSongs);
         }
 
 
-
-
-        [HttpPost("AddAlbum")]
-
-        public ActionResult<string> AddAlbum(AlbumDTO albumDTO)
-        {
-            Artist artist = db.Artists.FirstOrDefault(a => a.Username == albumDTO.ArtistName);
-            if (artist == null)
-            {
-                return NotFound("Invalid Artist.");
-            }
-
-            if (String.IsNullOrEmpty(albumDTO.AlbumName))
-            {
-                return BadRequest("invalid Album Name.");
-            }
-            Album album1 = new()
-            {
-                ArtistId = artist.ArtistId,
-                AlbumName = albumDTO.AlbumName,
-                ReleaseDate = DateTime.Now
-            };
-
-            //foreach (Album album in artist.CreatedAlbums)
-            //{
-            //    if (album.AlbumName == albumDTO.AlbumName)
-            //    {
-            //        return Conflict($"this Album Already Created By {artist.Username}");
-            //    }
-            //}
-
-            bool albumExists = db.Albums.Any(a => a.ArtistId == artist.ArtistId && a.AlbumName == albumDTO.AlbumName);
-            if (albumExists)
-            {
-                return Conflict($"This album has already been created by {artist.Username}.");
-            }
-            artist.CreatedAlbums.Add(album1);
-            db.Artists.Update(artist);
-            db.Albums.Add(album1);
-            db.SaveChanges();
-            return Ok($" {albumDTO.AlbumName} Has Been Created Successfully");
-        }
         [HttpGet("ArtistAlbums")]
         public ActionResult<List<AlbumOutDTO>> getArtistAlbums(string artistName)
         {
@@ -194,7 +235,208 @@ namespace Spotify.Controllers
         }
 
 
+        [HttpPost("ChangeData")]
 
+        public ActionResult<string> ChangeData(ChangedataDTO request)
+        {
+            if (!IsValidPassword(request.NewPassword))
+            {
+                return BadRequest("Invalid Password Structue");
+            }
+            if (request.NewPassword != request.ConfirmPassword)
+            {
+                return BadRequest("NewPassword not matched with ConfirmPassword , Try again.");
+            }
+            Artist artist = db.Artists.FirstOrDefault(a => a.Username == request.Username);
+            if (artist == null)
+            {
+                return NotFound("Not Found this Artist");
+            }
+            UpdatePassword(artist.Username, request.NewPassword);
+
+            return Ok("Data has been changed successfully");
+        }
+
+
+        [HttpGet("AllArtists")]
+        public ActionResult<List<ArtistOutDTO>> GetAllArtists()
+        {
+            var artists = db.Artists.ToList();
+
+            List<ArtistOutDTO> allArtists = new List<ArtistOutDTO>();
+
+            foreach (Artist artist in artists)
+            {
+                allArtists.Add(new ArtistOutDTO()
+                {
+                    name = artist.Username,
+                    pic = artist.ProfilePicture
+                });
+            }
+            return Ok(allArtists);
+        }
+
+        [HttpPost("followArtist")]
+        public ActionResult<string> FollowArtist(FollowArtistDTO followArtist)
+        {
+            var artist = db.Artists
+                .Include(p => p.Followers)
+                .SingleOrDefault(p => p.Username == followArtist.ArtistName);
+            if (artist == null)
+            {
+                return NotFound("Artist not found.");
+            }
+
+            User user = db.Users.FirstOrDefault(u => u.UserName == followArtist.UserName);
+            if (user == null)
+            {
+                return NotFound("User not found.");
+            }
+            
+
+            if (artist.Followers.Contains(user))
+            {
+                return BadRequest($"{followArtist.UserName} is already following {followArtist.ArtistName}.");
+            }
+
+            user.FollowedArtists.Add(artist);
+            artist.Followers.Add(user);
+            db.SaveChanges();
+            return Ok($"{followArtist.UserName} has followed {followArtist.ArtistName} successfully.");
+        }
+
+        #endregion
+
+        #region Album Funcions
+
+
+
+
+        [HttpPost("AddAlbum")]
+
+        public ActionResult<string> AddAlbum(AlbumDTO albumDTO)
+        {
+            Artist artist = db.Artists.FirstOrDefault(a => a.Username == albumDTO.ArtistName);
+            if (artist == null)
+            {
+                return NotFound("Invalid Artist.");
+            }
+
+            if (String.IsNullOrEmpty(albumDTO.AlbumName))
+            {
+                return BadRequest("invalid Album Name.");
+            }
+            Album album1 = new()
+            {
+                ArtistId = artist.ArtistId,
+                AlbumName = albumDTO.AlbumName,
+                ReleaseDate = DateTime.Now
+            };
+
+
+            bool albumExists = db.Albums.Any(a => a.ArtistId == artist.ArtistId && a.AlbumName == albumDTO.AlbumName);
+            if (albumExists)
+            {
+                return Conflict($"This album has already been created by {artist.Username}.");
+            }
+            artist.CreatedAlbums.Add(album1);
+            db.Artists.Update(artist);
+            db.Albums.Add(album1);
+            db.SaveChanges();
+            return Ok($" {albumDTO.AlbumName} Has Been Created Successfully");
+        }
+
+        [HttpGet("AlbumSongs")]
+        public ActionResult<List<SongOutDTO2>> getAlbumSongs(string albunmname)
+        {
+            if (String.IsNullOrEmpty(albunmname))
+            {
+                return BadRequest("Invalid username.");
+            }
+
+
+            var album = db.Albums
+                .Include(p => p.AlbumSongs)
+                .ThenInclude(ps => ps.artist)
+
+                .SingleOrDefault(p => p.AlbumName == albunmname);
+
+            if (album == null)
+            {
+                return NotFound("artist doesn't exist.");
+            }
+
+            List<SongOutDTO2> AlbumSongs = [];
+
+            foreach (Song song in album.AlbumSongs)
+            {
+
+                AlbumSongs.Add(new SongOutDTO2()
+                {
+                    SongName = song.SongName,
+                    Duration = song.Duration,
+                    ArtistName = song.artist.Username
+                });
+            }
+            return Ok(AlbumSongs);
+        }
+
+
+        [HttpGet("AllAlbums")]
+        public ActionResult<List<AlbumOutDTO2>> GetAllAlbums()
+        {
+            var albums = db.Albums
+                .Include(a => a.Artist)
+                .ToList();
+
+            List<AlbumOutDTO2> allAlbums = new List<AlbumOutDTO2>();
+
+            foreach (Album album in albums)
+            {
+                allAlbums.Add(new AlbumOutDTO2()
+                {
+                    albumname = album.AlbumName,
+                    artistname = album.Artist.Username,
+                    picture = album.picture,
+                    songs = album.Nsongs
+                });
+            }
+            return Ok(allAlbums);
+        }
+
+        [HttpPost("LikeAlbum")]
+        public ActionResult<string> LikeAlbum(LikedAlbumDTO likedAlbum)
+        {
+            var albums = db.Albums
+                .Include(p => p.ALmubLikers)
+                .SingleOrDefault(p => p.AlbumName == likedAlbum.albumname);
+
+            if (albums == null)
+            {
+                return NotFound("Album not found.");
+            }
+
+            User user = db.Users.FirstOrDefault(u => u.UserName == likedAlbum.username);
+            if (user == null)
+            {
+                return NotFound("User not found.");
+            }
+
+
+            if (albums.ALmubLikers.Contains(user))
+            {
+                return BadRequest($"{likedAlbum.username} is already liked {likedAlbum.albumname}.");
+            }
+
+            user.LikedAlbums.Add(albums);
+            albums.ALmubLikers.Add(user);
+            db.SaveChanges();
+            return Ok($"{likedAlbum.username} has liked {likedAlbum.albumname} successfully.");
+        }
+
+        #endregion
+
+        #region Song Functions 
 
 
         [HttpPost("AddSong")]
@@ -239,16 +481,6 @@ namespace Spotify.Controllers
                 return Conflict($"This song has already been created by {artist.Username}.");
             }
 
-            //foreach (Song song in artist.Songs)
-            //{
-            //    if (song.SongName.Equals(songDTO.Songname))
-            //    {
-            //        return Conflict($"this song Already Created by {artist.Username}");
-            //    }
-            //}
-
-
-
             artist.Songs.Add(song1);
             album.AlbumSongs.Add(song1);
             album.Nsongs = album.Nsongs + 1;
@@ -261,119 +493,13 @@ namespace Spotify.Controllers
             return Ok($"{songDTO.Songname} has been created successfully.");
 
         }
-        [HttpGet("ArtistSongs")]
-        public ActionResult<List<SongoutDTO>> getArtistsongs(string artistName)
-        {
-            if (String.IsNullOrEmpty(artistName))
-            {
-                return BadRequest("Invalid username.");
-            }
-            var artist = db.Artists
-                .Include(u => u.Songs)
-                .SingleOrDefault(u => u.Username == artistName);
-
-            if (artist == null)
-            {
-                return NotFound("artist doesn't exist.");
-            }
-            if (!artist.IsActive)
-            {
-                return Unauthorized("Please activate the account by changing your default password.");
-            }
-            List<SongoutDTO> ArtistSongs = [];
-
-            foreach (Song song in artist.Songs)
-            {
-                ArtistSongs.Add(new SongoutDTO()
-                {
-                    SongName = song.SongName,
-                    Duration = song.Duration,
-                    ReleaseDate = song.ReleaseDate
-                });
-            }
-            return Ok(ArtistSongs);
-        }
-
-        [HttpGet("AlbumSongs")]
-        public ActionResult<List<SongOutDTO2>> getAlbumSongs(string albunmname)
-        {
-            if (String.IsNullOrEmpty(albunmname))
-            {
-                return BadRequest("Invalid username.");
-            }
-           
-
-            var album = db.Albums
-                .Include(p => p.AlbumSongs)
-                .ThenInclude(ps => ps.artist)
-                
-                .SingleOrDefault(p => p.AlbumName == albunmname);
-
-            if (album == null)
-            {
-                return NotFound("artist doesn't exist.");
-            }
-           
-            List<SongOutDTO2> AlbumSongs = [];
-
-            foreach (Song song in album.AlbumSongs)
-            {
-                
-                AlbumSongs.Add(new SongOutDTO2()
-                {
-                    SongName = song.SongName,
-                    Duration = song.Duration,
-                    ArtistName = song.artist.Username
-                });
-            }
-            return Ok(AlbumSongs);
-        }
-
-        [HttpGet("AllArtists")]
-        public ActionResult<List<ArtistOutDTO>> GetAllArtists()
-        {
-            var artists = db.Artists.ToList();
-
-            List<ArtistOutDTO> allArtists = new List<ArtistOutDTO>();
-
-            foreach (Artist artist in artists)
-            {
-                allArtists.Add(new ArtistOutDTO()
-                {
-                    name = artist.Username,
-                    pic = artist.ProfilePicture
-                });
-            }
-            return Ok(allArtists);
-        } 
 
 
-        [HttpGet("AllAlbums")]
-        public ActionResult<List<AlbumOutDTO2>> GetAllAlbums()
-        {
-            var albums = db.Albums
-                .Include(a => a.Artist)
-                .ToList();
-
-            List<AlbumOutDTO2> allAlbums = new List<AlbumOutDTO2>();
-
-            foreach (Album album in albums)
-            {
-                allAlbums.Add(new AlbumOutDTO2()
-                {
-                    albumname = album.AlbumName,
-                    artistname = album.Artist.Username,
-                    picture = album.picture,
-                    songs = album.Nsongs
-                });
-            }
-            return Ok(allAlbums);
-        }
+        #endregion
 
 
-
-            #region Helpers 
-            private static void CreatePasswordHash(string Password, out byte[] PasswordHash, out byte[] PasswordSalt)
+        #region Helpers 
+        private static void CreatePasswordHash(string Password, out byte[] PasswordHash, out byte[] PasswordSalt)
         {
             using var hmac = new HMACSHA512();
             PasswordSalt = hmac.Key;

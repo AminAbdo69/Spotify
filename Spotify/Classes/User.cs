@@ -17,6 +17,8 @@ namespace Spotify
         public required byte[] PasswordSalt { get; set; }
         public bool? IsActive { get; set; } = false;
 
+        public string picture {  get; set; } = string.Empty;
+
         public string Lisence { get; set; } = "Normal";
 
         public List<Playlist> LikedPlaylists { get; set; } = [];
@@ -25,12 +27,12 @@ namespace Spotify
 
         public List<Song> LikedSons { get; set; } = [];
         public List<Album> LikedAlbums { get; set; } = [];
-        public List<Artist> FollowedArtists { get; set; } = [];
+        public List<Artist> FollowedArtists { get; set; } = new List<Artist>();
 
 
-        public string RefreshToken { get; set; }
-        public DateTime Tokencreated { get; set; }
-        public DateTime TokenExpires { get; set; }
+        public string RefreshToken { get; set; } = String.Empty;
+        public DateTime? Tokencreated { get; set; } = null;
+        public DateTime? TokenExpires { get; set; } = null;
 
 
         private static void CreatePasswordHash(string Password, out byte[] PasswordHash, out byte[] PasswordSalt)

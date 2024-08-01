@@ -11,7 +11,7 @@
         public bool IsActive { get; set; } = false;
 
         public List<Song> Songs { get; set; } = [];
-        public List<User> Followers { get; set; } = [];
+        public List<User> Followers { get; set; } = new List<User>();
         public List<Album> CreatedAlbums { get; set; } = [];
     }
 }

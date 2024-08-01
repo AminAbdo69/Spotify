@@ -16,10 +16,10 @@ namespace Spotify.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class AuthController(DataBase db, IConfiguration config ,IUserService userService) : ControllerBase
+    public class AuthController(DataBase db, IConfiguration config ,IUserService userService, IWebHostEnvironment environment) : ControllerBase
     {
         [HttpPost("register")]
-        public async Task<ActionResult<User>> Register(UserRegisterDTO request)
+        public async Task<ActionResult<User>> Register([FromForm]UserRegisterDTO request)
         {
             if (!IsValidUsername(request.Username))
             {
@@ -42,6 +42,17 @@ namespace Spotify.Controllers
                 return BadRequest("Invalid LastName");
             }
 
+            if (request.Image == null || request.Image.Length == 0) {
+                return BadRequest("No image for yourprofile was uploaded.");
+            }
+
+            var extention = Path.GetExtension(request.Image.FileName).ToLowerInvariant();
+            var allowedExtentions = new string[] { ".png", ".jpeg", ".jpg", ".avif" };
+
+            if (!allowedExtentions.Contains(extention))
+            {
+                return BadRequest("Unsupport image format.");
+            }
 
             if (db.Users.FirstOrDefault(u => u.UserName == request.Username) != null)
             {
@@ -49,6 +60,9 @@ namespace Spotify.Controllers
             }
 
             CreatePasswordHash(request.Password, out byte[] PasswordHash, out byte[] PasswordSalt);
+
+            var filePath = SaveProfileImage(request.Username, request.Image);
+
 
             User user = new()
             {
@@ -58,15 +72,66 @@ namespace Spotify.Controllers
                 Email = request.Email,
                 PasswordHash = PasswordHash,
                 PasswordSalt = PasswordSalt,
+                picture = filePath
             };
 
             await db.Users.AddAsync(user);
             await db.SaveChangesAsync();
 
+
+
             return Ok(user);
 
         }
 
+        private string SaveProfileImage(string Username, IFormFile Image)
+        {
+            var uploadFolder = Path.Combine(environment.ContentRootPath, "ProfileImages");
+            
+            if (!Directory.Exists(uploadFolder))
+            {
+                Directory.CreateDirectory(uploadFolder);
+            }
+
+            var extention = Path.GetExtension(Image.FileName).ToLowerInvariant();
+
+            var imagePath = Path.Combine(uploadFolder, $"{Username}{extention}");
+
+            using (var fileStream = new FileStream(imagePath, FileMode.Create))
+            {
+                Image.CopyTo(fileStream);
+            }
+
+            return Path.Combine("ProfileImages", $"{Username}{extention}");
+        }
+
+        [HttpGet("UserImage/{Username}")]
+        public IActionResult GetUserImage(string Username)
+        {
+            if (string.IsNullOrEmpty(Username))
+            {
+                return BadRequest("USername is invalid.");
+            }
+
+            User? user = db.Users.SingleOrDefault(u => u.UserName == Username);
+
+            if (user == null)
+            {
+                return NotFound("User not found.");
+            }
+
+            if (string.IsNullOrEmpty(user.picture))
+            {
+                return NotFound("Image not found.");
+            }
+
+            var filePath = Path.Combine(environment.ContentRootPath, user.picture);
+            var extention = Path.GetExtension(user.picture).ToLowerInvariant();
+
+            var image = System.IO.File.OpenRead(filePath);
+
+            return File(image, $"image/{extention.TrimStart('.')}");
+        }
 
 
         [HttpPost("login")]
@@ -105,13 +170,14 @@ namespace Spotify.Controllers
         }
 
         [HttpPost("refreshToken") , Authorize]
-        public  ActionResult<string> RefrshToken()
+        public  ActionResult<string> RefrshToken(string userName )
         {
             var refreshToken = Request.Cookies["refreshToken"];
-            var userName = userService.GetMyName();
-            var ROLE = userService.GetMyRole();
-            
-           
+            //var userName = userService.GetMyName();
+            var ROLE = "User";
+
+
+
             User? user =  db.Users.FirstOrDefault(u => u.UserName == userName);
             if (user == null)
             {
@@ -127,9 +193,9 @@ namespace Spotify.Controllers
                 return Unauthorized("Token Expired.");
             }
 
-            string token = CreateToken(user.UserName, ROLE);
-            var newRefrshToken = GenrateRefreshToken();
-            SetRefreshToken(user.UserName, newRefrshToken);
+            string token = CreateToken(user.UserName, ROLE); // new JWT token
+            var newRefrshToken = GenrateRefreshToken(); // new refresh token
+            SetRefreshToken(user.UserName, newRefrshToken); // udate token ion cookie and db
 
             return Ok(token);
         }
@@ -208,12 +274,14 @@ namespace Spotify.Controllers
             return refreshToken;
         }
 
-        private void SetRefreshToken(String Username  , RefreshToken refreshToken)
+        private void SetRefreshToken(string Username  , RefreshToken refreshToken)
         {
             var cookieOption = new CookieOptions
             {
                 HttpOnly = true,
-                Expires = refreshToken.Expires
+                Secure = true,
+                Expires = refreshToken.Expires,
+                SameSite = SameSiteMode.None,
             };
             Response.Cookies.Append("refreshToken", refreshToken.Token , cookieOption);
             User user = db.Users.FirstOrDefault(u => u.UserName == Username);

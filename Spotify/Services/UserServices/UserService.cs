@@ -15,6 +15,9 @@ namespace Spotify.Services.UserServices
               {
                 name = _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.Name);
               }
+              Console.WriteLine("===========================");
+              Console.WriteLine(name);
+              Console.WriteLine("==================================");
             return name;
         }
         public string GetMyRole()
