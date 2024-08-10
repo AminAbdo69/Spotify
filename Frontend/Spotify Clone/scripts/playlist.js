@@ -1,19 +1,9 @@
-//show page data
+// page data
+const playlistName = sessionStorage.getItem("playlistName");
+const playlistCreator = sessionStorage.getItem("playlistCreator");
+const playlistCount = sessionStorage.getItem("playlistCount");
+const playlistPic = sessionStorage.getItem("playlistPic");
 
-var Token = sessionStorage.getItem("myToken");
-console.log(Token);
-
-// Retrieve the data from localStorage
-const playlistNamet = localStorage.getItem("playlistName");
-var playlistName = playlistNamet.substring(0, playlistNamet.indexOf(" ."));
-const playlistPic = "assets/images/the last peace of art4.png";
-const playlistCreator = localStorage.getItem("playlistCreator");
-const playlistCountt = localStorage.getItem("playlistCount");
-const playlistCount = playlistCountt.substring(0, playlistCountt.indexOf(" s"));
-console.log(playlistName);
-console.log(playlistCount);
-// console.log(playlistPic);
-console.log(playlistCreator);
 // Display the data
 
 document.querySelectorAll("#username").forEach((element) => {
@@ -24,71 +14,89 @@ document.querySelectorAll("#playlistName").forEach((element) => {
   element.textContent = playlistName;
 });
 var Soungscount = document.getElementById("numSongs");
-Soungscount.innerText = playlistCount;
+Soungscount.innerText = playlistCount + "- songs";
 
 document.getElementById("albumImage").src = playlistPic;
 
-if (
-  localStorage.getItem("userplaylistData") === null ||
-  localStorage.getItem("userplaylistData") === ""
-) {
-  document.addEventListener("DOMContentLoaded", () => {
-    // Make a request to get the playlist's songs
-    fetch(
-      `https://localhost:7259/api/User/GetPlaylistSongs?playlistName=${playlistName}`
-    )
-      .then((response) => response.json())
-      .then((songs) => {
-        const songList = document.getElementById("playlistSongs");
-        songList.innerHTML = ""; // Clear existing content
+//show page data
 
-        songs.forEach((song) => {
-          const songItem = document.createElement("li");
-          songItem.innerHTML = `
-                <span class="song-title">
-                  ${song.songName} <br>
-                  <span class="artistName">${song.artistName}</span>
-                </span>
-                <span class="duration">
-                  <i class="fa-regular fa-heart"></i>
-                  <span class="time">${song.duration}</span>
-                  <i class="fa-solid fa-ellipsis"></i>
-                </span>
-              `;
-          songList.appendChild(songItem);
-        });
-      })
-      .catch((error) => console.error("Error fetching songs:", error));
-  });
-} else {
-  document.addEventListener("DOMContentLoaded", () => {
-    fetch(
-      `https://localhost:7259/api/User/GetPlaylistSongs?playlistName=${playlistName}`
-    )
-      .then((response) => response.json())
-      .then((songs) => {
-        const songList = document.getElementById("playlistSongs");
-        songList.innerHTML = ""; // Clear existing content
+// var Token = sessionStorage.getItem("myToken");
+// console.log(Token);
 
-        songs.forEach((song) => {
-          const songItem = document.createElement("li");
-          songItem.innerHTML = `
-                <span class="song-title">
-                  ${song.songName} <br>
-                  <span class="artistName">${song.artistName}</span>
-                </span>
-                <span class="duration">
-                  <i class="fa-regular fa-heart"></i>
-                  <span class="time">${song.duration}</span>
-                  <i class="fa-solid fa-ellipsis"></i>
-                </span>
-              `;
-          songList.appendChild(songItem);
-        });
-      })
-      .catch((error) => console.error("Error fetching songs:", error));
-  });
-}
+// // Retrieve the data from localStorage
+// const playlistNamet = localStorage.getItem("playlistName");
+// var playlistName = playlistNamet.substring(0, playlistNamet.indexOf(" ."));
+// const playlistPic = "assets/images/the last peace of art4.png";
+// const playlistCreator = localStorage.getItem("playlistCreator");
+// const playlistCountt = localStorage.getItem("playlistCount");
+// const playlistCount = playlistCountt.substring(0, playlistCountt.indexOf(" s"));
+// console.log(playlistName);
+// console.log(playlistCount);
+// // console.log(playlistPic);
+// console.log(playlistCreator);
+
+// if (
+//   localStorage.getItem("userplaylistData") === null ||
+//   localStorage.getItem("userplaylistData") === ""
+// ) {
+//   document.addEventListener("DOMContentLoaded", () => {
+//     // Make a request to get the playlist's songs
+//     fetch(
+//       `https://localhost:7259/api/User/GetPlaylistSongs?playlistName=${playlistName}`
+//     )
+//       .then((response) => response.json())
+//       .then((songs) => {
+//         const songList = document.getElementById("playlistSongs");
+//         songList.innerHTML = ""; // Clear existing content
+
+//         songs.forEach((song) => {
+//           const songItem = document.createElement("li");
+//           songItem.innerHTML = `
+//                 <span class="song-title">
+//                   ${song.songName} <br>
+//                   <span class="artistName">${song.artistName}</span>
+//                 </span>
+//                 <span class="duration">
+//                   <i class="fa-regular fa-heart"></i>
+//                   <span class="time">${song.duration}</span>
+//                   <i class="fa-solid fa-ellipsis"></i>
+//                 </span>
+//               `;
+//           songList.appendChild(songItem);
+//         });
+//       })
+//       .catch((error) => console.error("Error fetching songs:", error));
+//   });
+// } else {
+//   // document.addEventListener("DOMContentLoaded", () => {
+//   //   fetch(
+//   //     `https://localhost:7259/api/User/GetPlaylistSongs?playlistName=${playlistName}`
+//   //   )
+//   //     .then((response) => response.json())
+//   //     .then((songs) => {
+//   //       const songList = document.getElementById("playlistSongs");
+//   //       songList.innerHTML = ""; // Clear existing content
+
+//   //       songs.forEach((song) => {
+//   //         const songItem = document.createElement("li");
+//   //         songItem.innerHTML = `
+//   //               <span class="song-title">
+//   //                 ${song.songName} <br>
+//   //                 <span class="artistName">${song.artistName}</span>
+//   //               </span>
+//   //               <span class="duration">
+//   //                 <i class="fa-regular fa-heart"></i>
+//   //                 <span class="time">${song.duration}</span>
+//   //                 <i class="fa-solid fa-ellipsis"></i>
+//   //               </span>
+//   //             `;
+//   //         songList.appendChild(songItem);
+//   //       });
+//   //     })
+//   //     .catch((error) => console.error("Error fetching songs:", error));
+//   // });
+
+// }
 
 //create playlist show form
 document
@@ -119,7 +127,7 @@ document
     event.preventDefault(); // Prevent the default form submission behavior
     const playlistname = document.getElementById("playlistname").value;
     sessionStorage.setItem("playlistName", playlistname);
-    const playlistcreator = username;
+    const theplaylistcreator = username;
 
     const formData = new FormData();
     formData.append(
@@ -178,7 +186,6 @@ document
           method: "GET",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${Token}`, // Include your authorization token if needed
           },
         }
       );
@@ -232,7 +239,7 @@ document
   .getElementById("AddSongtoPlaylist")
   .addEventListener("submit", async function (event) {
     event.preventDefault(); // Prevent the default form submission behavior
-    const playlistName = localStorage.getItem("playlistName");
+
     const songName = document.getElementById("songName2").value;
     console.log(songName);
     const data = {
@@ -248,7 +255,7 @@ document
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${Token}`,
+            // Authorization: `Bearer ${Token}`,
           },
           body: JSON.stringify(data),
         }
@@ -272,14 +279,11 @@ document
 
 function fetchPlaylistSongs(playlistName) {
   fetch(
-    `https://localhost:7259/api/User/GetPlaylistSongs?playlistName=${encodeURIComponent(
-      playlistName
-    )}`,
+    `https://localhost:7259/api/User/GetPlaylistSongs?playlistName=${playlistName}`,
     {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${Token}`, // Include your authorization token if needed
       },
     }
   )
@@ -335,3 +339,60 @@ loveBtn.addEventListener("click", function () {
       alert("An error occurred while liking the playlist.");
     });
 });
+
+// playlist songs
+
+function loadPlaylistSongs(playlistName) {
+  if (!playlistName) {
+    console.error("Playlist name is required.");
+    return;
+  }
+
+  fetch(
+    `https://localhost:7259/api/User/GetPlaylistSongs?playlistName=${playlistName}`
+  )
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+      return response.json(); // Parse JSON response
+    })
+    .then((data) => {
+      const listContainer = document.getElementById("playlistSongs");
+      listContainer.innerHTML = ""; // Clear existing content
+
+      data.forEach((song) => {
+        const listItem = document.createElement("li");
+
+        const songTitleSpan = document.createElement("span");
+        songTitleSpan.className = "song-title";
+        songTitleSpan.innerHTML = `${song.songName} <br /> <span class="artistName">${song.artistName}</span>`;
+        listItem.appendChild(songTitleSpan);
+
+        const durationSpan = document.createElement("span");
+        durationSpan.className = "duration";
+        durationSpan.innerHTML = `
+                    <i class="fa-regular fa-heart"></i>
+                    <span class="time">${song.duration}</span>
+                    <i class="fa-solid fa-ellipsis"></i>
+                `;
+        listItem.appendChild(durationSpan);
+
+        listContainer.appendChild(listItem);
+      });
+    })
+    .catch((error) => console.error("Error fetching playlist songs:", error));
+}
+
+// Function to format duration in minutes and seconds
+function formatDuration(durationInSeconds) {
+  const minutes = Math.floor(durationInSeconds / 60);
+  const seconds = durationInSeconds % 60;
+  return `${minutes}:${seconds.toString().padStart(2, "0")}`;
+}
+
+// Call the function when the page loads
+window.onload = function () {
+  const playlistName = sessionStorage.getItem("playlistName"); // Retrieve playlist name from sessionStorage
+  loadPlaylistSongs(playlistName);
+};

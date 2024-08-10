@@ -5,5 +5,6 @@
         public string albumname { get; set; }
         public DateTime ReleaseDate { get; set; }
         public int Nsongs { get; set; }
+        public string picture { get; set; }
     }
 }

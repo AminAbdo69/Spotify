@@ -38,7 +38,7 @@ document.getElementById("myform").addEventListener("submit", function (event) {
   const formData = new FormData();
   formData.append("username", document.getElementById("username").value);
   formData.append("email", document.getElementById("email").value);
-  formData.append("image", document.getElementById("profileImage").files[0]);
+  formData.append("image", document.getElementById("ArtistImage").files[0]);
 
   fetch("https://localhost:7259/api/Artist/Artistregister", {
     method: "POST",
@@ -55,7 +55,8 @@ document.getElementById("myform").addEventListener("submit", function (event) {
       console.log(data);
       document.getElementById("username").value = "";
       document.getElementById("email").value = "";
-      document.getElementById("profileImage").value = "";
+      document.getElementById("ArtistImage").value = "";
+      location.href = "/artist/ArtistLogin.html";
       // Handle success (e.g., show a success message or redirect to another page)
     })
     .catch((error) => {

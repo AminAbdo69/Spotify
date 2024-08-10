@@ -74,18 +74,17 @@ body {
   width: 48px;
   height: 48px;
 }
-.sidebar .navigation .playlist-container .creator-info{
+.sidebar .navigation .playlist-container .creator-info {
   color: #8f8f8f;
   font-size: 15px;
 }
-.sidebar .navigation .playlist-container .playlistName{
+.sidebar .navigation .playlist-container .playlistName {
   font-size: 20px;
   font-weight: bold;
 }
 .sidebar .navigation .playlist-container:hover {
   background: var(--sidebar-scroll-bg);
 }
-
 
 .sidebar-scroll {
   height: 200px;
@@ -363,8 +362,6 @@ body {
   border-color: #636363;
 } */
 
-
-
 .popular-artists {
   display: flex;
   flex-direction: column;
@@ -375,7 +372,6 @@ body {
 .spotify-playlists {
   padding-inline: var(--content-spacing);
 }
-
 
 .spotify-playlists .title {
   display: flex;
@@ -437,6 +433,7 @@ body {
 }
 .spotify-playlists .list .item img {
   width: 100%;
+  height: 170px;
   border-radius: 6px;
   margin-bottom: 10px;
 }
@@ -478,6 +475,7 @@ body {
   margin: 70px 0px 0px;
   border-color: #636363;
 }
+
 .Popular-Playlist {
   margin-bottom: 100px;
 }

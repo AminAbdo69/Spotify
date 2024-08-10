@@ -1,5 +1,20 @@
 //global
-var artistname = sessionStorage.getItem("username");
+// var Artist = sessionStorage.getItem("Artist");
+// console.log(Artist);
+
+// var artistname = Artist.username;
+// var artistEmail = Artist.email;
+// var artistProfilePicture = Artist.profilePicture;
+// var artistIsActive = Artist.isActive;
+
+var artistname = sessionStorage.getItem("ArtistName");
+var artistEmail = sessionStorage.getItem("Artistemail");
+var artistProfilePicture = sessionStorage.getItem("Artistimage");
+var artistIsActive = sessionStorage.getItem("Artistisactive");
+
+if (artistIsActive === false) {
+  location.href = "/artist/changepassword.html";
+}
 
 document.querySelectorAll("#artistname").forEach((element) => {
   element.textContent = artistname;
@@ -40,7 +55,7 @@ document
     event.preventDefault();
     const formData = new FormData();
     formData.append("albumName", document.getElementById("albumName2").value);
-    formData.append("image", document.getElementById("profileImage").files[0]);
+    formData.append("image", document.getElementById("AlbumImage").files[0]);
     formData.append("artistName", artistname); // Replace with the actual artist name
 
     try {
@@ -63,9 +78,8 @@ document
       alert(await addAlbumResponse.text());
 
       // Fetch all albums for the artist
-      const artistName = artistname;
       const getAlbumsResponse = await fetch(
-        `https://localhost:7259/api/Artist/ArtistAlbums?artistName=${artistName}`
+        `https://localhost:7259/api/Artist/ArtistAlbums?artistName=${artistname}`
       );
 
       if (!getAlbumsResponse.ok) {
@@ -110,7 +124,8 @@ document
     formData.append("songname", document.getElementById("songName").value);
     formData.append("albumname", document.getElementById("albumName").value);
     formData.append("duration", document.getElementById("duration").value);
-    formData.append("image", document.getElementById("songImage2").files[0]);
+    formData.append("image", document.getElementById("songImage").files[0]);
+    formData.append("audio", document.getElementById("songAudio").files[0]);
     formData.append("artistusename", artistname);
 
     // const songDTO = {
@@ -139,9 +154,8 @@ document
       alert(await addSongResponse.text());
 
       // Fetch all songs for the artist
-      const artistName = artistname;
       const getSongsResponse = await fetch(
-        `https://localhost:7259/api/Artist/ArtistSongs?artistName=${artistName}`
+        `https://localhost:7259/api/Artist/ArtistSongs?artistName=${artistname}`
       );
 
       if (!getSongsResponse.ok) {
@@ -174,3 +188,92 @@ function populateSongsTable(songs) {
     tbody.appendChild(row);
   });
 }
+
+// retrieve artist image
+function fetchArtistProfileImage(username) {
+  // Replace with your actual API endpoint
+  const apiUrl = `https://localhost:7259/api/Artist/ArtistImage/${username}`;
+
+  fetch(apiUrl, {
+    method: "GET",
+    headers: {
+      "Content-Type": "image/jpg",
+    },
+  })
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error(`Error fetching image: ${response.status}`);
+      } 
+      return response.blob();
+    })
+    .then((blob) => {
+      // Create an object URL from the blob
+      const imageUrl = URL.createObjectURL(blob);
+      console.log(imageUrl);
+      
+
+      // Display the image (e.g., set it as the source of an <img> tag)
+      // const imgElement = document.getElementById("Artist-image");
+      // imgElement.src = imageUrl;
+      document.querySelectorAll("#Artist-image").forEach((element) => {
+        element.src = imageUrl;
+      });
+    })
+    .catch((error) => {
+      console.error("Error fetching image:", error);
+    });
+}
+
+// Call the function with the artist's username
+fetchArtistProfileImage(artistname); // Replace with the actual username
+// async function fetchAlbumImage() {
+//   try {
+//     const response = await fetch(
+//       `https://localhost:7259/api/ArtistImage/${username}`,
+//       {
+//         method: "GET",
+//         headers: {
+//           "Content-Type": "image/jpg",
+//         },
+//       }
+//     );
+
+//     if (!response.ok) {
+//       throw new Error("Network response was not ok");
+//     }
+
+//     const blob = await response.blob();
+//     const imageUrl = URL.createObjectURL(blob);
+//     const imgElement = document.getElementById("Artist-image");
+//     imgElement.src = imageUrl;
+//   } catch (e) {
+//     console.log(e);
+//   }
+// }
+
+// function fetchArtistImage(username) {
+//   // Replace with your actual API endpoint
+//   const apiUrl = `https://localhost:7259/api/ArtistImage/${username}`;
+
+//   fetch(apiUrl)
+//     .then((response) => {
+//       if (!response.ok) {
+//         throw new Error(`Error fetching image: ${response.status}`);
+//       }
+//       return response.blob();
+//     })
+//     .then((blob) => {
+//       // Create an object URL from the blob
+//       const imageUrl = URL.createObjectURL(blob);
+
+//       // Display the image (e.g., set it as the source of an <img> tag)
+//       const imgElement = document.getElementById("Artist-image");
+//       imgElement.src = imageUrl;
+//     })
+//     .catch((error) => {
+//       console.error("Error fetching image:", error);
+//     });
+// }
+
+// Call the function with the artist's username
+// fetchArtistImage(artistname); // Replace with the actual username

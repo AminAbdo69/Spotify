@@ -30,13 +30,20 @@ document
       }
 
       const result = await response.json();
-      console.log(result);
+      console.log(result.username);
+      console.log(result.email);
+      console.log(result.profilePicture);
+      console.log(result.isActive);
+      sessionStorage.setItem("ArtistName", result.username);
+      sessionStorage.setItem("Artistemail", result.email);
+      sessionStorage.setItem("Artistimage", result.profilePicture);
+      sessionStorage.setItem("Artistisactive", result.isActive);
       if (result.isActive === false) {
         location.href = "/artist/changepassword.html";
       }
-      location.href = "/artist/artistDashboard.html";
       document.getElementById("loginusername").value = "";
       document.getElementById("loginpassword").value = "";
+      location.href = "/artist/artistDashboard.html";
       // Handle the token (e.g., store it in local storage or use it for subsequent requests)
     } catch (error) {
       console.error("Error logging in:", error);

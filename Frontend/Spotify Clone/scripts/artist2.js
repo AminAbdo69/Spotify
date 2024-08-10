@@ -1,3 +1,8 @@
+// page data
+
+const artist = sessionStorage.getItem("artistname");
+const artistPic = sessionStorage.getItem("artistpic");
+
 var theusername = document.querySelector(".topbar .navbar .username");
 theusername.innerHTML = sessionStorage.getItem("username");
 var Token = sessionStorage.getItem("myToken");
@@ -77,8 +82,6 @@ document
   });
 // refresh token
 
-
-
 // user playlists
 
 document
@@ -143,24 +146,14 @@ function sendData(element, identifier) {
   window.location.href = "/playlist.html"; // Replace with your target page
 }
 
-
-
-
-
-
 var TheArtistName = document.getElementById("artist-name");
 var TheArtistpic = document.getElementById("artist-pic");
-
-const artist = localStorage.getItem("artist");
-// const artistPic = localStorage.getItem('artistPic');
-const artistPic = "assets/images/the last peace of art.png";
 
 TheArtistName.innerText = artist;
 TheArtistpic.src = artistPic;
 
 document.addEventListener("DOMContentLoaded", () => {
   // Retrieve the data from localStorage
-  const artist = localStorage.getItem("artist");
 
   // Make a request to get the artist's songs
   fetch(`https://localhost:7259/api/Artist/ArtistSongs?artistName=${artist}`)
@@ -188,59 +181,120 @@ document.addEventListener("DOMContentLoaded", () => {
     .catch((error) => console.error("Error fetching songs:", error));
 });
 
-document.addEventListener("DOMContentLoaded", () => {
-  // Retrieve the data from localStorage
-  const artist = localStorage.getItem("artist");
+// document.addEventListener("DOMContentLoaded", () => {
+//   // Make a request to get the artist's albums
+//   fetch(`https://localhost:7259/api/Artist/ArtistAlbums?artistName=${artist}`)
+//     .then((response) => response.json())
+//     .then((albums) => {
+//       const albumList = document.getElementById("Popular-Albums");
+//       albumList.innerHTML = ""; // Clear existing content
 
-  // Make a request to get the artist's albums
+//       albums.forEach((album) => {
+//         const albumCard = document.createElement("a");
+//         albumCard.className = "item album-card";
+//         albumCard.dataset.artist = artist;
+//         albumCard.dataset.artistPic = album.albumPic; // Assuming albumPic is part of AlbumOutDTO
+//         albumCard.href = "/albumAfterLogin.html";
+
+//         albumCard.innerHTML = `
+//           <img class="album-image" src="assets/images/the last peace of art.png" />
+//           <div class="play">
+//             <span class="fa fa-play"></span>
+//           </div>
+//           <h4 class="album-title" id="album-name">${album.albumname}</h4>
+//           <p id="album-creator">${artist} - ${album.nsongs} songs</p>
+//         `;
+
+//         albumCard.addEventListener("click", (event) => {
+//           event.preventDefault(); // Prevent the default link behavior
+
+//           // Store the data in localStorage
+//           localStorage.setItem("albumName", album.albumname);
+//           localStorage.setItem("albumPic", album.albumPic);
+//           localStorage.setItem("albumArtist", artist);
+
+//           // Redirect to the new page
+//           window.location.href = albumCard.getAttribute("href");
+//         });
+
+//         albumList.appendChild(albumCard);
+//       });
+//     })
+//     .catch((error) => console.error("Error fetching albums:", error));
+
+//   const showAllButton = document.getElementById("showAll2");
+//   showAllButton.addEventListener("click", function () {
+//     const playlistList = document.getElementById("Popular-Albums");
+//     playlistList.style.overflowX = "auto";
+//   });
+// });
+
+function loadArtistAlbums() {
+  // Retrieve artist name from sessionStorage
+  const artistName = sessionStorage.getItem("artistname");
+
+  if (!artistName) {
+    console.error("No artist name found in sessionStorage.");
+    return;
+  }
+
   fetch(`https://localhost:7259/api/Artist/ArtistAlbums?artistName=${artist}`)
     .then((response) => response.json())
-    .then((albums) => {
-      const albumList = document.getElementById("Popular-Albums");
-      albumList.innerHTML = ""; // Clear existing content
+    .then((data) => {
+      const listContainer = document.getElementById("Popular-Albums");
+      listContainer.innerHTML = ""; // Clear existing content
 
-      albums.forEach((album) => {
+      data.forEach((album) => {
         const albumCard = document.createElement("a");
         albumCard.className = "item album-card";
-        albumCard.dataset.artist = artist;
-        albumCard.dataset.artistPic = album.albumPic; // Assuming albumPic is part of AlbumOutDTO
-        albumCard.href = "/albumAfterLogin.html";
+        albumCard.setAttribute("data-artist", artistName);
+        albumCard.setAttribute("data-artist-pic", album.picture);
+        albumCard.href = "./album.html"; // URL to the album details page
 
-        albumCard.innerHTML = `
-          <img class="album-image" src="assets/images/the last peace of art.png" />
-          <div class="play">
-            <span class="fa fa-play"></span>
-          </div>
-          <h4 class="album-title" id="album-name">${album.albumname}</h4>
-          <p id="album-creator">${artist} - ${album.nsongs} songs</p>
-        `;
+        const img = document.createElement("img");
+        img.className = "album-image";
+        img.src = album.picture; // URL to the album cover image
+        albumCard.appendChild(img);
+
+        const playDiv = document.createElement("div");
+        playDiv.className = "play";
+        playDiv.innerHTML = '<span class="fa fa-play"></span>';
+        albumCard.appendChild(playDiv);
+
+        const title = document.createElement("h4");
+        title.className = "album-title";
+        title.id = "album-name";
+
+        title.textContent = album.albumname; // Album name
+        albumCard.appendChild(title);
+
+        const creator = document.createElement("p");
+        creator.id = "album-creator";
+        creator.textContent = `${album.nsongs} songs`; // Number of songs
+        albumCard.appendChild(creator);
 
         albumCard.addEventListener("click", (event) => {
           event.preventDefault(); // Prevent the default link behavior
 
           // Store the data in localStorage
-          localStorage.setItem("albumName", album.albumname);
-          localStorage.setItem("albumPic", album.albumPic);
-          localStorage.setItem("albumArtist", artist);
+          sessionStorage.setItem("albumName", album.albumname);
+          sessionStorage.setItem("albumPic", album.picture);
+          sessionStorage.setItem("albumArtist", album.artistname);
 
           // Redirect to the new page
           window.location.href = albumCard.getAttribute("href");
         });
 
-        albumList.appendChild(albumCard);
+        listContainer.appendChild(albumCard);
       });
     })
-    .catch((error) => console.error("Error fetching albums:", error));
+    .catch((error) => console.error("Error fetching artist albums:", error));
+}
 
-  const showAllButton = document.getElementById("showAll2");
-  showAllButton.addEventListener("click", function () {
-    const playlistList = document.getElementById("Popular-Albums");
-    playlistList.style.overflowX = "auto";
-  });
-});
+// Call the function to load albums
+loadArtistAlbums();
 
 // following artist
-
 const followBtn = document.getElementById("followBtn");
 
 followBtn.addEventListener("click", function () {
@@ -265,4 +319,227 @@ followBtn.addEventListener("click", function () {
       console.error("Error:", error);
       alert("An error occurred while following the artist.");
     });
+});
+
+// choose any song
+
+document.addEventListener("DOMContentLoaded", function () {
+  // Function to handle click events on song list items
+  function handleSongClick(event) {
+    // Check if the clicked element is a list item
+    if (event.target.tagName === "LI" || event.target.closest("li")) {
+      // Find the closest <li> element to the clicked target
+      const listItem = event.target.closest("li");
+      if (listItem) {
+        // Extract the song title from the <span> with class 'song-title'
+        const songTitleSpan = listItem.querySelector(".song-title");
+        if (songTitleSpan) {
+          const songName = songTitleSpan.textContent
+            .trim()
+            .split("\n")[0]
+            .trim();
+          console.log("Selected song:", songName);
+          // Example usage: load details for a specific song
+          window.onload = function () {
+            loadSongDetails(songName);
+          };
+        }
+      }
+    }
+  }
+
+  // Add click event listener to the song list container
+  const songList = document.getElementById("song-list");
+  if (songList) {
+    songList.addEventListener("click", handleSongClick);
+  }
+});
+
+function loadSongDetails(songName) {
+  if (!songName) {
+    console.error("Song name is required.");
+    return;
+  }
+
+  fetch(`https://localhost:7259/api/Artist/SongDetails/Realsong`)
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+      return response.json(); // Parse JSON response
+    })
+    .then((data) => {
+      console.log("Song details:", data);
+      // Use data to update your UI
+      // Example:
+      document.getElementById("songName22").textContent = data.songname;
+      document.getElementById("artistName22").textContent = data.artistname;
+      document.getElementById("songImage22").src = data.image;
+      document.getElementById("songAudio22").src = data.audio;
+    })
+    .catch((error) => console.error("Error fetching song details:", error));
+}
+
+// audio test
+
+document.addEventListener("DOMContentLoaded", function () {
+  function loadSongAudio(songName) {
+    if (!songName) {
+      console.error("Song name is required.");
+      return;
+    }
+
+    // Construct the URL to fetch the audio
+    const audioUrl = `https://localhost:7259/api/Artist/SongAudio/${encodeURIComponent(
+      songName
+    )}`;
+
+    // Fetch the audio file
+    fetch(audioUrl)
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        return response.blob(); // Get the audio file as a Blob
+      })
+      .then((blob) => {
+        // Create a URL for the Blob
+        const audioBlobUrl = URL.createObjectURL(blob);
+
+        // Set the URL as the source for the audio element
+        const audioElement = document.getElementById("songAudio22");
+        if (audioElement) {
+          audioElement.src = audioBlobUrl;
+        }
+      })
+      .catch((error) => console.error("Error fetching song audio:", error));
+  }
+
+  // Example usage: load audio for a specific song
+  const songName = sessionStorage.getItem("songName"); // Retrieve song name from sessionStorage
+  loadSongAudio("Realsong");
+});
+// image
+
+document.addEventListener("DOMContentLoaded", function () {
+  function loadSongImage(songName) {
+    if (!songName) {
+      console.error("Song name is required.");
+      return;
+    }
+
+    // Construct the URL to fetch the image
+    const imageUrl = `https://localhost:7259/api/Artist/SongImage/${encodeURIComponent(
+      songName
+    )}`;
+
+    // Fetch the image file
+    fetch(imageUrl)
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        return response.blob(); // Get the image file as a Blob
+      })
+      .then((blob) => {
+        // Create a URL for the Blob
+        const imageBlobUrl = URL.createObjectURL(blob);
+
+        // Set the URL as the source for the image element
+        const imageElement = document.getElementById("songImag22e");
+        if (imageElement) {
+          imageElement.src = imageBlobUrl;
+        }
+      })
+      .catch((error) => console.error("Error fetching song image:", error));
+  }
+
+  // Example usage: load image for a specific song
+
+  loadSongImage("Realsong");
+});
+// music player test
+
+// script.js
+
+document.addEventListener("DOMContentLoaded", function () {
+  const audioPlayer = document.getElementById("audioPlayer");
+  const playButton = document.getElementById("playButton");
+  const prevButton = document.getElementById("prevButton");
+  const nextButton = document.getElementById("nextButton");
+  const progressBar = document.getElementById("progressBar");
+  const currentTimeDisplay = document.getElementById("currentTime");
+  const durationDisplay = document.getElementById("duration");
+  const albumArt = document.getElementById("albumArt");
+  const songTitle = document.getElementById("songTitle");
+  const artistName = document.getElementById("artistName");
+
+  let currentSongIndex = 0;
+  const songs = [
+    {
+      title: "Song 1",
+      artist: "Artist 1",
+      url: "path/to/song1.mp3",
+      imageUrl: "path/to/image1.jpg",
+    },
+    {
+      title: "Song 2",
+      artist: "Artist 2",
+      url: "path/to/song2.mp3",
+      imageUrl: "path/to/image2.jpg",
+    },
+    // Add more songs as needed
+  ];
+
+  function loadSong(song) {
+    audioPlayer.src = song.url;
+    albumArt.src = song.imageUrl;
+    songTitle.textContent = song.title;
+    artistName.textContent = song.artist;
+    audioPlayer.addEventListener("loadeddata", () => {
+      durationDisplay.textContent = formatTime(audioPlayer.duration);
+    });
+  }
+
+  function formatTime(seconds) {
+    const minutes = Math.floor(seconds / 60);
+    const secs = Math.floor(seconds % 60);
+    return `${minutes}:${secs < 10 ? "0" : ""}${secs}`;
+  }
+
+  function updateProgress() {
+    progressBar.value = (audioPlayer.currentTime / audioPlayer.duration) * 100;
+    currentTimeDisplay.textContent = formatTime(audioPlayer.currentTime);
+  }
+
+  playButton.addEventListener("click", () => {
+    if (audioPlayer.paused) {
+      audioPlayer.play();
+      playButton.textContent = "Pause";
+    } else {
+      audioPlayer.pause();
+      playButton.textContent = "Play";
+    }
+  });
+
+  prevButton.addEventListener("click", () => {
+    currentSongIndex = (currentSongIndex - 1 + songs.length) % songs.length;
+    loadSong(songs[currentSongIndex]);
+    audioPlayer.play();
+  });
+
+  nextButton.addEventListener("click", () => {
+    currentSongIndex = (currentSongIndex + 1) % songs.length;
+    loadSong(songs[currentSongIndex]);
+    audioPlayer.play();
+  });
+
+  progressBar.addEventListener("input", () => {
+    audioPlayer.currentTime = (progressBar.value / 100) * audioPlayer.duration;
+  });
+
+  audioPlayer.addEventListener("timeupdate", updateProgress);
+
+  // Load the first song
+  loadSong(songs[currentSongIndex]);
 });

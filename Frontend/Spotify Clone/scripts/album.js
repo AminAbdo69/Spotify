@@ -49,7 +49,6 @@ document.addEventListener("click", function (event) {
   }
 });
 
-
 // Get the modal
 var modal = document.getElementById("myModal");
 
@@ -136,16 +135,17 @@ songss.forEach(function (song) {
 
 // document.title = data.title;
 
+const albumName = sessionStorage.getItem("albumName");
+const albumPic = sessionStorage.getItem("albumPic");
+const albumArtist = sessionStorage.getItem("albumArtist");
 document.addEventListener("DOMContentLoaded", () => {
   // Retrieve the data from localStorage
-  const albumName = localStorage.getItem("albumName");
-  const albumPic = "assets/images/the last peace of art4.png";
-  const albumArtist = localStorage.getItem("albumArtist");
   console.log(albumName);
   console.log(albumArtist);
   // Display the data
   document.getElementById("artist-name").textContent = albumArtist;
   document.getElementById("album-title").textContent = albumName;
+  document.getElementById("albumImage").src = albumPic;
 
   fetch(`https://localhost:7259/api/Artist/AlbumSongs?albunmname=${albumName}`)
     .then((response) => response.json())
@@ -171,3 +171,30 @@ document.addEventListener("DOMContentLoaded", () => {
     })
     .catch((error) => console.error("Error fetching songs:", error));
 });
+// get artist image
+function loadArtistImage(artistName) {
+  if (!artistName) {
+      console.error('Artist name is required.');
+      return;
+  }
+
+  fetch(`https://localhost:7259/api/Artist/ArtistImage/${artistName}`)
+      .then(response => {
+          if (!response.ok) {
+              throw new Error(`HTTP error! Status: ${response.status}`);
+          }
+          return response.blob(); // Get the response as a blob
+      })
+      .then(imageBlob => {
+          const imageUrl = URL.createObjectURL(imageBlob); // Create a local URL for the image blob
+          const imgElement = document.getElementById('artistImage'); // Ensure you have an element with this ID in your HTML
+          imgElement.src = imageUrl; // Set the image source to the local URL
+      })
+      .catch(error => console.error('Error fetching artist image:', error));
+}
+
+// Example usage: load image for a specific artist
+window.onload = function() {
+  loadArtistImage(albumArtist);
+};
+

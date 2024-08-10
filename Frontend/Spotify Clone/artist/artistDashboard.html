@@ -55,7 +55,11 @@
             <span class="notification p-relative">
               <i class="fa-regular fa-bell fa-lg"></i>
             </span>
-            <img src="../artist/asset/imgs/amin.jpeg" alt="" />
+            <img
+              id="Artist-image"
+              src="../artist/asset/imgs/amin.jpeg"
+              alt=""
+            />
           </div>
         </div>
         <!-- end head  -->
@@ -81,6 +85,7 @@
                     src="../artist/asset/imgs/amin.jpeg"
                     alt=""
                     class="avatar"
+                    id="Artist-image"
                   />
                   <div class="body d-flex txt-c p-20 mb-20 block-mobile">
                     <div>
@@ -511,6 +516,7 @@
                       class="avatar mr-15"
                       src="../artist/asset/imgs/amin.jpeg"
                       alt=""
+                      id="Artist-image"
                     />
                     <div class="info">
                       <span class="d-block mb-5 fw-bold" id="">Amin Abdo</span>
@@ -722,8 +728,15 @@
 
                     <input
                       type="file"
-                      id="songImage2"
-                      name="songImage2"
+                      id="songImage"
+                      name="songImage"
+                      accept=".png, .jpeg, .jpg, .avif"
+                      required
+                    />
+                    <input
+                      type="file"
+                      id="songAudio"
+                      name="songAudio"
                       accept=".mp3, .wav"
                       required
                     />
@@ -772,11 +785,11 @@
                       placeholder="e.g The Last Peace of art"
                       id="albumName2"
                     />
-                    <label for="profileImage">Profile Image</label>
+                    <label for="AlbumImage">Album Image</label>
                     <input
                       type="file"
-                      id="profileImage"
-                      name="profileImage"
+                      id="AlbumImage"
+                      name="AlbumImage"
                       accept=".png, .jpeg, .jpg, .avif"
                       required
                     />

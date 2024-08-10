@@ -34,7 +34,7 @@ namespace Spotify.Controllers
 
             if (request.Image == null || request.Image.Length == 0)
             {
-                return BadRequest("No image for yourprofile was uploaded.");
+                return BadRequest("No image for playlist was uploaded.");
             }
 
             var extention = Path.GetExtension(request.Image.FileName).ToLowerInvariant();
@@ -44,7 +44,7 @@ namespace Spotify.Controllers
             {
                 return BadRequest("Unsupport image format.");
             }
-            var filePath = SaveProfileImage(request.playlistname, request.Image);
+            var filePath = SavePlaylistImage(request.playlistname, request.Image);
 
 
             Playlist playlist = new()
@@ -68,6 +68,34 @@ namespace Spotify.Controllers
             
             db.SaveChanges();
             return Ok($" {request.playlistname} Has Been Created Successfully");
+        }
+
+        [HttpGet("PlaylistImage/{playlistname}")]
+        public IActionResult GetUserImage(string playlistname)
+        {
+            if (string.IsNullOrEmpty(playlistname))
+            {
+                return BadRequest("playlistname is invalid.");
+            }
+
+            Playlist? playlist = db.Playlists.SingleOrDefault(u => u.PlaylistName == playlistname);
+
+            if (playlist == null)
+            {
+                return NotFound("PLaylist not found.");
+            }
+
+            if (string.IsNullOrEmpty(playlist.picpath))
+            {
+                return NotFound("Image not found.");
+            }
+
+            var filePath = Path.Combine(environment.ContentRootPath, playlist.picpath);
+            var extention = Path.GetExtension(playlist.picpath).ToLowerInvariant();
+
+            var image = System.IO.File.OpenRead(filePath);
+
+            return File(image, $"image/{extention.TrimStart('.')}");
         }
 
         [HttpGet("UserPlayllists")]
@@ -135,7 +163,7 @@ namespace Spotify.Controllers
 
         }
 
-        [HttpPost("AddPlaylistSong") , Authorize]
+        [HttpPost("AddPlaylistSong")]
         public ActionResult<string> AddPlaylistSong(AddPlaylistSongDTO request)
         {
             Playlist playlist = db.Playlists.FirstOrDefault(p=>p.PlaylistName == request.playlistName);
@@ -214,14 +242,14 @@ namespace Spotify.Controllers
                     name = playlist.PlaylistName,
                     creator = playlist.User.UserName,
                     count = playlist.PlaylistsoungCount,
-                    picture = playlist.picpath
+                    picture = $"https://localhost:7259/api/User/PlaylistImage/{playlist.PlaylistName}"
                 });
             }
             return Ok(allPlaylists);
         }
 
         [HttpPost("LikePlaylist")]
-        public ActionResult<string> LikeAlbum(LikedPlaylistDTO likedPlaylist)
+        public ActionResult<string> LikePlaylist(LikedPlaylistDTO likedPlaylist)
         {
             var playlist = db.Playlists
                 .Include(p => p.PLaylistLovers)
@@ -250,13 +278,10 @@ namespace Spotify.Controllers
             return Ok($"{likedPlaylist.username} has liked {likedPlaylist.playlistname} successfully.");
         }
 
-        #endregion
-
-
-
-        private string SaveProfileImage(string Username, IFormFile Image)
+        #endregion  
+        private string SavePlaylistImage(string playlistname, IFormFile Image)
         {
-            var uploadFolder = Path.Combine(environment.ContentRootPath, "ProfileArtistImages");
+            var uploadFolder = Path.Combine(environment.ContentRootPath, "PlaylistsImages");
 
             if (!Directory.Exists(uploadFolder))
             {
@@ -265,36 +290,14 @@ namespace Spotify.Controllers
 
             var extention = Path.GetExtension(Image.FileName).ToLowerInvariant();
 
-            var imagePath = Path.Combine(uploadFolder, $"{Username}{extention}");
+            var imagePath = Path.Combine(uploadFolder, $"{playlistname}{extention}");
 
             using (var fileStream = new FileStream(imagePath, FileMode.Create))
             {
                 Image.CopyTo(fileStream);
             }
 
-            return Path.Combine("ProfileArtistImages", $"{Username}{extention}");
+            return Path.Combine("PlaylistsImages", $"{playlistname}{extention}");
         }
-
-        private string SaveAudioFile(string username, IFormFile audioFile)
-        {
-            var uploadFolder = Path.Combine(environment.ContentRootPath, "ArtistAudioFiles");
-
-            if (!Directory.Exists(uploadFolder))
-            {
-                Directory.CreateDirectory(uploadFolder);
-            }
-
-            var extension = Path.GetExtension(audioFile.FileName).ToLowerInvariant();
-            var audioPath = Path.Combine(uploadFolder, $"{username}{extension}");
-
-            using (var fileStream = new FileStream(audioPath, FileMode.Create))
-            {
-                audioFile.CopyTo(fileStream);
-            }
-
-            return Path.Combine("ArtistAudioFiles", $"{username}{extension}");
-        }
-
-
     }
 }

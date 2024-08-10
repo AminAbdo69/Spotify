@@ -74,18 +74,17 @@ body {
   width: 48px;
   height: 48px;
 }
-.sidebar .navigation .playlist-container .creator-info{
+.sidebar .navigation .playlist-container .creator-info {
   color: #8f8f8f;
   font-size: 15px;
 }
-.sidebar .navigation .playlist-container .playlistName{
+.sidebar .navigation .playlist-container .playlistName {
   font-size: 20px;
   font-weight: bold;
 }
 .sidebar .navigation .playlist-container:hover {
   background: var(--sidebar-scroll-bg);
 }
-
 
 .sidebar-scroll {
   height: 200px;
@@ -530,7 +529,6 @@ body {
   opacity: 1;
 }
 
-
 .popular-artists {
   display: flex;
   flex-direction: column;
@@ -541,7 +539,6 @@ body {
 .spotify-playlists {
   padding-inline: var(--content-spacing);
 }
-
 
 .spotify-playlists .title {
   display: flex;
@@ -797,4 +794,73 @@ i:hover {
 }
 .volume-bar .progress-bar:hover .progress::after {
   --size: 0.8em;
+}
+.test-container {
+  background-color: white;
+  color: red;
+  display: flex;
+  margin-left: 400px;
+  padding: 20px;
+  gap: 20px;
+}
+.test-container img {
+  width: 50px;
+  height: 50px;
+  border-radius: 10px;
+}
+
+/* player music  */
+
+.player-container {
+  background: #1e1e1e;
+  border-radius: 8px;
+  width: 300px;
+  padding: 20px;
+  text-align: center;
+  margin-left: 400px;
+  color: #fff;
+}
+
+.album-art {
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+}
+
+.player-info h2 {
+  font-size: 1.2em;
+  margin: 10px 0;
+}
+
+.player-controls {
+  margin: 20px 0;
+}
+
+.control-button {
+  background: #1db954;
+  border: none;
+  color: white;
+  padding: 10px 20px;
+  margin: 0 5px;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.control-button:hover {
+  background: #1ed760;
+}
+
+.progress-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#progressBar {
+  width: 80%;
+}
+
+#currentTime,
+#duration {
+  margin: 0 10px;
 }
