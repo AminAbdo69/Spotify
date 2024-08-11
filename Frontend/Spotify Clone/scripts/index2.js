@@ -611,3 +611,161 @@ showAllButton3.addEventListener("click", function () {
   const playlistList = document.getElementById("Popular-Playlist");
   playlistList.style.overflowX = "auto";
 });
+
+
+// test playing the song
+document.addEventListener("DOMContentLoaded", function () {
+  const playPauseBtn = document.querySelector(".play-pause");
+  const progressBar = document.querySelector(".progress-bar .progress");
+  const volumeBar = document.querySelector(".volume-bar .progress");
+
+  const audio = new Audio();
+  // Function to handle click events on song list items
+  function handleSongClick(event) {
+    // Check if the clicked element is a list item
+    if (event.target.tagName === "LI" || event.target.closest("li")) {
+      // Find the closest <li> element to the clicked target
+      const listItem = event.target.closest("li");
+      if (listItem) {
+        // Extract the song title from the <span> with class 'song-title'
+        const songTitleSpan = listItem.querySelector(".song-title");
+        const songArtistSpan = listItem.querySelector(".artistName");
+        if (songTitleSpan && songArtistSpan) {
+          const songName = songTitleSpan.textContent
+            .trim()
+            .split("\n")[0]
+            .trim();
+          const songArtist = songArtistSpan.textContent;
+          document.getElementById("Song-name").innerText = songName;
+          document.getElementById("song-artist").innerText = songArtist;
+          fetchSongAudio(songName);
+          fetchSongImage(songName);
+        }
+      }
+    }
+  }
+
+  // Add click event listener to the song list container
+  const songList = document.getElementById("song-list");
+  if (songList) {
+    songList.addEventListener("click", handleSongClick);
+  }
+
+  // Function to make an HTTP request to fetch the song audio
+  function fetchSongAudio(songName) {
+    fetch(
+      `https://localhost:7259/api/Artist/SongAudio/${encodeURIComponent(
+        songName
+      )}`
+    )
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`Error: ${response.statusText}`);
+        }
+        return response.blob(); // Fetch the audio as a binary blob
+      })
+      .then((blob) => {
+        const audioUrl = URL.createObjectURL(blob);
+        audio.src = audioUrl;
+        audio.play(); // Automatically start playing the song
+      })
+      .catch((error) => {
+        console.error("Failed to load the song:", error);
+      });
+  }
+  // Function to make an HTTP request to fetch the song image
+  function fetchSongImage(songName) {
+    fetch(
+      `https://localhost:7259/api/Artist/SongImage/${encodeURIComponent(
+        songName
+      )}`
+    )
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`Error: ${response.statusText}`);
+        }
+        return response.blob(); // Fetch the image as a binary blob
+      })
+      .then((blob) => {
+        const imageUrl = URL.createObjectURL(blob);
+
+        // Find the img element by its ID and update its src attribute
+        const imageElement = document.getElementById("song-image");
+        if (imageElement) {
+          imageElement.src = imageUrl;
+        } else {
+          console.error("Image element with ID 'song-image' not found");
+        }
+      })
+      .catch((error) => {
+        console.error("Failed to load the image:", error);
+      });
+  }
+
+  // end test
+  let isPlaying = true;
+
+  // Play/Pause Toggle
+  playPauseBtn.addEventListener("click", function () {
+    if (isPlaying) {
+      audio.pause();
+      playPauseBtn.classList.remove("fa-pause");
+      playPauseBtn.classList.add("fa-play");
+    } else {
+      audio.play();
+      playPauseBtn.classList.remove("fa-play");
+      playPauseBtn.classList.add("fa-pause");
+    }
+    isPlaying = !isPlaying;
+  });
+
+  // Update progress bar as the audio plays
+  audio.addEventListener("timeupdate", function () {
+    const progressPercent = (audio.currentTime / audio.duration) * 100;
+    progressBar.style.width = `${progressPercent}%`;
+
+    // Update the current time display
+    const currentTimeDisplay = document.querySelector(
+      ".progress-container span:first-child"
+    );
+    currentTimeDisplay.textContent = formatTime(audio.currentTime);
+
+    // Update the duration display
+    const durationDisplay = document.querySelector(
+      ".progress-container span:last-child"
+    );
+    if (!isNaN(audio.duration)) {
+      durationDisplay.textContent = formatTime(audio.duration);
+    }
+  });
+
+  // Function to format time in minutes and seconds
+  function formatTime(seconds) {
+    const minutes = Math.floor(seconds / 60);
+    seconds = Math.floor(seconds % 60);
+    return `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
+  }
+
+  // Seek functionality
+  document
+    .querySelector(".progress-bar")
+    .addEventListener("click", function (e) {
+      const progressContainerWidth = this.clientWidth;
+      const clickX = e.offsetX;
+      const duration = audio.duration;
+
+      audio.currentTime = (clickX / progressContainerWidth) * duration;
+    });
+
+  // Volume Control
+  document
+    .querySelector(".volume-bar .progress-bar")
+    .addEventListener("click", function (e) {
+      const volumeBarWidth = this.clientWidth;
+      const clickX = e.offsetX;
+      const volumeLevel = clickX / volumeBarWidth;
+
+      audio.volume = volumeLevel;
+      volumeBar.style.width = `${volumeLevel * 100}%`;
+    });
+});

@@ -322,7 +322,8 @@ followBtn.addEventListener("click", function () {
 });
 
 // choose any song
-
+var selectedSongname = "";
+var selectedSongArtist = "";
 document.addEventListener("DOMContentLoaded", function () {
   // Function to handle click events on song list items
   function handleSongClick(event) {
@@ -333,16 +334,17 @@ document.addEventListener("DOMContentLoaded", function () {
       if (listItem) {
         // Extract the song title from the <span> with class 'song-title'
         const songTitleSpan = listItem.querySelector(".song-title");
-        if (songTitleSpan) {
+        const songArtistSpan = listItem.querySelector(".artistName");
+        if (songTitleSpan && songArtistSpan) {
           const songName = songTitleSpan.textContent
             .trim()
             .split("\n")[0]
             .trim();
-          console.log("Selected song:", songName);
-          // Example usage: load details for a specific song
-          window.onload = function () {
-            loadSongDetails(songName);
-          };
+          const songArtist = songArtistSpan.textContent;
+          selectedSongname = songName;
+          selectedSongArtist = songArtist;
+          // console.log("Selected song:", selectedSongname);
+          // console.log("Selected song artist :", selectedSongArtist);
         }
       }
     }
@@ -381,44 +383,44 @@ function loadSongDetails(songName) {
 }
 
 // audio test
+// var audio = "";
+// document.addEventListener("DOMContentLoaded", function () {
+//   function loadSongAudio(songName) {
+//     if (!songName) {
+//       console.error("Song name is required.");
+//       return;
+//     }
 
-document.addEventListener("DOMContentLoaded", function () {
-  function loadSongAudio(songName) {
-    if (!songName) {
-      console.error("Song name is required.");
-      return;
-    }
+//     // Construct the URL to fetch the audio
+//     const audioUrl = `https://localhost:7259/api/Artist/SongAudio/${encodeURIComponent(
+//       songName
+//     )}`;
 
-    // Construct the URL to fetch the audio
-    const audioUrl = `https://localhost:7259/api/Artist/SongAudio/${encodeURIComponent(
-      songName
-    )}`;
+//     // Fetch the audio file
+//     fetch(audioUrl)
+//       .then((response) => {
+//         if (!response.ok) {
+//           throw new Error(`HTTP error! Status: ${response.status}`);
+//         }
+//         return response.blob(); // Get the audio file as a Blob
+//       })
+//       .then((blob) => {
+//         // Create a URL for the Blob
+//         const audioBlobUrl = URL.createObjectURL(blob);
+//         audio.src = audioBlobUrl;
+//         // // Set the URL as the source for the audio element
+//         // const audioElement = document.getElementById("songAudio22");
+//         // if (audioElement) {
+//         //   audio.src = audioBlobUrl;
+//         // }
+//       })
+//       .catch((error) => console.error("Error fetching song audio:", error));
+//   }
 
-    // Fetch the audio file
-    fetch(audioUrl)
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error(`HTTP error! Status: ${response.status}`);
-        }
-        return response.blob(); // Get the audio file as a Blob
-      })
-      .then((blob) => {
-        // Create a URL for the Blob
-        const audioBlobUrl = URL.createObjectURL(blob);
-
-        // Set the URL as the source for the audio element
-        const audioElement = document.getElementById("songAudio22");
-        if (audioElement) {
-          audioElement.src = audioBlobUrl;
-        }
-      })
-      .catch((error) => console.error("Error fetching song audio:", error));
-  }
-
-  // Example usage: load audio for a specific song
-  const songName = sessionStorage.getItem("songName"); // Retrieve song name from sessionStorage
-  loadSongAudio("Realsong");
-});
+//   // Example usage: load audio for a specific song
+//   const songName = sessionStorage.getItem("songName"); // Retrieve song name from sessionStorage
+//   loadSongAudio(selectedSongname);
+// });
 // image
 
 document.addEventListener("DOMContentLoaded", function () {
@@ -458,88 +460,178 @@ document.addEventListener("DOMContentLoaded", function () {
 
   loadSongImage("Realsong");
 });
-// music player test
 
-// script.js
-
+// test playing the song
 document.addEventListener("DOMContentLoaded", function () {
-  const audioPlayer = document.getElementById("audioPlayer");
-  const playButton = document.getElementById("playButton");
-  const prevButton = document.getElementById("prevButton");
-  const nextButton = document.getElementById("nextButton");
-  const progressBar = document.getElementById("progressBar");
-  const currentTimeDisplay = document.getElementById("currentTime");
-  const durationDisplay = document.getElementById("duration");
-  const albumArt = document.getElementById("albumArt");
-  const songTitle = document.getElementById("songTitle");
-  const artistName = document.getElementById("artistName");
+  const playPauseBtn = document.querySelector(".play-pause");
+  const progressBar = document.querySelector(".progress-bar .progress");
+  const volumeBar = document.querySelector(".volume-bar .progress");
 
-  let currentSongIndex = 0;
-  const songs = [
-    {
-      title: "Song 1",
-      artist: "Artist 1",
-      url: "path/to/song1.mp3",
-      imageUrl: "path/to/image1.jpg",
-    },
-    {
-      title: "Song 2",
-      artist: "Artist 2",
-      url: "path/to/song2.mp3",
-      imageUrl: "path/to/image2.jpg",
-    },
-    // Add more songs as needed
-  ];
+  // start test
+  // const songList = document.getElementById("song-list");
+  const audio = new Audio();
 
-  function loadSong(song) {
-    audioPlayer.src = song.url;
-    albumArt.src = song.imageUrl;
-    songTitle.textContent = song.title;
-    artistName.textContent = song.artist;
-    audioPlayer.addEventListener("loadeddata", () => {
-      durationDisplay.textContent = formatTime(audioPlayer.duration);
-    });
+  // Add click event listener to each song in the list
+  // songList.addEventListener("click", function (e) {
+  //   const songItem = e.target.closest("li");
+  //   if (songItem) {
+  //     const songTitleElement = document.querySelector(".song-title");
+
+  //     // Extract the song title by removing the artist's name
+  //     const songTitle = songTitleElement.childNodes[0].textContent.trim();
+  //     console.log(songTitle);
+
+  //     if (songTitle) {
+  //       fetchSongAudio(songTitle);
+  //     }
+  //   }
+  // });
+  // Function to handle click events on song list items
+  function handleSongClick(event) {
+    // Check if the clicked element is a list item
+    if (event.target.tagName === "LI" || event.target.closest("li")) {
+      // Find the closest <li> element to the clicked target
+      const listItem = event.target.closest("li");
+      if (listItem) {
+        // Extract the song title from the <span> with class 'song-title'
+        const songTitleSpan = listItem.querySelector(".song-title");
+        const songArtistSpan = listItem.querySelector(".artistName");
+        if (songTitleSpan && songArtistSpan) {
+          const songName = songTitleSpan.textContent
+            .trim()
+            .split("\n")[0]
+            .trim();
+          const songArtist = songArtistSpan.textContent;
+          document.getElementById("Song-name").innerText = songName;
+          document.getElementById("song-artist").innerText = songArtist;
+          fetchSongAudio(songName);
+          fetchSongImage(songName);
+        }
+      }
+    }
   }
 
-  function formatTime(seconds) {
-    const minutes = Math.floor(seconds / 60);
-    const secs = Math.floor(seconds % 60);
-    return `${minutes}:${secs < 10 ? "0" : ""}${secs}`;
+  // Add click event listener to the song list container
+  const songList = document.getElementById("song-list");
+  if (songList) {
+    songList.addEventListener("click", handleSongClick);
   }
 
-  function updateProgress() {
-    progressBar.value = (audioPlayer.currentTime / audioPlayer.duration) * 100;
-    currentTimeDisplay.textContent = formatTime(audioPlayer.currentTime);
+  // Function to make an HTTP request to fetch the song audio
+  function fetchSongAudio(songName) {
+    fetch(
+      `https://localhost:7259/api/Artist/SongAudio/${encodeURIComponent(
+        songName
+      )}`
+    )
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`Error: ${response.statusText}`);
+        }
+        return response.blob(); // Fetch the audio as a binary blob
+      })
+      .then((blob) => {
+        const audioUrl = URL.createObjectURL(blob);
+        audio.src = audioUrl;
+        audio.play(); // Automatically start playing the song
+      })
+      .catch((error) => {
+        console.error("Failed to load the song:", error);
+      });
+  }
+  // Function to make an HTTP request to fetch the song image
+  function fetchSongImage(songName) {
+    fetch(
+      `https://localhost:7259/api/Artist/SongImage/${encodeURIComponent(
+        songName
+      )}`
+    )
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`Error: ${response.statusText}`);
+        }
+        return response.blob(); // Fetch the image as a binary blob
+      })
+      .then((blob) => {
+        const imageUrl = URL.createObjectURL(blob);
+
+        // Find the img element by its ID and update its src attribute
+        const imageElement = document.getElementById("song-image");
+        if (imageElement) {
+          imageElement.src = imageUrl;
+        } else {
+          console.error("Image element with ID 'song-image' not found");
+        }
+      })
+      .catch((error) => {
+        console.error("Failed to load the image:", error);
+      });
   }
 
-  playButton.addEventListener("click", () => {
-    if (audioPlayer.paused) {
-      audioPlayer.play();
-      playButton.textContent = "Pause";
+  // end test
+  let isPlaying = true;
+
+  // Play/Pause Toggle
+  playPauseBtn.addEventListener("click", function () {
+    if (isPlaying) {
+      audio.pause();
+      playPauseBtn.classList.remove("fa-pause");
+      playPauseBtn.classList.add("fa-play");
     } else {
-      audioPlayer.pause();
-      playButton.textContent = "Play";
+      audio.play();
+      playPauseBtn.classList.remove("fa-play");
+      playPauseBtn.classList.add("fa-pause");
+    }
+    isPlaying = !isPlaying;
+  });
+
+  // Update progress bar as the audio plays
+  audio.addEventListener("timeupdate", function () {
+    const progressPercent = (audio.currentTime / audio.duration) * 100;
+    progressBar.style.width = `${progressPercent}%`;
+
+    // Update the current time display
+    const currentTimeDisplay = document.querySelector(
+      ".progress-container span:first-child"
+    );
+    currentTimeDisplay.textContent = formatTime(audio.currentTime);
+
+    // Update the duration display
+    const durationDisplay = document.querySelector(
+      ".progress-container span:last-child"
+    );
+    if (!isNaN(audio.duration)) {
+      durationDisplay.textContent = formatTime(audio.duration);
     }
   });
 
-  prevButton.addEventListener("click", () => {
-    currentSongIndex = (currentSongIndex - 1 + songs.length) % songs.length;
-    loadSong(songs[currentSongIndex]);
-    audioPlayer.play();
-  });
+  // Function to format time in minutes and seconds
+  function formatTime(seconds) {
+    const minutes = Math.floor(seconds / 60);
+    seconds = Math.floor(seconds % 60);
+    return `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
+  }
 
-  nextButton.addEventListener("click", () => {
-    currentSongIndex = (currentSongIndex + 1) % songs.length;
-    loadSong(songs[currentSongIndex]);
-    audioPlayer.play();
-  });
+  // Seek functionality
+  document
+    .querySelector(".progress-bar")
+    .addEventListener("click", function (e) {
+      const progressContainerWidth = this.clientWidth;
+      const clickX = e.offsetX;
+      const duration = audio.duration;
 
-  progressBar.addEventListener("input", () => {
-    audioPlayer.currentTime = (progressBar.value / 100) * audioPlayer.duration;
-  });
+      audio.currentTime = (clickX / progressContainerWidth) * duration;
+    });
 
-  audioPlayer.addEventListener("timeupdate", updateProgress);
+  // Volume Control
+  document
+    .querySelector(".volume-bar .progress-bar")
+    .addEventListener("click", function (e) {
+      const volumeBarWidth = this.clientWidth;
+      const clickX = e.offsetX;
+      const volumeLevel = clickX / volumeBarWidth;
 
-  // Load the first song
-  loadSong(songs[currentSongIndex]);
+      audio.volume = volumeLevel;
+      volumeBar.style.width = `${volumeLevel * 100}%`;
+    });
 });
