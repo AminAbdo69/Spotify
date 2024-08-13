@@ -2,7 +2,7 @@
 const albumName = sessionStorage.getItem("albumName");
 const albumPic = sessionStorage.getItem("albumPic");
 const albumArtist = sessionStorage.getItem("albumArtist");
-const Username = localStorage.getItem("Username");
+const Username = sessionStorage.getItem("username");
 
 var theusername = document.querySelector(".topbar .navbar .username");
 theusername.innerHTML = Username;
@@ -180,7 +180,7 @@ document.addEventListener("DOMContentLoaded", () => {
                   <span class="artistName">${song.artistName}</span>
                 </span>
                 <span class="duration">
-                  <i class="fa-regular fa-heart"></i>
+                  <i class="fa-regular fa-heart" id="likesong" data-songname=${song.songName}></i>
                   <span class="time">${song.duration}</span>
                   <i class="fa-solid fa-ellipsis"></i>
                 </span>
@@ -194,6 +194,7 @@ document.addEventListener("DOMContentLoaded", () => {
 // user love album
 
 const loveBtn = document.getElementById("hearticon");
+const unloveBtn = document.getElementById("unlikealbum");
 
 loveBtn.addEventListener("click", function () {
   var username = Username;
@@ -213,6 +214,8 @@ loveBtn.addEventListener("click", function () {
     .then((response) => response.text())
     .then((data) => {
       alert(data);
+      loveBtn.style.display = "none";
+      unloveBtn.style.display = "block";
     })
     .catch((error) => {
       console.error("Error :", error);
@@ -220,6 +223,185 @@ loveBtn.addEventListener("click", function () {
     });
 });
 
+// user unlike album
+unloveBtn.addEventListener("click", function () {
+  var username = Username; // Replace with the actual username variable
+  var albumname = albumName; // Replace with the actual album name variable
+
+  const likedAlbumDTO = {
+    albumname: albumname,
+    username: username,
+  };
+
+  fetch("https://localhost:7259/api/Artist/UnlikeAlbum", {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(likedAlbumDTO),
+  })
+    .then((response) => response.text())
+    .then((data) => {
+      alert(data);
+      unloveBtn.style.display = "none";
+      loveBtn.style.display = "block";
+    })
+    .catch((error) => {
+      console.error("Error:", error);
+      alert("An error occurred while unliking the album.");
+    });
+});
+// like and unlike song
+
+document.addEventListener("DOMContentLoaded", function () {
+  const username = Username; // Replace with the actual username
+
+  document.querySelectorAll(".like-song").forEach(function (likeIcon) {
+    likeIcon.addEventListener("click", function () {
+      const songName = this.getAttribute("data-songname");
+
+      const likedSongDTO = {
+        songname: songName,
+        username: username,
+      };
+
+      // Determine if the song is already liked
+      if (this.classList.contains("fa-heart")) {
+        // Send a POST request to like the song
+        fetch("https://localhost:7259/api/Artist/LikeSong", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(likedSongDTO),
+        })
+          .then((response) => response.text())
+          .then((data) => {
+            console.log(data);
+            alert(data);
+
+            // Change the icon to show it's liked
+            this.classList.remove("fa-heart");
+            this.classList.add("fa-circle-check");
+            this.style.color = "#1db954";
+            this.id = "unlikesong"; // Update the id
+          })
+          .catch((error) => {
+            console.error("Error:", error);
+            alert("An error occurred while liking the song.");
+          });
+      } else if (this.classList.contains("fa-circle-check")) {
+        // Send a DELETE request to unlike the song
+        fetch("https://localhost:7259/api/Artist/UnlikeSong", {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(likedSongDTO),
+        })
+          .then((response) => response.text())
+          .then((data) => {
+            console.log(data);
+            alert(data);
+
+            // Change the icon back to the unliked state
+            this.classList.remove("fa-circle-check");
+            this.classList.add("fa-heart");
+            this.style.color = ""; // Reset color to default
+            this.id = "likesong"; // Update the id
+          })
+          .catch((error) => {
+            console.error("Error:", error);
+            alert("An error occurred while unliking the song.");
+          });
+      }
+    });
+  });
+});
+
+// like and unlike from music player
+
+document.addEventListener("DOMContentLoaded", function () {
+  const likeSongIcon = document.getElementById("likesongg");
+  const songNameElement = document.getElementById("Song-name");
+  const unlikeSongIcon = document.getElementById("unlikesongg");
+
+  likeSongIcon.addEventListener("click", function () {
+    // Get the username from sessionStorage
+    const username = sessionStorage.getItem("username");
+
+    // Get the song name from the song name element
+    const songName = songNameElement.textContent;
+    console.log(username);
+    console.log(songName);
+
+    // Prepare the LikedSongDTO object
+    const likedSongDTO = {
+      songname: songName,
+      username: username,
+    };
+
+    // Make the POST request to like the song
+    fetch("https://localhost:7259/api/Artist/LikeSong", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(likedSongDTO),
+    })
+      .then((response) => response.text())
+      .then((data) => {
+        console.log(data);
+        alert(data);
+
+        // Change the icon to show it's liked
+        likeSongIcon.style.display = "none";
+        unlikeSongIcon.style.display = "block";
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+        alert("An error occurred while liking the song.");
+      });
+  });
+
+  unlikeSongIcon.addEventListener("click", function () {
+    // Get the username from sessionStorage
+    const username = sessionStorage.getItem("username");
+
+    // Get the song name from the song name element
+    const songName = songNameElement.textContent.trim();
+
+    // Prepare the LikedSongDTO object
+    const likedSongDTO = {
+      songname: songName,
+      username: username,
+    };
+
+    // Make the DELETE request to unlike the song
+    fetch("https://localhost:7259/api/Artist/UnlikeSong", {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(likedSongDTO),
+    })
+      .then((response) => response.text())
+      .then((data) => {
+        console.log(data);
+        alert(data);
+
+        // Change the icon back to the unliked state
+        unlikeSongIcon.style.display = "none";
+        likeSongIcon.style.display = "block";
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+        alert("An error occurred while unliking the song.");
+      });
+  });
+});
+
+// end like & unlike song
 // get artist image
 function loadArtistImage(artistName) {
   if (!artistName) {

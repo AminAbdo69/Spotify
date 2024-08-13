@@ -294,7 +294,7 @@ function loadArtistAlbums() {
 // Call the function to load albums
 loadArtistAlbums();
 
-// following artist
+// following and unfollowing artist
 const followBtn = document.getElementById("followBtn");
 
 followBtn.addEventListener("click", function () {
@@ -303,23 +303,130 @@ followBtn.addEventListener("click", function () {
     UserName: username, // Replace with the actual user username
   };
 
-  fetch("https://localhost:7259/api/Artist/followArtist", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(followArtistDTO),
-  })
-    .then((response) => response.text())
-    .then((data) => {
-      console.log(data);
-      alert(data);
+  if (followBtn.innerText === "Follow") {
+    // Make a POST request to follow the artist
+    fetch("https://localhost:7259/api/Artist/followArtist", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(followArtistDTO),
     })
-    .catch((error) => {
-      console.error("Error:", error);
-      alert("An error occurred while following the artist.");
-    });
+      .then((response) => response.text())
+      .then((data) => {
+        console.log(data);
+        alert(data);
+        followBtn.innerText = "Following";
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+        alert("An error occurred while following the artist.");
+      });
+  } else if (followBtn.innerText === "Following") {
+    // Make a DELETE request to unfollow the artist
+    fetch("https://localhost:7259/api/Artist/unfollowArtist", {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(followArtistDTO),
+    })
+      .then((response) => response.text())
+      .then((data) => {
+        console.log(data);
+        alert(data);
+        followBtn.innerText = "Follow";
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+        alert("An error occurred while unfollowing the artist.");
+      });
+  }
 });
+
+// like and unlike from music player
+
+document.addEventListener("DOMContentLoaded", function () {
+  const likeSongIcon = document.getElementById("likesongg");
+  const songNameElement = document.getElementById("Song-name");
+  const unlikeSongIcon = document.getElementById("unlikesongg");
+
+  likeSongIcon.addEventListener("click", function () {
+    // Get the username from sessionStorage
+    const username = sessionStorage.getItem("username");
+
+    // Get the song name from the song name element
+    const songName = songNameElement.textContent;
+    console.log(username);
+    console.log(songName);
+
+    // Prepare the LikedSongDTO object
+    const likedSongDTO = {
+      songname: songName,
+      username: username,
+    };
+
+    // Make the POST request to like the song
+    fetch("https://localhost:7259/api/Artist/LikeSong", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(likedSongDTO),
+    })
+      .then((response) => response.text())
+      .then((data) => {
+        console.log(data);
+        alert(data);
+
+        // Change the icon to show it's liked
+        likeSongIcon.style.display = "none";
+        unlikeSongIcon.style.display = "block";
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+        alert("An error occurred while liking the song.");
+      });
+  });
+
+  unlikeSongIcon.addEventListener("click", function () {
+    // Get the username from sessionStorage
+    const username = sessionStorage.getItem("username");
+
+    // Get the song name from the song name element
+    const songName = songNameElement.textContent.trim();
+
+    // Prepare the LikedSongDTO object
+    const likedSongDTO = {
+      songname: songName,
+      username: username,
+    };
+
+    // Make the DELETE request to unlike the song
+    fetch("https://localhost:7259/api/Artist/UnlikeSong", {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(likedSongDTO),
+    })
+      .then((response) => response.text())
+      .then((data) => {
+        console.log(data);
+        alert(data);
+
+        // Change the icon back to the unliked state
+        unlikeSongIcon.style.display = "none";
+        likeSongIcon.style.display = "block";
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+        alert("An error occurred while unliking the song.");
+      });
+  });
+});
+
+// end like & unlike song
 
 // choose any song
 var selectedSongname = "";

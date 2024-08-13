@@ -288,6 +288,35 @@ namespace Spotify.Controllers
             return Ok($"{followArtist.UserName} has followed {followArtist.ArtistName} successfully.");
         }
 
+        [HttpDelete("unfollowArtist")]
+        public ActionResult<string> UnFollowArtist(FollowArtistDTO followArtist)
+        {
+            var artist = db.Artists
+                .Include(p => p.Followers)
+                .SingleOrDefault(p => p.Username == followArtist.ArtistName);
+            if (artist == null)
+            {
+                return NotFound("Artist not found.");
+            }
+
+            User user = db.Users.FirstOrDefault(u => u.UserName == followArtist.UserName);
+            if (user == null)
+            {
+                return NotFound("User not found.");
+            }
+
+
+            if (!artist.Followers.Contains(user))
+            {
+                return BadRequest($"{followArtist.UserName} is already Unfollowed {followArtist.ArtistName}.");
+            }
+
+            user.FollowedArtists.Remove(artist);
+            artist.Followers.Remove(user);
+            db.SaveChanges();
+            return Ok($"{followArtist.UserName} has Unfollowed {followArtist.ArtistName} successfully.");
+        }
+
         #endregion
 
         #region Album Funcions
@@ -463,6 +492,31 @@ namespace Spotify.Controllers
             albums.ALmubLikers.Add(user);
             db.SaveChanges();
             return Ok($"{likedAlbum.username} has liked {likedAlbum.albumname} successfully.");
+        }
+
+        [HttpDelete("UnlikeAlbum")]
+        public ActionResult<string> UnlikeAlbum(LikedAlbumDTO likedAlbum)
+        {
+            var album = db.Albums
+                            .Include(p => p.ALmubLikers)
+                            .SingleOrDefault(p => p.AlbumName == likedAlbum.albumname);
+            if (album == null)
+            {
+                return NotFound("Album not found.");
+            }
+            User user = db.Users.FirstOrDefault(u => u.UserName == likedAlbum.username);
+            if (user == null)
+            {
+                return NotFound("User not found.");
+            }
+            if (album.ALmubLikers.Contains(user))
+            {
+                user.LikedAlbums.Remove(album);
+                album.ALmubLikers.Remove(user);
+                db.SaveChanges() ;
+                return Ok($"{likedAlbum.username} has unliked {likedAlbum.albumname} successfully.");
+            }
+            return BadRequest("You Don't like this album .");
         }
 
         #endregion
@@ -650,6 +704,35 @@ namespace Spotify.Controllers
             db.SaveChanges();
             return Ok($"{likedsong.username} has liked {likedsong.songname} successfully.");
         }
+        [HttpDelete("UnlikeSong")]
+        public ActionResult<string> UnlikeSong(LikedSongDTO likedsong)
+        {
+            var songs = db.Songs
+                .Include(p => p.Likedusers)
+                .SingleOrDefault(p => p.SongName == likedsong.songname);
+
+            if (songs == null)
+            {
+                return NotFound("Song not found.");
+            }
+
+            User user = db.Users.FirstOrDefault(u => u.UserName == likedsong.username);
+            if (user == null)
+            {
+                return NotFound("User not found.");
+            }
+
+            if (!songs.Likedusers.Contains(user))
+            {
+                return BadRequest($"{likedsong.username} has not liked {likedsong.songname}.");
+            }
+
+            user.LikedSons.Remove(songs);
+            songs.Likedusers.Remove(user);
+            db.SaveChanges();
+            return Ok($"{likedsong.username} has unliked {likedsong.songname} successfully.");
+        }
+
 
         [HttpGet("SongDetails/{songname}")]
         public IActionResult GetSongDetails(string songname)

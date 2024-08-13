@@ -278,6 +278,36 @@ namespace Spotify.Controllers
             return Ok($"{likedPlaylist.username} has liked {likedPlaylist.playlistname} successfully.");
         }
 
+        [HttpDelete("UnlikePlaylist")]
+        public ActionResult<string> UnlikePlaylist(LikedPlaylistDTO likedPlaylist)
+        {
+            var playlist = db.Playlists
+                .Include(p => p.PLaylistLovers)
+                .SingleOrDefault(p => p.PlaylistName == likedPlaylist.playlistname);
+
+            if (playlist == null)
+            {
+                return NotFound("Playlist not found.");
+            }
+
+            User user = db.Users.FirstOrDefault(u => u.UserName == likedPlaylist.username);
+            if (user == null)
+            {
+                return NotFound("User not found.");
+            }
+
+            if (!playlist.PLaylistLovers.Contains(user))
+            {
+                return BadRequest($"{likedPlaylist.username} has not liked {likedPlaylist.playlistname}.");
+            }
+
+            user.LikedPlaylists.Remove(playlist);
+            playlist.PLaylistLovers.Remove(user);
+            db.SaveChanges();
+            return Ok($"{likedPlaylist.username} has unliked {likedPlaylist.playlistname} successfully.");
+        }
+
+
         #endregion  
         private string SavePlaylistImage(string playlistname, IFormFile Image)
         {

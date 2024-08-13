@@ -314,11 +314,11 @@ function fetchPlaylistSongs(playlistName) {
 }
 
 // user like playlist
-
 const loveBtn = document.getElementById("likeBtn");
+const unloveBtn = document.getElementById("unlikeplaylist");
 loveBtn.addEventListener("click", function () {
-  const username = localStorage.getItem("playlistCreator");
-  const playlistnamee = localStorage.getItem("playlistName");
+  const username = playlistCreator;
+  const playlistnamee = playlistName;
 
   const likedPlaylist = {
     username: username,
@@ -334,12 +334,128 @@ loveBtn.addEventListener("click", function () {
     .then((response) => response.text())
     .then((data) => {
       alert(data);
+      loveBtn.style.display = "none";
+      unloveBtn.style.display = "block";
     })
     .catch((error) => {
       log.error("Error :", error);
       alert("An error occurred while liking the playlist.");
     });
 });
+
+// user unlike playlist
+unloveBtn.addEventListener("click", function () {
+  const username = playlistCreator;
+  const playlistnamee = playlistName;
+
+  const likedPlaylist = {
+    username: username,
+    playlistname: playlistnamee,
+  };
+
+  fetch("https://localhost:7259/api/User/UnlikePlaylist", {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(likedPlaylist),
+  })
+    .then((response) => response.text())
+    .then((data) => {
+      alert(data);
+      unloveBtn.style.display = "none";
+      loveBtn.style.display = "block";
+    })
+    .catch((error) => {
+      console.error("Error:", error);
+      alert("An error occurred while unliking the playlist.");
+    });
+});
+
+// like and unlike from music player
+
+document.addEventListener("DOMContentLoaded", function () {
+  const likeSongIcon = document.getElementById("likesongg");
+  const songNameElement = document.getElementById("Song-name");
+  const unlikeSongIcon = document.getElementById("unlikesongg");
+
+  likeSongIcon.addEventListener("click", function () {
+    // Get the username from sessionStorage
+    const username = sessionStorage.getItem("username");
+
+    // Get the song name from the song name element
+    const songName = songNameElement.textContent;
+    console.log(username);
+    console.log(songName);
+
+    // Prepare the LikedSongDTO object
+    const likedSongDTO = {
+      songname: songName,
+      username: username,
+    };
+
+    // Make the POST request to like the song
+    fetch("https://localhost:7259/api/Artist/LikeSong", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(likedSongDTO),
+    })
+      .then((response) => response.text())
+      .then((data) => {
+        console.log(data);
+        alert(data);
+
+        // Change the icon to show it's liked
+        likeSongIcon.style.display = "none";
+        unlikeSongIcon.style.display = "block";
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+        alert("An error occurred while liking the song.");
+      });
+  });
+
+  unlikeSongIcon.addEventListener("click", function () {
+    // Get the username from sessionStorage
+    const username = sessionStorage.getItem("username");
+
+    // Get the song name from the song name element
+    const songName = songNameElement.textContent.trim();
+
+    // Prepare the LikedSongDTO object
+    const likedSongDTO = {
+      songname: songName,
+      username: username,
+    };
+
+    // Make the DELETE request to unlike the song
+    fetch("https://localhost:7259/api/Artist/UnlikeSong", {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(likedSongDTO),
+    })
+      .then((response) => response.text())
+      .then((data) => {
+        console.log(data);
+        alert(data);
+
+        // Change the icon back to the unliked state
+        unlikeSongIcon.style.display = "none";
+        likeSongIcon.style.display = "block";
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+        alert("An error occurred while unliking the song.");
+      });
+  });
+});
+
+// end like & unlike song
+
 
 // playlist songs
 
