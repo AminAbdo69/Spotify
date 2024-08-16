@@ -130,7 +130,11 @@
     <div class="main-container">
       <div class="topbar">
         <div class="prev-next-buttons">
-          <button type="button" class="fa fas fa-chevron-left"></button>
+          <button
+            type="button"
+            class="fa fas fa-chevron-left"
+            onclick="window.location.href='/index2.html';"
+          ></button>
           <button type="button" class="fa fas fa-chevron-right"></button>
         </div>
 
@@ -236,6 +240,33 @@
               </div>
             </div>
           </form>
+
+          <!-- start search songs  -->
+          <div class="track-list">
+            <div class="track-item">
+              <div class="track-info">
+                <img src="song1.jpg" alt="Track Image" id="searchSongImage" />
+                <div class="track-details">
+                  <span class="track-title">Free</span>
+                  <span class="track-artist">Marwan Pablo</span>
+                </div>
+              </div>
+              <div class="album-info">
+                <span class="track-album">Free</span>
+              </div>
+              <div class="track-actions">
+                <button
+                  id="TrackAddBtn"
+                  class="track-add-button"
+                  data-song-name="Free"
+                >
+                  Add
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- end search songs  -->
         </div>
       </div>
     </div>

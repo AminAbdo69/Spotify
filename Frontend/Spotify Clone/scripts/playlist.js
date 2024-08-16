@@ -456,7 +456,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
 // end like & unlike song
 
-
 // playlist songs
 
 function loadPlaylistSongs(playlistName) {
@@ -513,6 +512,223 @@ window.onload = function () {
   const playlistName = sessionStorage.getItem("playlistName"); // Retrieve playlist name from sessionStorage
   loadPlaylistSongs(playlistName);
 };
+// start search songs
+
+document.addEventListener("DOMContentLoaded", async function () {
+  try {
+    const response = await fetch(
+      "https://localhost:7259/api/Artist/song-search",
+      {
+        method: "GET",
+      }
+    );
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error(errorText);
+      alert(`Error: ${errorText}`);
+      return;
+    }
+
+    const songs = await response.json();
+    const trackListContainer = document.querySelector(".track-list");
+    trackListContainer.innerHTML = ""; // Clear existing content
+    songs.forEach((song) => {
+      const trackItem = document.createElement("div");
+      trackItem.classList.add("track-item");
+
+      trackItem.innerHTML = `
+              <div class="track-info">
+                  <img src="${song.songimg}" alt="Track Image" id="searchSongImage"/>
+                  <div class="track-details">
+                      <span class="track-title">${song.songname}</span>
+                      <span class="track-artist">${song.songartist}</span>
+                  </div>
+              </div>
+              <div class="album-info">
+                  <span class="track-album">${song.albumname}</span>
+              </div>
+              <div class="track-actions">
+                  <button id="TrackAddBtn2" class="track-add-button" data-song-name="${song.songname}">Add</button>
+              </div>
+          `;
+
+      trackListContainer.appendChild(trackItem);
+    });
+  } catch (error) {
+    console.error("Error:", error);
+    alert("An error occurred while fetching the songs.");
+  }
+});
+// add any searched song to playlist
+
+// document.addEventListener("DOMContentLoaded", function () {
+//   document.querySelectorAll(".track-add-button").forEach((button) => {
+//     button.addEventListener("click", async function () {
+//       const songName = this.getAttribute("data-song-name");
+//       const playlistName = playlistName; // Replace with actual playlist name
+
+//       // Data to be sent in the request
+//       const data = {
+//         playlistName,
+//         songName,
+//       };
+
+//       try {
+//         // Make an HTTP POST request to add the song to the playlist
+//         const response = await fetch(
+//           "https://localhost:7259/api/User/AddPlaylistSong",
+//           {
+//             method: "POST",
+//             headers: {
+//               "Content-Type": "application/json",
+//               // Authorization: `Bearer ${Token}`, // Uncomment if using authentication
+//             },
+//             body: JSON.stringify(data),
+//           }
+//         );
+
+//         if (!response.ok) {
+//           throw new Error(`Error: ${response.status} ${response.statusText}`);
+//         }
+
+//         const responseData = await response.text();
+//         console.log(responseData);
+//         console.log("Song added successfully");
+//         // Optionally, you can fetch and display the updated playlist songs here
+//         // fetchPlaylistSongs(playlistName);
+//       } catch (error) {
+//         console.error("Error adding song:", error);
+//         // Handle error (e.g., show an error message to the user)
+//       }
+//     });
+//   });
+// });
+
+document.querySelectorAll(".track-actions .track-add-button").forEach((BTN) => {
+  BTN.textContent = "xhange";
+});
+document.addEventListener("DOMContentLoaded", function () {
+  document
+    .querySelectorAll(".track-item .track-add-button")
+    .forEach((button) => {
+      button.addEventListener("click", async function () {
+        console.log("tets");
+
+        const songName = this.getAttribute("data-song-name");
+        const playlistName = playlistName; // Replace with actual playlist name
+
+        // Determine if the button is currently in "Add" or "Remove" state
+        const isRemoving = this.classList.contains("remove");
+
+        try {
+          let response;
+
+          if (isRemoving) {
+            // Send DELETE request to remove the song from the playlist
+            response = await fetch(
+              "https://localhost:7259/api/User/RemovePlaylistSong",
+              {
+                method: "DELETE",
+                headers: {
+                  "Content-Type": "application/json",
+                  // Authorization: `Bearer ${Token}`, // Uncomment if using authentication
+                },
+                body: JSON.stringify({
+                  PlaylistName: playlistName,
+                  SongName: songName,
+                }),
+              }
+            );
+
+            if (!response.ok) {
+              throw new Error(
+                `Error: ${response.status} ${response.statusText}`
+              );
+            }
+
+            const responseData = await response.text();
+            console.log(responseData);
+            console.log("Song removed successfully");
+
+            // Change button to "Add" state
+            this.textContent = "Add";
+            this.classList.remove("remove");
+            this.style.backgroundColor = "";
+            this.style.borderColor = "white";
+          } else {
+            // Send POST request to add the song
+            response = await fetch(
+              "https://localhost:7259/api/User/AddPlaylistSong",
+              {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                  // Authorization: `Bearer ${Token}`, // Uncomment if using authentication
+                },
+                body: JSON.stringify({
+                  playlistName,
+                  songName,
+                }),
+              }
+            );
+
+            if (!response.ok) {
+              throw new Error(
+                `Error: ${response.status} ${response.statusText}`
+              );
+            }
+
+            const responseData = await response.text();
+            console.log(responseData);
+            console.log("Song added successfully");
+
+            // Change button to "Remove" state
+            this.textContent = "Remove";
+            this.classList.add("remove");
+            this.style.backgroundColor = "#e62222";
+            this.style.borderColor = "#e62222";
+          }
+
+          // Optionally, you can fetch and display the updated playlist songs here
+          // fetchPlaylistSongs(playlistName);
+        } catch (error) {
+          console.error("Error:", error);
+          // Handle error (e.g., show an error message to the user)
+        }
+      });
+    });
+});
+
+function fetchSongImage2(songName) {
+  fetch(
+    `https://localhost:7259/api/Artist/SongImage/${encodeURIComponent(
+      songName
+    )}`
+  )
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error(`Error: ${response.statusText}`);
+      }
+      return response.blob(); // Fetch the image as a binary blob
+    })
+    .then((blob) => {
+      const imageUrl = URL.createObjectURL(blob);
+
+      // Find the img element by its ID and update its src attribute
+      const imageElement = document.getElementById("songName");
+      if (imageElement) {
+        imageElement.src = imageUrl;
+      } else {
+        console.error("Image element with ID 'song-image' not found");
+      }
+    })
+    .catch((error) => {
+      console.error("Failed to load the image:", error);
+    });
+}
+
+// end search songs
 
 // test playing the song
 document.addEventListener("DOMContentLoaded", function () {

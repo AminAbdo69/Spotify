@@ -222,9 +222,20 @@ body {
   background-color: #101010;
   padding: 14px 30px;
 }
-.topbar .prev-next-buttons button {
+.topbar .prev-next-buttons button:last-of-type {
   color: #7a7a7a;
   cursor: not-allowed;
+  width: 34px;
+  height: 34px;
+  border-radius: 100%;
+  font-size: 18px;
+  border: 0px;
+  background-color: #090909;
+  margin-right: 10px;
+}
+.topbar .prev-next-buttons button:first-of-type {
+  color: #7a7a7a;
+  cursor: pointer;
   width: 34px;
   height: 34px;
   border-radius: 100%;

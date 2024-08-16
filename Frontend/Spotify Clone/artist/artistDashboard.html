@@ -39,8 +39,28 @@
               class="d-flex align-center fs-14 c-black rad-6 p-10"
               id="btn3"
             >
-              <i class="fa-brands fa-spotify"></i>
+              <i class="fa-solid fa-volume-high"></i>
               <span class="fs-14 ml-10">Add Album</span>
+            </button>
+          </li>
+          <li>
+            <button
+              class="d-flex align-center fs-14 c-black rad-6 p-10"
+              id="btn4"
+            >
+              <i class="fa-solid fa-microphone-slash"></i>
+
+              <span class="fs-14 ml-10">Remove Song</span>
+            </button>
+          </li>
+          <li>
+            <button
+              class="d-flex align-center fs-14 c-black rad-6 p-10"
+              id="btn5"
+            >
+              <i class="fa-solid fa-volume-xmark"></i>
+
+              <span class="fs-14 ml-10">Remove Album</span>
             </button>
           </li>
         </ul>
@@ -811,6 +831,91 @@
                         >
                           <line y2="19" y1="5" x2="12" x1="12"></line>
                           <line y2="12" y1="12" x2="19" x1="5"></line></svg
+                      ></span>
+                    </button>
+                  </div>
+                </div>
+              </form>
+            </section>
+            <section id="section4" class="panel remove-song">
+              <table id="songsTable2" style="opacity: 0">
+                <thead>
+                  <tr>
+                    <th>Song Name</th>
+                    <th>Duration</th>
+                    <th>Release Date</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <!-- Songs will be populated here -->
+                </tbody>
+              </table>
+              <form id="remove-song">
+                <div class="song-container">
+                  <div class="inputs">
+                    <input
+                      type="text"
+                      placeholder="Song Name e.g El-mabdaa"
+                      id="deletesongName"
+                    />
+                    <input
+                      type="text"
+                      placeholder="Album Name e.g The Last Peace of art"
+                      id="deletealbumName"
+                    />
+                    <button class="noselect" id="deleteSongBtn">
+                      <span class="text">Delete Song</span
+                      ><span class="icon"
+                        ><svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="24"
+                          height="24"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            d="M24 20.188l-8.315-8.209 8.2-8.282-3.697-3.697-8.212 8.318-8.31-8.203-3.666 3.666 8.321 8.24-8.206 8.313 3.666 3.666 8.237-8.318 8.285 8.203z"
+                          ></path></svg
+                      ></span>
+                    </button>
+                  </div>
+                </div>
+              </form>
+            </section>
+            <section id="section5" class="panel remove-album">
+              <table id="albumsTable2" style="opacity: 0">
+                <thead>
+                  <tr>
+                    <th>Album Name</th>
+                    <th>Release Date</th>
+                    <th>Number of Songs</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <!-- Albums will be populated here -->
+                </tbody>
+              </table>
+              <form action="" id="remove-album">
+                <div class="add-card">
+                  <label>Album Name</label>
+                  <div class="inputcontainer">
+                    <input
+                      type="text"
+                      placeholder="e.g The Last Peace of art"
+                      id="RemovealbumName"
+                    />
+
+                    <button class="noselect" id="deleteAlbumBtn">
+                      <span class="text">Delete Album</span
+                      ><span class="icon"
+                        ><svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="24"
+                          height="24"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            d="M24 20.188l-8.315-8.209 8.2-8.282-3.697-3.697-8.212 8.318-8.31-8.203-3.666 3.666 8.321 8.24-8.206 8.313 3.666 3.666 8.237-8.318 8.285 8.203z"
+                          ></path></svg
                       ></span>
                     </button>
                   </div>

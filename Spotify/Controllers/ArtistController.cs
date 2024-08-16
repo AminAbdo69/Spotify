@@ -284,6 +284,9 @@ namespace Spotify.Controllers
 
             user.FollowedArtists.Add(artist);
             artist.Followers.Add(user);
+
+            db.Users.Update(user);
+            db.Artists.Update(artist);
             db.SaveChanges();
             return Ok($"{followArtist.UserName} has followed {followArtist.ArtistName} successfully.");
         }
@@ -313,6 +316,9 @@ namespace Spotify.Controllers
 
             user.FollowedArtists.Remove(artist);
             artist.Followers.Remove(user);
+
+            db.Users.Update(user);
+            db.Artists.Update(artist);
             db.SaveChanges();
             return Ok($"{followArtist.UserName} has Unfollowed {followArtist.ArtistName} successfully.");
         }
@@ -371,6 +377,34 @@ namespace Spotify.Controllers
             db.SaveChanges();
             return Ok($" {albumDTO.AlbumName} Has Been Created Successfully");
         }
+
+        [HttpDelete("DeleteAlbum")]
+        public ActionResult<string> DeleteAlbum([FromForm] DeleteAlbumDTO deleteAlbumDTO)
+        {
+            Artist artist = db.Artists.FirstOrDefault(a => a.Username == deleteAlbumDTO.ArtistName);
+            if (artist == null)
+            {
+                return NotFound("Invalid Artist.");
+            }
+            if (!artist.IsActive)
+            {
+                return BadRequest("Activate your account first.");
+            }
+            Album album = db.Albums.FirstOrDefault(a => a.AlbumName == deleteAlbumDTO.AlbumName && a.ArtistId == artist.ArtistId);
+            if (album == null)
+            {
+                return NotFound("Album not found.");
+            }
+            artist.CreatedAlbums.Remove(album);
+            db.Albums.Remove(album);
+
+            
+            db.Artists.Update(artist);
+            db.SaveChanges();
+
+            return Ok($"{deleteAlbumDTO.AlbumName} has been deleted successfully.");
+        }
+
 
         [HttpGet("AlbumImage/{albumname}")]
         public IActionResult GetAlbumImage(string albumname)
@@ -490,6 +524,9 @@ namespace Spotify.Controllers
 
             user.LikedAlbums.Add(albums);
             albums.ALmubLikers.Add(user);
+
+            db.Users.Update(user);
+            db.Albums.Update(albums);
             db.SaveChanges();
             return Ok($"{likedAlbum.username} has liked {likedAlbum.albumname} successfully.");
         }
@@ -513,6 +550,10 @@ namespace Spotify.Controllers
             {
                 user.LikedAlbums.Remove(album);
                 album.ALmubLikers.Remove(user);
+
+                db.Users.Update(user);
+                db.Albums.Update(album);
+
                 db.SaveChanges() ;
                 return Ok($"{likedAlbum.username} has unliked {likedAlbum.albumname} successfully.");
             }
@@ -525,7 +566,7 @@ namespace Spotify.Controllers
 
 
         [HttpPost("AddSong")]
-        public ActionResult<string> AddSong([FromForm]AddSongDTO songDTO)
+        public ActionResult<string> AddSong([FromForm] AddSongDTO songDTO)
         {
             if (String.IsNullOrEmpty(songDTO.Songname))
             {
@@ -617,6 +658,164 @@ namespace Spotify.Controllers
 
         }
 
+        //[HttpPost("AddSong")]
+        //public ActionResult<string> AddSong([FromForm] AddSongDTO songDTO)
+        //{
+        //    if (string.IsNullOrEmpty(songDTO.Songname))
+        //    {
+        //        return BadRequest("Invalid song name.");
+        //    }
+
+        //    // Retrieve the album and artist in a single database call if possible
+        //    var albumAndArtist = (from a in db.Albums
+        //                          join ar in db.Artists on a.ArtistId equals ar.ArtistId
+        //                          where a.AlbumName == songDTO.Albumname && ar.Username == songDTO.artistusename
+        //                          select new { Album = a, Artist = ar }).FirstOrDefault();
+
+        //    if (albumAndArtist == null)
+        //    {
+        //        return NotFound("Album or artist not found.");
+        //    }
+
+        //    var album = albumAndArtist.Album;
+        //    var artist = albumAndArtist.Artist;
+
+        //    if (!artist.IsActive)
+        //    {
+        //        return BadRequest("Activate your account first.");
+        //    }
+
+        //    if (songDTO.Duration <= 0 || songDTO.Duration > 10.0)
+        //    {
+        //        return BadRequest("Invalid song duration.");
+        //    }
+
+        //    // Validate image and audio file extensions
+        //    if (!ValidateFileExtension(songDTO.Image, new[] { ".png", ".jpeg", ".jpg", ".avif" }, out var imagePath))
+        //    {
+        //        return BadRequest("Unsupported image format.");
+        //    }
+
+        //    if (!ValidateFileExtension(songDTO.Audio, new[] { ".mp3", ".wav" }, out var audioPath))
+        //    {
+        //        return BadRequest("Unsupported audio format.");
+        //    }
+
+        //    // Check if the song already exists in the album or for the artist
+        //    bool songExists = db.Songs.Any(s =>
+        //        (s.AlbumId == album.AlbumId || s.ArtistId == artist.ArtistId) &&
+        //        s.SongName == songDTO.Songname);
+
+        //    if (songExists)
+        //    {
+        //        return Conflict($"This song already exists in the album or has already been created by the artist.");
+        //    }
+
+        //    // Create and save the song entity
+        //    Song newSong = new()
+        //    {
+        //        AlbumId = album.AlbumId,
+        //        ArtistId = artist.ArtistId,
+        //        SongName = songDTO.Songname,
+        //        Duration = songDTO.Duration,
+        //        ReleaseDate = DateTime.Now,
+        //        picture = imagePath,
+        //        path = audioPath
+        //    };
+
+        //    db.Songs.Add(newSong);
+        //    album.AlbumSongs.Add(newSong);
+        //    artist.Songs.Add(newSong);
+        //    album.Nsongs += 1;
+
+        //    // Save changes in a transaction
+        //    using (var transaction = db.Database.BeginTransaction())
+        //    {
+        //        try
+        //        {
+        //            db.Albums.Update(album);
+        //            db.Artists.Update(artist);
+        //            db.SaveChanges();
+
+        //            transaction.Commit();
+        //        }
+        //        catch (Exception)
+        //        {
+        //            transaction.Rollback();
+        //            return StatusCode(500, "An error occurred while adding the song.");
+        //        }
+        //    }
+
+        //    return Ok($"{songDTO.Songname} has been created successfully.");
+        //}
+
+        //private bool ValidateFileExtension(IFormFile file, string[] allowedExtensions, out string filePath)
+        //{
+        //    filePath = null;
+        //    if (file == null || file.Length == 0)
+        //    {
+        //        return false;
+        //    }
+
+        //    var extension = Path.GetExtension(file.FileName).ToLowerInvariant();
+        //    if (!allowedExtensions.Contains(extension))
+        //    {
+        //        return false;
+        //    }
+
+        //    // Save the file and return the file path
+        //    filePath = SaveFile(file.FileName, file);
+        //    return true;
+        //}
+
+
+        [HttpDelete("DeleteSong")]
+        public ActionResult<string> DeleteSong([FromForm] DeleteSongDTO deleteSongDTO)
+        {
+            // Retrieve the song, album, and artist in a single query if possible
+            var song = db.Songs.Include(s => s.Songalbum).Include(s => s.artist)
+                               .FirstOrDefault(s => s.SongName == deleteSongDTO.Songname &&
+                                                    s.Songalbum.AlbumName == deleteSongDTO.Albumname &&
+                                                    s.artist.Username == deleteSongDTO.Artistusename);
+
+            if (song == null)
+            {
+                return NotFound("Song not found in the specified album.");
+            }
+
+            var album = song.Songalbum;
+            var artist = song.artist;
+
+            // Remove the song from the album and artist collections
+            album.AlbumSongs.Remove(song);
+            artist.Songs.Remove(song);
+            album.Nsongs -= 1;
+
+            // Remove the song from the database
+            db.Songs.Remove(song);
+
+            // Save changes in a transaction
+            using (var transaction = db.Database.BeginTransaction())
+            {
+                try
+                {
+                    db.Albums.Update(album);
+                    db.Artists.Update(artist);
+                    db.SaveChanges();
+
+                    transaction.Commit();
+                }
+                catch (Exception)
+                {
+                    transaction.Rollback();
+                    return StatusCode(500, "An error occurred while deleting the song.");
+                }
+            }
+
+            return Ok($"{deleteSongDTO.Songname} has been deleted from the album {deleteSongDTO.Albumname}.");
+        }
+
+
 
         [HttpGet("SongImage/{songname}")]
         public IActionResult GetSongImage(string songname)
@@ -701,9 +900,14 @@ namespace Spotify.Controllers
 
             user.LikedSons.Add(songs);
             songs.Likedusers.Add(user);
+
+            db.Users.Update(user);
+            db.Songs.Update(songs);
             db.SaveChanges();
             return Ok($"{likedsong.username} has liked {likedsong.songname} successfully.");
         }
+
+
         [HttpDelete("UnlikeSong")]
         public ActionResult<string> UnlikeSong(LikedSongDTO likedsong)
         {
@@ -729,6 +933,9 @@ namespace Spotify.Controllers
 
             user.LikedSons.Remove(songs);
             songs.Likedusers.Remove(user);
+
+            db.Users.Update(user);
+            db.Songs.Update(songs);
             db.SaveChanges();
             return Ok($"{likedsong.username} has unliked {likedsong.songname} successfully.");
         }
@@ -768,6 +975,29 @@ namespace Spotify.Controllers
             };
 
             return Ok(songDetails);
+        }
+
+
+        [HttpGet("song-search")]
+        public ActionResult<List<searchSongDTO>> SearchSong()
+        {
+            var songs = db.Songs.Include(s => s.artist).ToList();
+
+            List<searchSongDTO> allSearchSongs = new List<searchSongDTO>();
+
+            foreach (Song song in songs)
+            {
+                Album album = db.Albums.FirstOrDefault(a=>a.AlbumId == song.AlbumId);
+                allSearchSongs.Add(new searchSongDTO()
+                {
+                    songname = song.SongName,
+                    songartist = song.artist.Username,
+                    songimg = $"https://localhost:7259/api/Artist/SongImage/{song.SongName}",
+                    albumname = album.AlbumName
+                });
+
+            }
+            return Ok(allSearchSongs);
         }
 
         #endregion

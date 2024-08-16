@@ -166,7 +166,7 @@ namespace Spotify.Controllers
         [HttpPost("AddPlaylistSong")]
         public ActionResult<string> AddPlaylistSong(AddPlaylistSongDTO request)
         {
-            Playlist playlist = db.Playlists.FirstOrDefault(p=>p.PlaylistName == request.playlistName);
+            Playlist playlist = db.Playlists.Include(p=>p.PlaylistSongs).FirstOrDefault(p=>p.PlaylistName == request.playlistName);
             if(playlist == null)
             {
                 return NotFound("Not Found this playlist.");
@@ -189,6 +189,42 @@ namespace Spotify.Controllers
             db.SaveChanges();
             return Ok($"{song.SongName} Has been added to {playlist.PlaylistName}");
         }
+
+        [HttpDelete("RemovePlaylistSong")]
+        public ActionResult<string> RemovePlaylistSong(RemovePlaylistSongDTO request)
+        {
+            // Find the playlist by name
+            Playlist playlist = db.Playlists.Include(p=>p.PlaylistSongs).FirstOrDefault(p => p.PlaylistName == request.PlaylistName);
+            if (playlist == null)
+            {
+                return NotFound("Playlist not found.");
+            }
+
+            // Find the song by name
+            Song song = db.Songs.FirstOrDefault(s => s.SongName == request.SongName);
+            if (song == null)
+            {
+                return NotFound("Song not found.");
+            }
+
+            // Check if the song exists in the playlist
+            var playlistSong = playlist.PlaylistSongs.FirstOrDefault(s => s.SongId == song.SongId);
+            if (playlistSong == null)
+            {
+                return NotFound($"{song.SongName} is not in the playlist {playlist.PlaylistName}.");
+            }
+
+            // Remove the song from the playlist
+            playlist.PlaylistSongs.Remove(playlistSong);
+            playlist.PlaylistsoungCount = playlist.PlaylistsoungCount - 1; // Update song count
+
+            // Update the playlist in the database
+            db.Playlists.Update(playlist);
+            db.SaveChanges();
+
+            return Ok($"{song.SongName} has been removed from {playlist.PlaylistName}.");
+        }
+
 
         [HttpGet("GetPlaylistSongs")]
         public ActionResult<List<PlaylistSongOut>> GetPlaylistSongs(string playlistName)
@@ -274,6 +310,9 @@ namespace Spotify.Controllers
 
             user.LikedPlaylists.Add(playlist);
             playlist.PLaylistLovers.Add(user);
+
+            db.Users.Update(user);
+            db.Playlists.Update(playlist);
             db.SaveChanges();
             return Ok($"{likedPlaylist.username} has liked {likedPlaylist.playlistname} successfully.");
         }
@@ -303,6 +342,9 @@ namespace Spotify.Controllers
 
             user.LikedPlaylists.Remove(playlist);
             playlist.PLaylistLovers.Remove(user);
+
+            db.Users.Update(user);
+            db.Playlists.Update(playlist);
             db.SaveChanges();
             return Ok($"{likedPlaylist.username} has unliked {likedPlaylist.playlistname} successfully.");
         }

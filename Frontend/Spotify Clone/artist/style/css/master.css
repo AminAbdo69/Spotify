@@ -83,7 +83,7 @@ ul {
 }
 .sidebar ul li a:hover,
 .sidebar ul li a.active,
-.sidebar ul li:hover{
+.sidebar ul li:hover {
   background-color: #f6f6f6;
 }
 .panel {
@@ -1234,18 +1234,21 @@ ul {
 /* End Plan Page  */
 
 /* Start add album */
-#add-album {
+#add-album,
+#remove-album {
   display: flex;
   justify-content: space-between;
   margin-top: 40px;
 }
-section #add-album label {
+section #add-album label,
+section #remove-album label {
   font-size: 25px;
   margin-bottom: 8px;
   display: inline-block;
   font-weight: bold;
 }
-section #add-album input {
+section #add-album input,
+section #remove-album input {
   display: block;
   padding: 14px;
   width: 600px;
@@ -1261,7 +1264,8 @@ section #add-album input {
   box-shadow: 0 0 0 1px #878787;
 }
 
-#add-album .inputcontainer {
+#add-album .inputcontainer,
+#remove-album .inputcontainer {
   display: flex;
   justify-content: space-between;
   gap: 15px;
@@ -1355,6 +1359,79 @@ section .song-container .inputs {
 .button:active {
   border: 1px solid #2e8644;
 }
+
+/* Delete Button */
+#section5 button,
+#section4 button {
+  width: 160px;
+  height: 50px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  border: none;
+  border-radius: 5px;
+  box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.15);
+  background: #e62222;
+}
+
+#section5 button,
+#section4 button,
+#section5 button span,
+#section4 button span {
+  transition: 200ms;
+}
+
+#section5 button .text,
+#section4 button .text {
+  transform: translateX(20px);
+  color: white;
+  font-weight: bold;
+}
+
+#section5 button .icon,
+#section4 button .icon {
+  position: absolute;
+  border-left: 1px solid #c41b1b;
+  transform: translateX(110px);
+  height: 40px;
+  width: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#section5 button svg,
+#section4 button svg {
+  width: 15px;
+  fill: #eee;
+}
+
+#section5 .button:hover,
+#section4 button:hover {
+  background: #ff3636;
+}
+
+#section5 button:hover .text,
+#section4 button:hover .text {
+  color: transparent;
+}
+
+#section5 button:hover .icon,
+#section4 button:hover .icon {
+  width: 150px;
+  border-left: none;
+  transform: translateX(0);
+}
+
+#section5 button:focus,
+#section4 button:focus {
+  outline: none;
+}
+
+#section5 button:active .icon svg,
+#section4 button:active .icon svg {
+  transform: scale(0.8);
+}
 /* end add album */
 
 table {
@@ -1366,7 +1443,8 @@ table {
   margin-bottom: 30px;
 }
 
-table th, table td {
+table th,
+table td {
   padding: 10px;
   border: 1px solid #ddd;
   text-align: left;
