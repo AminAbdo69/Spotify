@@ -69,6 +69,36 @@ namespace Spotify.Controllers
             db.SaveChanges();
             return Ok($" {request.playlistname} Has Been Created Successfully");
         }
+        [HttpDelete("DeletePlaylist")]
+        public ActionResult<string> DeletePlaylist(DeletePlaylistDTO request)
+        {
+            Playlist playlist = db.Playlists.FirstOrDefault(p => p.PlaylistName == request.playlistname);
+
+            if (playlist == null)
+            {
+                return NotFound("Playlist not found.");
+            }
+
+            User user = db.Users.FirstOrDefault(u => u.UserName == request.playlistcreator);
+
+            if (user == null)
+            {
+                return NotFound("User associated with the playlist not found.");
+            }
+            user.CreatedPlaylists.Remove(playlist);
+
+            db.Playlists.Remove(playlist);
+            db.SaveChanges();
+
+            
+            if (!string.IsNullOrEmpty(playlist.picpath) && System.IO.File.Exists(playlist.picpath))
+            {
+                System.IO.File.Delete(playlist.picpath);
+            }
+
+            return Ok($"Playlist '{playlist.PlaylistName}' has been deleted successfully.");
+        }
+
 
         [HttpGet("PlaylistImage/{playlistname}")]
         public IActionResult GetUserImage(string playlistname)

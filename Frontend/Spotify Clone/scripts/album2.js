@@ -1,11 +1,15 @@
 // get page data
 const albumName = sessionStorage.getItem("albumName");
 const albumPic = sessionStorage.getItem("albumPic");
-const albumArtist = sessionStorage.getItem("albumArtist");
+const albumArtist = sessionStorage.getItem("artistname");
 const Username = sessionStorage.getItem("username");
 
 var theusername = document.querySelector(".topbar .navbar .username");
 theusername.innerHTML = Username;
+
+theusername.addEventListener("click", function () {
+  document.querySelector(".topbar .navbar .Btn").style.display = "flex";
+});
 
 // var Token = sessionStorage.getItem("myToken");
 // console.log(" Token:", Token);
@@ -60,6 +64,7 @@ document
       // Make an HTTP POST request to your API endpoint
       const response = await fetch(
         "https://localhost:7259/api/User/AddPlaylist",
+
         {
           method: "POST",
           body: formData,
@@ -84,7 +89,7 @@ document
 
       const dataa = await response.text();
       console.log(dataa);
-      // location.href = "/playlist.html";
+      location.href = "/playlist.html";
     } catch (error) {
       console.error("Error logging in:", error);
       // Handle login error (e.g., show an error message to the user)
@@ -106,7 +111,7 @@ document
           method: "GET",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${Token}`, // Include your authorization token if needed
+            // Authorization: `Bearer ${Token}`, // Include your authorization token if needed
           },
         }
       );
@@ -123,7 +128,7 @@ document
       playlists.forEach((playlist) => {
         const playlistElement = document.createElement("li");
         playlistElement.innerHTML = `
-        <div class="playlist-container" onclick="sendData(this, ${playlist.count})">
+        <div class="playlist-container" >
           <div class="image">
             <img src="/assets/icons/LogosSpotifyIcon.svg" alt="">
           </div>
@@ -132,9 +137,59 @@ document
             
             <p class="creator-info">playlist <span id="playlistCreator">${playlist.creator}</span></p>
           </div>
+          <div> <button id="Deleteplaylist" style="background-color:red ; border-radius:15px ; width:60px;" data-playlist-name="${playlist.name}">Delete</button> </div>
         </div>
       `;
         playlistsElement.appendChild(playlistElement);
+        const deleteButtons = document.querySelectorAll(
+          ".playlist-container #Deleteplaylist"
+        );
+
+        deleteButtons.forEach((button) => {
+          button.addEventListener("click", function () {
+            const playlistName = this.getAttribute("data-playlist-name");
+            const playlistCreator =
+              document.getElementById("playlistCreator").textContent;
+
+            if (
+              confirm(
+                `Are you sure you want to delete the playlist: ${playlistName}?`
+              )
+            ) {
+              deletePlaylist(playlistName, playlistCreator);
+            }
+          });
+        });
+
+        function deletePlaylist(playlistName, playlistCreator) {
+          fetch(`https://localhost:7259/api/User/DeletePlaylist`, {
+            method: "DELETE",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              playlistname: playlistName,
+              playlistcreator: playlistCreator,
+            }),
+          })
+            .then((response) => {
+              if (response.ok) {
+                alert(
+                  `Playlist '${playlistName}' has been deleted successfully.`
+                );
+                // Optionally remove the playlist from the UI
+                location.reload(); // or use a more dynamic method to remove the element
+              } else {
+                return response.text().then((text) => {
+                  throw new Error(text);
+                });
+              }
+            })
+            .catch((error) => {
+              console.error("Failed to delete the playlist:", error);
+              alert("Failed to delete the playlist.");
+            });
+        }
       });
     } catch (error) {
       console.error("Error fetching playlists:", error);
@@ -446,6 +501,9 @@ document.addEventListener("DOMContentLoaded", function () {
         // Extract the song title from the <span> with class 'song-title'
         const songTitleSpan = listItem.querySelector(".song-title");
         const songArtistSpan = listItem.querySelector(".artistName");
+        localStorage.clear();
+        console.log("test");
+
         if (songTitleSpan && songArtistSpan) {
           const songName = songTitleSpan.textContent
             .trim()
@@ -454,6 +512,8 @@ document.addEventListener("DOMContentLoaded", function () {
           const songArtist = songArtistSpan.textContent;
           document.getElementById("Song-name").innerText = songName;
           document.getElementById("song-artist").innerText = songArtist;
+          localStorage.setItem("Resumesongname", songName);
+          localStorage.setItem("Resumeartistname", songArtist);
           fetchSongAudio(songName);
           fetchSongImage(songName);
         }
@@ -482,6 +542,8 @@ document.addEventListener("DOMContentLoaded", function () {
       })
       .then((blob) => {
         const audioUrl = URL.createObjectURL(blob);
+        localStorage.setItem("ResumeaudioUrl", audioUrl);
+
         audio.src = audioUrl;
         audio.play(); // Automatically start playing the song
       })
@@ -504,6 +566,7 @@ document.addEventListener("DOMContentLoaded", function () {
       })
       .then((blob) => {
         const imageUrl = URL.createObjectURL(blob);
+        localStorage.setItem("ResumeimageUrl", imageUrl);
 
         // Find the img element by its ID and update its src attribute
         const imageElement = document.getElementById("song-image");
@@ -539,6 +602,7 @@ document.addEventListener("DOMContentLoaded", function () {
   audio.addEventListener("timeupdate", function () {
     const progressPercent = (audio.currentTime / audio.duration) * 100;
     progressBar.style.width = `${progressPercent}%`;
+    localStorage.setItem("ResumeaduioTime", audio.currentTime);
 
     // Update the current time display
     const currentTimeDisplay = document.querySelector(
@@ -584,4 +648,186 @@ document.addEventListener("DOMContentLoaded", function () {
       audio.volume = volumeLevel;
       volumeBar.style.width = `${volumeLevel * 100}%`;
     });
+});
+// resume
+document.addEventListener("DOMContentLoaded", function () {
+  const playPauseBtn = document.querySelector(".play-pause");
+  const progressBar = document.querySelector(".progress-bar .progress");
+  const volumeBar = document.querySelector(".volume-bar .progress");
+
+  const audio = new Audio();
+
+  // Resume song state on page load
+  function resumeSongState() {
+    const resumeSongName = localStorage.getItem("Resumesongname");
+    const resumeArtistName = localStorage.getItem("Resumeartistname");
+    const resumeSongTime = localStorage.getItem("ResumeaduioTime");
+
+    if (resumeSongName && resumeArtistName) {
+      document.getElementById("Song-name").innerText = resumeSongName;
+      document.getElementById("song-artist").innerText = resumeArtistName;
+
+      fetchSongAudio(resumeSongName, resumeSongTime);
+      fetchSongImage(resumeSongName);
+    }
+  }
+
+  // Function to handle click events on song list items
+  function handleSongClick(event) {
+    if (event.target.tagName === "LI" || event.target.closest("li")) {
+      const listItem = event.target.closest("li");
+      if (listItem) {
+        const songTitleSpan = listItem.querySelector(".song-title");
+        const songArtistSpan = listItem.querySelector(".artistName");
+        if (songTitleSpan && songArtistSpan) {
+          const songName = songTitleSpan.textContent
+            .trim()
+            .split("\n")[0]
+            .trim();
+          const songArtist = songArtistSpan.textContent;
+          audio.pause();
+          audio.currentTime = 0; // Reset the playback time
+
+          document.getElementById("Song-name").innerText = songName;
+          document.getElementById("song-artist").innerText = songArtist;
+
+          // Save song info in localStorage
+          localStorage.setItem("Resumesongname", songName);
+          localStorage.setItem("Resumeartistname", songArtist);
+
+          fetchSongAudio(songName);
+          fetchSongImage(songName);
+        }
+      }
+    }
+  }
+
+  // Add click event listener to the song list container
+  const songList = document.getElementById("song-list");
+  if (songList) {
+    songList.addEventListener("click", handleSongClick);
+  }
+
+  // Function to fetch and play the song audio
+  function fetchSongAudio(songName, resumeTime = 0) {
+    fetch(
+      `https://localhost:7259/api/Artist/SongAudio/${encodeURIComponent(
+        songName
+      )}`
+    )
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`Error: ${response.statusText}`);
+        }
+        return response.blob(); // Fetch the audio as a binary blob
+      })
+      .then((blob) => {
+        const audioUrl = URL.createObjectURL(blob);
+        audio.src = audioUrl;
+
+        // Set the resume time if available
+        audio.currentTime = resumeTime;
+        audio.play(); // Automatically start playing the song
+      })
+      .catch((error) => {
+        console.error("Failed to load the song:", error);
+      });
+  }
+
+  // Function to fetch and display the song image
+  function fetchSongImage(songName) {
+    fetch(
+      `https://localhost:7259/api/Artist/SongImage/${encodeURIComponent(
+        songName
+      )}`
+    )
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`Error: ${response.statusText}`);
+        }
+        return response.blob(); // Fetch the image as a binary blob
+      })
+      .then((blob) => {
+        const imageUrl = URL.createObjectURL(blob);
+
+        const imageElement = document.getElementById("song-image");
+        if (imageElement) {
+          imageElement.src = imageUrl;
+        } else {
+          console.error("Image element with ID 'song-image' not found");
+        }
+      })
+      .catch((error) => {
+        console.error("Failed to load the image:", error);
+      });
+  }
+
+  // Play/Pause Toggle
+  playPauseBtn.addEventListener("click", function () {
+    if (audio.paused) {
+      audio.play();
+      playPauseBtn.classList.remove("fa-play");
+      playPauseBtn.classList.add("fa-pause");
+    } else {
+      audio.pause();
+      playPauseBtn.classList.remove("fa-pause");
+      playPauseBtn.classList.add("fa-play");
+    }
+  });
+
+  // Update progress bar as the audio plays
+  audio.addEventListener("timeupdate", function () {
+    const progressPercent = (audio.currentTime / audio.duration) * 100;
+    progressBar.style.width = `${progressPercent}%`;
+
+    // Save the current time to localStorage
+    localStorage.setItem("ResumeaduioTime", audio.currentTime);
+
+    // Update the current time display
+    const currentTimeDisplay = document.querySelector(
+      ".progress-container span:first-child"
+    );
+    currentTimeDisplay.textContent = formatTime(audio.currentTime);
+
+    // Update the duration display
+    const durationDisplay = document.querySelector(
+      ".progress-container span:last-child"
+    );
+    if (!isNaN(audio.duration)) {
+      durationDisplay.textContent = formatTime(audio.duration);
+    }
+  });
+
+  // Function to format time in minutes and seconds
+  function formatTime(seconds) {
+    const minutes = Math.floor(seconds / 60);
+    seconds = Math.floor(seconds % 60);
+    return `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
+  }
+
+  // Seek functionality
+  document
+    .querySelector(".progress-bar")
+    .addEventListener("click", function (e) {
+      const progressContainerWidth = this.clientWidth;
+      const clickX = e.offsetX;
+      const duration = audio.duration;
+
+      audio.currentTime = (clickX / progressContainerWidth) * duration;
+    });
+
+  // Volume Control
+  document
+    .querySelector(".volume-bar .progress-bar")
+    .addEventListener("click", function (e) {
+      const volumeBarWidth = this.clientWidth;
+      const clickX = e.offsetX;
+      const volumeLevel = clickX / volumeBarWidth;
+
+      audio.volume = volumeLevel;
+      volumeBar.style.width = `${volumeLevel * 100}%`;
+    });
+
+  // Resume song state on page load
+  resumeSongState();
 });

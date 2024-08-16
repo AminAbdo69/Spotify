@@ -137,7 +137,7 @@ songss.forEach(function (song) {
 
 const albumName = sessionStorage.getItem("albumName");
 const albumPic = sessionStorage.getItem("albumPic");
-const albumArtist = sessionStorage.getItem("albumArtist");
+const albumArtist = sessionStorage.getItem("artistname");
 document.addEventListener("DOMContentLoaded", () => {
   // Retrieve the data from localStorage
   console.log(albumName);
